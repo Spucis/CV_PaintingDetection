@@ -1,6 +1,9 @@
 */__pycache__/
 *.pyc
 *.txt
+input/data.csv
+input/estensi.glb
+input/map.png
 input/images/*
 !input/images/.gitkeep
 input/videos/*
