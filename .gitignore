@@ -2,7 +2,11 @@
 *.pyc
 *.txt
 input/images/*
+!input/images/.gitkeep
 input/videos/*
+!input/videos/.gitkeep
 output/images/*
+!output/images/.gitkeep
 output/videos/*
+!output/videos/.gitkeep
 .idea
