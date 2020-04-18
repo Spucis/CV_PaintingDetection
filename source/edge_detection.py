@@ -11,10 +11,10 @@ class edge_detector():
         print("Edge detection function.")
 
 
-def edge_detection(debug = False, force_all_video = True, corners = False):
+def edge_detection(debug = False, force_all_video = True, corners = False, conf = None):
     print("Second Edge detection function.")
 
-    basepath = "C:\\Users\\Marco\\Desktop\\Universita\\Magistrale\\Secondo anno\\Computer Vision and Cognitive Systems\\Project material\\videos\\000\\"
+    basepath = ".\\input\\videos\\000\\"
     video_name = "VIRB0401"
     cap = cv2.VideoCapture()
     cap.open("{}{}.MP4".format(basepath,video_name))
@@ -62,12 +62,12 @@ def edge_detection(debug = False, force_all_video = True, corners = False):
             gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
             ret, th2 = cv2.threshold(gray, 0, 200,  cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             thresholded_image = frame
-            thresholded_image[gray > th2] = [0,0,0]
+            thresholded_image[gray > ret] = [0,0,0]
             #thresholded_image[gray > 60] = [0,0,0]
 
             if debug and i == 0:
                 cv2.imshow('Blurred image', dst)
-                cv2.imshow('Thresholded image', thresholded_image)
+                cv2.imshow('Thresholded image - Value: {}'.format(ret), thresholded_image)
                 cv2.waitKey()
                 cv2.destroyAllWindows()
             #Canny
@@ -126,8 +126,8 @@ def edge_detection(debug = False, force_all_video = True, corners = False):
                     cv2.destroyAllWindows()
 
 
-                if debug and not force_all_video:
-                    break
+            if debug and not force_all_video:
+                break
             out.write(mod_f2.astype(np.uint8))
 
             #frames[i] = frame
