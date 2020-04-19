@@ -13,4 +13,8 @@ output/images/*
 output/videos/*
 !output/videos/.gitkeep
 .idea
+<<<<<<< HEAD
 conf.json
+=======
+config.json
+>>>>>>> master
