@@ -1,23 +1,17 @@
-
+from source import globals
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
-class edge_detector():
-    def __init__(self):
-        pass
-    #@staticmethod
-    def edge_detection(self):
-        print("Edge detection function.")
+conf = globals.conf
 
-
-def edge_detection(debug = False, force_all_video = True, corners = False, conf = None):
+def edge_detection(debug = False, force_all_video = True, corners = False):
     print("Second Edge detection function.")
 
-    basepath = ".\\input\\videos\\000\\"
+    basepath = conf['input_path'] + '000' + conf['slash']
     video_name = "VIRB0401"
     cap = cv2.VideoCapture()
-    cap.open("{}{}.MP4".format(basepath,video_name))
+    cap.open("{}{}.MP4".format(basepath, video_name))
     # Check if camera opened successfully
     if (cap.isOpened() == False):
         print("Error opening video stream or file")
@@ -31,9 +25,9 @@ def edge_detection(debug = False, force_all_video = True, corners = False, conf 
     print("Codec number: {}\nFPS: {}\nFrame size: {}".format(int(in_codec), np.around(in_fps).astype(np.uint32),
                                                              np.around(in_frameSize).astype(np.uint32)))
 
-    out = cv2.VideoWriter(".\\output\\videos\\{}.mp4".format(video_name), cv2.VideoWriter_fourcc(*'mp4v'), np.around(in_fps).astype(np.uint32),
+    out = cv2.VideoWriter("{}{}.mp4".format(conf['output_path'], video_name), cv2.VideoWriter_fourcc(*'mp4v'), np.around(in_fps).astype(np.uint32),
                           tuple(np.around(in_frameSize).astype(np.uint32)), True)
-    out.open(".\\output\\videos\\{}.mp4".format(video_name), cv2.VideoWriter_fourcc(*'mp4v'), np.around(in_fps).astype(np.uint32),
+    out.open("{}{}.mp4".format(conf['output_path'], video_name), cv2.VideoWriter_fourcc(*'mp4v'), np.around(in_fps).astype(np.uint32),
              tuple(np.around(in_frameSize).astype(np.uint32)))
 
     if (out.isOpened() == False):
@@ -65,7 +59,7 @@ def edge_detection(debug = False, force_all_video = True, corners = False, conf 
             thresholded_image[gray > ret] = [0,0,0]
             #thresholded_image[gray > 60] = [0,0,0]
 
-            if debug and i == 0:
+            if debug:
                 cv2.imshow('Blurred image', dst)
                 cv2.imshow('Thresholded image - Value: {}'.format(ret), thresholded_image)
                 cv2.waitKey()
@@ -94,15 +88,15 @@ def edge_detection(debug = False, force_all_video = True, corners = False, conf 
             TH = 200
             mod_f = cv2.Canny(dst.astype(np.uint8), th, TH, apertureSize=3, L2gradient=True)
 
-            if debug and i == 0:
-                cv2.imshow('Edge detection image', mod_f)
-                cv2.waitKey()
-                cv2.destroyAllWindows()
+ #           if debug and i == 0:
+ #               cv2.imshow('Edge detection image', mod_f)
+ #               cv2.waitKey()
+ #               cv2.destroyAllWindows()
 
             #CORNER DETECTION
             if corners:
                 mod_f = np.float32(mod_f)
-                dst = cv2.cornerHarris(mod_f, 10, 5, 0.04)
+                dst = cv2.cornerMinEigenVal(mod_f, 10) # , 5, 0.04)
 
                 # result is dilated for marking the corners, not important
                 dst = cv2.dilate(dst, None)
