@@ -13,3 +13,4 @@ output/images/*
 output/videos/*
 !output/videos/.gitkeep
 .idea
+conf.json
