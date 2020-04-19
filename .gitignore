@@ -13,4 +13,4 @@ output/images/*
 output/videos/*
 !output/videos/.gitkeep
 .idea
-*.json
+config.json
