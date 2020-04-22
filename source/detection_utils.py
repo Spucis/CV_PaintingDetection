@@ -16,11 +16,16 @@ def show_frame(d_frames):
 # Tranforms a binary input image into a simbolic one, in which all the pixel of the same components
 # have the same label
 def ccl_detection(or_frame, m_frame, frame):
-    contours, hierarchy = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    print(hierarchy.shape[0])
+
+    contours, hierarchy = cv2.findContours(frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    print(hierarchy.shape)
+    # Tolgo la prima dimensione -- Da controllare, in generale
+    hierarchy = hierarchy[0]
     for i in range(hierarchy.shape[0]):
-        mod_f = cv2.drawContours(or_frame, contours, -1, (0, 255, 0))
-        show_frame({'CCL_Frame': mod_f, 'Canny_Frame':m_frame})
+        mod_f = cv2.drawContours(or_frame.copy(), contours, hierarchy[i][0], (0, 255, 0))
+        # per adesso tolgo il frame normale 'Canny_Frame':m_frame,
+        show_frame({'CCL_Frame_ContourHierarchy: {}'.format(i): mod_f})
     return mod_f
 
 def edge_detection(frame, debug = False, corners = False, frame_number = 0):
