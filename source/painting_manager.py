@@ -1,11 +1,13 @@
-from source import globals, edge_detection
-conf = globals.conf
+from source import globals
+from source.detection_utils import *
 
+conf = globals.conf
 
 class PaintingManager:
     def __init__(self, video_manager):
         self.video_manager = video_manager
         self.input_path = conf['input_path'] + '000' + conf['slash']
+        self.count = 0
         self.cap = None
         self.out = None
 
@@ -16,22 +18,23 @@ class PaintingManager:
         self.cap.release()
         self.out.release()
 
-    def paint_detection(self):
-        self.ROI_detection()
+    def ROI_detection(self, or_frame):
+        marked_frame, ed_frame  = edge_detection(or_frame, debug=True, corners=False, frame_number=self.count)
+        ccl_frame = ccl_detection(or_frame, marked_frame, ed_frame)
+        return ccl_frame
 
-    def ROI_detection(self):
+    def paint_detection(self):
         # Read until video is completed
-        count = 0
         while (self.cap.isOpened() and self.out.isOpened()):
             ret, frame = self.cap.read()
             if ret == True:
-                if count == 0:
+                if self.count == 0:
                     print("Edge detection function.")
-                mod_frame = edge_detection(frame, debug=True, corners=False, frame_number = count)
+                mod_frame = self.ROI_detection(frame)
                 # hough_transform()
-                count += 1
-                if count % 100 == 0:
-                    print("Frame count: {}/{}".format(count, self.video_manager.n_frame))
+                self.count += 1
+                if self.count % 100 == 0:
+                    print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
                 self.out.write(mod_frame)
 
                 all_video = True
