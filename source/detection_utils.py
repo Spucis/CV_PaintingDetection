@@ -22,11 +22,25 @@ def ccl_detection(or_frame, m_frame, frame):
     print(hierarchy.shape)
     # Tolgo la prima dimensione -- Da controllare, in generale
     hierarchy = hierarchy[0]
-    for i in range(hierarchy.shape[0]):
-        mod_f = cv2.drawContours(or_frame.copy(), contours, hierarchy[i][0], (0, 255, 0))
+    #for i in range(hierarchy.shape[0]):
+    #    mod_f = cv2.drawContours(or_frame.copy(), contours, hierarchy[i][0], (0, 255, 0))
         # per adesso tolgo il frame normale 'Canny_Frame':m_frame,
-        show_frame({'CCL_Frame_ContourHierarchy: {}'.format(i): mod_f})
-    return mod_f
+    #    show_frame({'CCL_Frame_ContourHierarchy: {}'.format(i): mod_f})
+    i = 0
+    for component in zip(contours, hierarchy):
+        currentContour = component[0]
+        currentHierarchy = component[1]
+        x,y,w,h = cv2.boundingRect(currentContour)
+        print(x,y,w,h)
+        if currentHierarchy[2] < 0:
+            # these are the innermost child components
+            img = cv2.rectangle(or_frame,(x,y),(x+w,y+h),(0,0,255),3)
+        elif currentHierarchy[3] < 0:
+            # these are the outermost parent components
+            img = cv2.rectangle(or_frame,(x,y),(x+w,y+h),(0,255,0),3)
+        #show_frame({'CCL_Frame_ContourHierarchy: {}'.format(i): img})
+        i += 1
+    return img
 
 def edge_detection(frame, debug = False, corners = False, frame_number = 0):
 
