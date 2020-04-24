@@ -6,6 +6,7 @@ import random
 
 conf = globals.conf
 
+
 def show_frame(d_frames):
     for label, frame in d_frames.items():
         cv2.imshow(label, frame)
@@ -27,19 +28,53 @@ def ccl_detection(or_frame, m_frame, frame):
         # per adesso tolgo il frame normale 'Canny_Frame':m_frame,
     #    show_frame({'CCL_Frame_ContourHierarchy: {}'.format(i): mod_f})
     i = 0
+    #hull = []
     for component in zip(contours, hierarchy):
         currentContour = component[0]
         currentHierarchy = component[1]
         x,y,w,h = cv2.boundingRect(currentContour)
-        print(x,y,w,h)
+
+        #hull.append(cv2.convexHull(currentContour))
+        img = cv2.putText(or_frame, "C{}".format(i), (x, y), cv2.FONT_HERSHEY_SIMPLEX, .2, (0,0,0))
+        img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        """
+        if currentHierarchy[0] > 0:
+            _x, _y, _w, _h = cv2.boundingRect(contours[currentHierarchy[0]])
+            # these are the innermost child components
+            img = cv2.rectangle(or_frame, (_x-1, _y-1), (_x + _w + 1, _y + _h + 1), (0, 255, 0), 2)
+
+        if currentHierarchy[1] > 0:
+            _x, _y, _w, _h = cv2.boundingRect(contours[currentHierarchy[1]])
+            # these are the innermost child components
+            img = cv2.rectangle(or_frame, (_x-1, _y-1), (_x + _w + 1, _y + _h + 1), (255, 0, 0), 2)
+        """
+        """
+        #print(x,y,w,h)
+        print("{}".format(currentHierarchy))
+
         if currentHierarchy[2] < 0:
             # these are the innermost child components
-            img = cv2.rectangle(or_frame,(x,y),(x+w,y+h),(0,0,255),3)
+            img = cv2.rectangle(or_frame,(x,y),(x+w,y+h),(0,0,255),2)
         elif currentHierarchy[3] < 0:
             # these are the outermost parent components
-            img = cv2.rectangle(or_frame,(x,y),(x+w,y+h),(0,255,0),3)
-        #show_frame({'CCL_Frame_ContourHierarchy: {}'.format(i): img})
+            img = cv2.rectangle(or_frame,(x,y),(x+w,y+h),(0,255,0),2)
+
+        #show_frame({'CCL_Frame_ContourHierarchy: {}'.format(i): hull})
+        
+        """
         i += 1
+    """
+    drawing = np.uint8(or_frame.copy()/2.)
+
+    for i in range(len(contours)):
+        color = (0, 0, 255)  # blue - color for convex hull
+        # draw ith contour
+        #cv2.drawContours(drawing, contours, i, color_contours, 1, 8)#, hierarchy)
+        # draw ith convex hull object
+        cv2.drawContours(drawing, hull, i, color, 1, 8)
+
+    return drawing
+    """
     return img
 
 def edge_detection(frame, debug = False, corners = False, frame_number = 0):
