@@ -16,7 +16,30 @@ def show_frame(d_frames):
 # Connected Components Labeling
 # Tranforms a binary input image into a simbolic one, in which all the pixel of the same components
 # have the same label
-def ccl_detection(or_frame, m_frame, frame):
+def ccl_detection(or_frame, gray_frame, frame):
+
+    """
+        Marco
+        Provo cv.connectedComponents(	image[, labels[, connectivity[, ltype]]]	)
+    """
+
+    threshold_frame = cv2.adaptiveThreshold(gray_frame ,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 1)
+    components, labels = cv2.connectedComponents(threshold_frame)
+    print("{} \n {}".format(components, labels))
+
+    cv2.imshow("Thresholded_image", threshold_frame)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+
+    colors = []
+    for label in range(components):
+        colors.append([random.randint(0,255),random.randint(0,255),random.randint(0,255)])
+    colors[0] = [0,0,0]
+    for r in range(labels.shape[0]):
+        for c in range(labels.shape[1]):
+            or_frame[r,c] = colors[labels[r,c]]
+
+    show_frame({"LABELED_FRAME": or_frame})
 
     contours, hierarchy = cv2.findContours(frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -35,7 +58,14 @@ def ccl_detection(or_frame, m_frame, frame):
         x,y,w,h = cv2.boundingRect(currentContour)
 
         #hull.append(cv2.convexHull(currentContour))
-        img = cv2.putText(or_frame, "C{}".format(i), (x, y), cv2.FONT_HERSHEY_SIMPLEX, .2, (0,0,0))
+        text = "C{}".format(i)
+        fontFace  =  cv2.FONT_HERSHEY_SIMPLEX
+        fontScale = .5
+        thickness = 1
+        textSize, baseLine = cv2.getTextSize(text, fontFace, fontScale, thickness)
+        img = cv2.rectangle(or_frame, (x, y), (x + textSize[0], y - textSize[1] - 5), (0,0,255), cv2.FILLED)
+        img = cv2.putText(img, text , (x, y - 5), fontFace, fontScale, (0,0,0), thickness)
+
         img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
         """
         if currentHierarchy[0] > 0:
@@ -147,4 +177,4 @@ def edge_detection(frame, debug = False, corners = False, frame_number = 0):
 
     show_frame(d_frames)
     # return mod_f2.astype(np.uint8)
-    return vis, mod_f.astype(np.uint8)
+    return gray, vis, mod_f.astype(np.uint8)

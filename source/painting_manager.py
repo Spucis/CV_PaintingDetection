@@ -19,8 +19,8 @@ class PaintingManager:
         self.out.release()
 
     def ROI_detection(self, or_frame):
-        marked_frame, ed_frame  = edge_detection(or_frame, debug=True, corners=False, frame_number=self.count)
-        ccl_frame = ccl_detection(or_frame, marked_frame, ed_frame)
+        gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True, corners=False, frame_number=self.count)
+        ccl_frame = ccl_detection(or_frame, gray_frame, ed_frame)
         return ccl_frame
 
     def paint_detection(self):

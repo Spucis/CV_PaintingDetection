@@ -13,7 +13,6 @@ class VideoManager:
         self.in_frameSize = None
         self.n_frame = None
 
-
     def print_info(self):
         print("Frame count: {}".format(self.n_frame))
         print("Codec number: {}\nFPS: {}\nFrame size: {}".format(int(self.in_codec),
@@ -34,7 +33,7 @@ class VideoManager:
         self.in_frameSize = np.around((cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT))).astype(
             np.uint32)
         self.n_frame = np.around(cap.get(cv2.CAP_PROP_FRAME_COUNT)).astype(np.uint32)
-
+                                                                                                # *'mp4v'
         out = cv2.VideoWriter("{}{}.MP4".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
                               np.around(self.in_fps).astype(np.uint32),
                               tuple(np.around(self.in_frameSize).astype(np.uint32)), True)
