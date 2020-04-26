@@ -23,23 +23,76 @@ def ccl_detection(or_frame, gray_frame, frame):
         Provo cv.connectedComponents(	image[, labels[, connectivity[, ltype]]]	)
     """
 
+    """
+    CONNECTED COMPONENTS AND LABELING
+    
     threshold_frame = cv2.adaptiveThreshold(gray_frame ,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 1)
-    components, labels = cv2.connectedComponents(threshold_frame)
-    print("{} \n {}".format(components, labels))
+    
+    input = frame.copy()
+    H, W = input.shape  # input -> (n, iC, H, W).. so i have to expand dims like: (n, 1, iC, H, W)
+    kernel = np.full((17,17), 1)
 
-    cv2.imshow("Thresholded_image", threshold_frame)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+    # (1, oC, iC, kH, kW)
+    kH = kernel.shape[0]
+    kW = kernel.shape[1]
 
+    out = np.zeros((H - kH + 1, W - kW + 1))
+
+    for i in range(H - kH + 1):
+        for j in range(W - kW + 1):
+            new_input =input[i:i + kH, j:j + kW]
+            out[i, j] = np.sum(new_input * kernel)
+
+    out[out > 0] = 1
+    out = out.astype(np.uint8)
+    print("OUT: {}\nshape: {}, kernel: {}".format(out, out.shape, kernel))
+    components, labels = cv2.connectedComponents(out)
+    print("Num. components: {}".format(components))
+
+    #show_frame({"Dilatated CANNY" : out, "Normal CANNY": frame})
+    show_frame({"Thresholded_image": threshold_frame})
+
+    labeled_frame = or_frame.copy()
     colors = []
+    example_point = []
+
     for label in range(components):
         colors.append([random.randint(0,255),random.randint(0,255),random.randint(0,255)])
+        #Trovo le ccordinate di un punto del cluster
+        found = False
+        for r in range(labels.shape[0]):
+            for c in range(labels.shape[1]):
+                if labels[r, c] == label:
+                    example_point.append((r, c))
+                    found = True
+                if found:
+                    break
+            if found:
+                break
     colors[0] = [0,0,0]
     for r in range(labels.shape[0]):
         for c in range(labels.shape[1]):
-            or_frame[r,c] = colors[labels[r,c]]
+            labeled_frame[r,c] = colors[labels[r,c]]
 
-    show_frame({"LABELED_FRAME": or_frame})
+    for label in range(components):
+        text = "L{}".format(label)
+        fontFace = cv2.FONT_HERSHEY_SIMPLEX
+        fontScale = .4
+        thickness = 1
+
+        textSize, baseLine = cv2.getTextSize(text, fontFace, fontScale, thickness)
+        x = 0
+        y = label * textSize[1] + textSize[1] + 1
+        labeled_frame = cv2.rectangle(labeled_frame, (x, y), (x + textSize[0], y - textSize[1] - 5),
+                                      colors[label], cv2.FILLED)
+        labeled_frame = cv2.putText(labeled_frame, text, (x, y - 5), fontFace, fontScale, (255, 255, 255), thickness)
+
+
+    show_frame({"LABELED_FRAME": labeled_frame})
+
+    labeled_frame_2 = cv2.cvtColor(labeled_frame, cv2.COLOR_BGR2GRAY)
+    labeled_frame_2[labeled_frame_2 > 0] = 1
+    """
 
     contours, hierarchy = cv2.findContours(frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -68,6 +121,8 @@ def ccl_detection(or_frame, gray_frame, frame):
 
         img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
         """
+        CONSIDER HIERARCHIES
+        
         if currentHierarchy[0] > 0:
             _x, _y, _w, _h = cv2.boundingRect(contours[currentHierarchy[0]])
             # these are the innermost child components
@@ -94,6 +149,8 @@ def ccl_detection(or_frame, gray_frame, frame):
         """
         i += 1
     """
+    CONVEX HULL DRAWING
+    
     drawing = np.uint8(or_frame.copy()/2.)
 
     for i in range(len(contours)):
@@ -103,7 +160,7 @@ def ccl_detection(or_frame, gray_frame, frame):
         # draw ith convex hull object
         cv2.drawContours(drawing, hull, i, color, 1, 8)
 
-    return drawing
+    show_frame({"convex_hull": drawing})
     """
     return img
 
@@ -177,4 +234,4 @@ def edge_detection(frame, debug = False, corners = False, frame_number = 0):
 
     show_frame(d_frames)
     # return mod_f2.astype(np.uint8)
-    return gray, vis, mod_f.astype(np.uint8)
+    return gray, vis, mod_f

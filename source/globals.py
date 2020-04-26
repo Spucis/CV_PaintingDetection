@@ -37,6 +37,7 @@ class VideoManager:
         out = cv2.VideoWriter("{}{}.MP4".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
                               np.around(self.in_fps).astype(np.uint32),
                               tuple(np.around(self.in_frameSize).astype(np.uint32)), True)
+
         out.open("{}{}.MP4".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
                  np.around(self.in_fps).astype(np.uint32),
                  tuple(np.around(self.in_frameSize).astype(np.uint32)))

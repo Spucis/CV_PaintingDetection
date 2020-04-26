@@ -21,6 +21,9 @@ class PaintingManager:
     def ROI_detection(self, or_frame):
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True, corners=False, frame_number=self.count)
         ccl_frame = ccl_detection(or_frame, gray_frame, ed_frame)
+
+        #ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
+
         return ccl_frame
 
     def paint_detection(self):
