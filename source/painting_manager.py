@@ -6,7 +6,7 @@ conf = globals.conf
 class PaintingManager:
     def __init__(self, video_manager):
         self.video_manager = video_manager
-        self.input_path = conf['input_path'] + '000' + conf['slash']
+        self.input_path = conf['input_path'] + conf['in_dir'] + conf['slash']
         self.count = 0
         self.cap = None
         self.out = None
@@ -19,8 +19,9 @@ class PaintingManager:
         self.out.release()
 
     def ROI_detection(self, or_frame):
-        gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True, corners=False, frame_number=self.count)
-        ccl_frame = ccl_detection(or_frame, gray_frame, ed_frame)
+        gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True,  frame_number=self.count)
+        #kp_frame = keypoints_detection(or_frame, show=False)
+        ccl_frame = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count)
 
         #ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
 
@@ -44,5 +45,6 @@ class PaintingManager:
                 if not all_video:
                     break
             else:
+                print("Problema durante la lettura del video... stop al frame {}: {}".format(self.count, frame))
                 break
         print("Fine edge_detection.")

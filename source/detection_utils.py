@@ -2,6 +2,9 @@ from source import globals
 
 import numpy as np
 import cv2
+import time
+import matplotlib.pyplot as plt
+
 import random
 
 conf = globals.conf
@@ -13,18 +16,64 @@ def show_frame(d_frames):
     cv2.waitKey()
     cv2.destroyAllWindows()
 
+# Ritorna l'intersezione di un segmento a0-a1 e un altro b0-b1
+def calculateIntersection(a0, a1, b0, b1):
+    if a0 >= b0 and a1 <= b1: # Contained
+        intersection = a1 - a0
+    elif a0 < b0 and a1 > b1: # Contains
+        intersection = b1 - b0
+    elif a0 < b0 and a1 > b0: # Intersects right
+        intersection = a1 - b0
+    elif a1 > b1 and a0 < b1: # Intersects left
+        intersection = b1 - a0
+    else: # No intersection (either side)
+        intersection = 0
+
+    return intersection
+
 # Connected Components Labeling
 # Tranforms a binary input image into a simbolic one, in which all the pixel of the same components
 # have the same label
-def ccl_detection(or_frame, gray_frame, frame):
+def ccl_detection(or_frame, gray_frame, frame, frame_number):
 
     """
         Marco
         Provo cv.connectedComponents(	image[, labels[, connectivity[, ltype]]]	)
     """
 
+    # Parametri delle modifiche apportate all'immagine. Verranno elencate nell'immagine finale.
+    # nome -> valore
+    params = {}
+    out = frame
+
     """
-    CONNECTED COMPONENTS AND LABELING
+    # Dilatation of the borders to connect near edges
+    input = frame.copy()
+    H, W = input.shape  # input -> (n, iC, H, W).. so i have to expand dims like: (n, 1, iC, H, W)
+    k_dim = 5
+    params["Dilation kernel dim"] = "{}x{}".format(k_dim, k_dim)
+    kernel = np.full((k_dim, k_dim), 1)
+
+    # (1, oC, iC, kH, kW)
+    kH = kernel.shape[0]
+    kW = kernel.shape[1]
+
+    out = np.zeros((H - kH + 1, W - kW + 1))
+
+    start_conv = time.time()
+    for i in range(H - kH + 1):
+        for j in range(W - kW + 1):
+            new_input = input[i:i + kH, j:j + kW]
+            out[i, j] = np.sum(new_input * kernel)
+
+    print("Conv time: {}".format(time.time() - start_conv))
+
+    out[out > 0] = 1
+    show_frame({"Dilated Canny. Kernel: {}x{}".format(k_dim,k_dim) : out})
+    out = out.astype(np.uint8)
+    """
+
+    """ CONNECTED COMPONENTS AND LABELING
     
     threshold_frame = cv2.adaptiveThreshold(gray_frame ,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 1)
     
@@ -94,9 +143,13 @@ def ccl_detection(or_frame, gray_frame, frame):
     labeled_frame_2[labeled_frame_2 > 0] = 1
     """
 
-    contours, hierarchy = cv2.findContours(frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(out, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    out = cv2.drawContours(out, contours, -1, (255,255,255), 3)
+    contours, hierarchy = cv2.findContours(out, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
-    print(hierarchy.shape)
+    #show_frame({"CANNY CONTOURS DILATED": out})
+
+    #print(hierarchy.shape)
     # Tolgo la prima dimensione -- Da controllare, in generale
     hierarchy = hierarchy[0]
     #for i in range(hierarchy.shape[0]):
@@ -105,21 +158,48 @@ def ccl_detection(or_frame, gray_frame, frame):
     #    show_frame({'CCL_Frame_ContourHierarchy: {}'.format(i): mod_f})
     i = 0
     #hull = []
+    ROIs = []
+
+    """ CLEANING ROIs RULES """
+    # 1. se il rapporto di aspetto è più di 'ratio_max' volte, considero la ROI non ammissibile
+    # 2. se l'area è minore di min_area, non è ammissibile
+    # 3. se è contenuto in un'altra ROI o contiene un'altra ROI, quello con area minore non è ammissibile -- TODO
+    # 4. (opzionale?) se l'overlap supera una certa soglia, la ROI con area minore non è ammissibile -- TODO
+    ratio_max = 4.5
+    min_area = 4000
+
     for component in zip(contours, hierarchy):
         currentContour = component[0]
-        currentHierarchy = component[1]
+        #currentHierarchy = component[1]
         x,y,w,h = cv2.boundingRect(currentContour)
 
         #hull.append(cv2.convexHull(currentContour))
-        text = "C{}".format(i)
-        fontFace  =  cv2.FONT_HERSHEY_SIMPLEX
-        fontScale = .5
-        thickness = 1
-        textSize, baseLine = cv2.getTextSize(text, fontFace, fontScale, thickness)
-        img = cv2.rectangle(or_frame, (x, y), (x + textSize[0], y - textSize[1] - 5), (0,0,255), cv2.FILLED)
-        img = cv2.putText(img, text , (x, y - 5), fontFace, fontScale, (0,0,0), thickness)
 
-        img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+
+        cleaning_boxes = True
+        if cleaning_boxes:
+            #1.
+            feasible_ratio = abs(h) < abs(ratio_max * (w)) and abs(w) < abs(ratio_max * (h))
+            area = w * h
+            #2.
+            feasible_area = area > min_area
+
+            params["Maximum ROI Aspect ratio"] = ratio_max
+            params["Minimun ROI Area"] = min_area
+
+            if feasible_ratio and feasible_area:
+
+                ROIs.append([(x, y), (x + w, y + h), w, h])
+            else:
+                continue
+                text = "C{} DISCARDED".format(i)
+                #img = cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+
+        else: #NO CLEANING BOXES
+            img = cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
         """
         CONSIDER HIERARCHIES
         
@@ -162,9 +242,118 @@ def ccl_detection(or_frame, gray_frame, frame):
 
     show_frame({"convex_hull": drawing})
     """
+
+    i = 0
+    # ARLGORITMO QUADRATICO RISPETTO AL NUMERO DELLE ROI, MIGLIORABILE? TODO
+
+    max_overlap = 0.6
+    params["Max ROI overlap"] = max_overlap
+
+    # Initiate ORB detector
+    orb = cv2.ORB_create()
+
+    for roi in ROIs:
+                   # 0[0, 1]    1[0 , 1]      2      3
+        # roi -> [ (x00, y00) , (x01, y01) , width, height ]
+
+        curr_roi = []
+
+        # Se "roi" verrà riconosciuto come contenuto in altre ROI, sarà non drawable
+        drawable = True
+        j = 0
+
+
+        for roi2 in ROIs:
+
+            if roi[0][0] == roi2[0][0] and roi[0][1] == roi2[0][1] and roi[1][0] == roi2[1][0] and roi[1][1] == roi2[1][1]:
+                j += 1
+                continue
+
+            width = calculateIntersection(roi[0][0],roi[1][0], roi2[0][0], roi2[1][0])
+            height = calculateIntersection(roi[0][1],roi[1][1], roi2[0][1], roi2[1][1])
+            area = width * height
+            percent = area / (roi[2] * roi[3])
+            #print("C{} over C{} overlap: {}".format(i,j,percent))
+
+            # must go over the max_overlap AND minor area
+            if percent >= max_overlap and roi[2] * roi[3] < roi2[2] * roi2[3]:
+                drawable = False
+                #print("C{} over C{} overlap: {} ---- BREAK!".format(i, j, percent))
+                break
+            j += 1
+
+        text = "C{}".format(i)
+
+        """ DRAW KEYPOINTS
+        start = time.time()
+
+        # find the keypoints with ORB
+        kp = orb.detect(or_frame, None)
+        # compute the descriptors with ORB
+        kp, des = orb.compute(or_frame, kp)
+        # draw only keypoints location,not size and orientation
+        or_frame = cv2.drawKeypoints(or_frame, kp, None, color=(0, 255, 0), flags=0)
+        """
+
+        x = roi[0][0]
+        y = roi[0][1]
+        w = roi[2]
+        h = roi[3]
+
+        if not drawable:
+            #img = cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            continue
+        else:
+            img = cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+        show_plots = True
+        total_var = 0
+        if frame_number == 150 and show_plots:
+            color = ('b', 'g', 'r')
+            total_var = []
+            for index, col in enumerate(color):
+                histr = cv2.calcHist([or_frame[y:y + h, x:x + w, :]], [index], None, [256], [0, 256])
+                #print(histr.shape)
+                var = np.std(histr, axis=0)
+                total_var.append(var/(w*h))
+
+                #print("Var of {} in ROI {}, frame {}:{}".format(col,i,frame_number,var))
+                plt.plot(histr, color=col)
+                plt.title("Histogram of colors ROI{}_frame{}".format(i, frame_number))
+                plt.xlim([0, 256])
+            plt.show()
+            print("Average var of image: {}".format(np.std(total_var)))
+
+            show_frame({"ROI{}".format(i): or_frame[y:y + h, x:x + w, :]})
+
+        #if np.var(total_var) > 10:
+        #    cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        #   show_frame({"SOMETHING?": or_frame})
+
+
+
+        fontFace = cv2.FONT_HERSHEY_SIMPLEX
+        fontScale = .5
+        thickness = 1
+        textSize, baseLine = cv2.getTextSize(text, fontFace, fontScale, thickness)
+
+        # To show the label also when at the upper corner of the image
+        label_rect_h = 5
+        label_offset = -textSize[1] - label_rect_h if y - textSize[1] - label_rect_h > 0 else textSize[1] + label_rect_h
+        text_offset = -label_rect_h if label_offset < 0 else textSize[1] + 2  # 1 of the border itself and 1 of spacing
+
+        img = cv2.rectangle(img, (x, y), (x + textSize[0], y + label_offset), (0, 0, 255), cv2.FILLED)
+        img = cv2.putText(img, text, (x, y + text_offset), fontFace, fontScale, (0, 0, 0), thickness)
+        i += 1
+
+    final_string = ""
+    for name, value in params.items():
+        final_string += "{}: {}; ".format(name, value)
+
+    #show_frame({"Relevant ROIs: " + final_string : img})
     return img
 
-def edge_detection(frame, debug = False, corners = False, frame_number = 0):
+def edge_detection(frame, debug = False, frame_number = 0):
 
     selected_frame = 0
     d_frames = {}
@@ -184,6 +373,7 @@ def edge_detection(frame, debug = False, corners = False, frame_number = 0):
     # blur = cv2.bilateralFilter(blur, 5, 5, 20)
 
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
+
     if debug and selected_frame == frame_number:
         d_frames['Blurred image'] = blur
         d_frames['Gray'] = gray
@@ -197,6 +387,10 @@ def edge_detection(frame, debug = False, corners = False, frame_number = 0):
     th = 500
     TH = 1300
 
+    #Threshold rumorose
+    th = 400
+    TH = 800
+
     mod_f = cv2.Canny(dst.astype(np.uint8), th, TH, apertureSize=5, L2gradient=True)
 
     # Frame with the edges highlighted in green
@@ -208,30 +402,26 @@ def edge_detection(frame, debug = False, corners = False, frame_number = 0):
         d_frames['Vis'] = vis
         d_frames['Canny_OutPut'] = mod_f
 
-    # CORNER DETECTION
-    if corners:
-        mod_f = np.float32(mod_f)
-        dst = cv2.cornerMinEigenVal(mod_f, 10) # , 5, 0.04)
-
-        # result is dilated for marking the corners, not important
-        dst = cv2.dilate(dst, None)
-
     # conversione colore
     mod_f2 = cv2.cvtColor(mod_f.astype(np.uint8), cv2.COLOR_GRAY2RGB)
-    if corners:
-        # PRINT THE CORNERS
-        #No threshold for corners
-        #mod_f2[dst > 0] = [0, 0, 255]
-
-        # Threshold for an optimal value, it may vary depending on the image. (original was 0.01 * dst.max())
-        #mod_f2[dst > 0.3* dst.max()]= [0, 0, 255]
-
-        # Threshold between two values
-        mod_f2[ np.where((0.1* dst.max() <  dst) & (dst< 0.15 * dst.max()))] = [0, 0, 255]
-
-        if debug and selected_frame == frame_number:
-            d_frames['Corner detection image'] = mod_f2
 
     show_frame(d_frames)
-    # return mod_f2.astype(np.uint8)
+
     return gray, vis, mod_f
+
+def keypoints_detection(frame, show=True):
+
+    start = time.time()
+    # Initiate ORB detector
+    orb = cv2.ORB_create()
+    # find the keypoints with ORB
+    kp = orb.detect(frame, None)
+    # compute the descriptors with ORB
+    kp, des = orb.compute(frame, kp)
+    # draw only keypoints location,not size and orientation
+    kp_frame = cv2.drawKeypoints(frame, kp, None, color=(0, 255, 0), flags=0)
+
+    if show:
+        show_frame({"KEY_POINTS_elapsedTime: {}".format(time.time()-start): kp_frame})
+
+    return kp_frame
