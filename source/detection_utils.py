@@ -15,8 +15,6 @@ def show_frame(d_frames):
     for label, frame in d_frames.items():
         cv2.imshow(label, frame)
     cv2.waitKey()
-    cv2.waitKey()
-    cv2.waitKey()
     cv2.destroyAllWindows()
 
 # Ritorna l'intersezione di un segmento a0-a1 e un altro b0-b1
@@ -255,6 +253,9 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
     # Initiate ORB detector
     orb = cv2.ORB_create()
 
+    # True ROIs array
+    trueROIs = []
+
     for roi in ROIs:
                    # 0[0, 1]    1[0 , 1]      2      3
         # roi -> [ (x00, y00) , (x01, y01) , width, height ]
@@ -308,6 +309,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
             continue
         else:
             img = cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            trueROIs.append((x, y, w, h))
 
         show_plots = True
         total_var = 0
@@ -354,7 +356,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
         final_string += "{}: {}; ".format(name, value)
 
     #show_frame({"Relevant ROIs: " + final_string : img})
-    return img
+    return img, trueROIs
 
 def edge_detection(frame, debug = False, frame_number = 0):
 
@@ -439,3 +441,26 @@ def find_keypoint(img):
         # in una funzione a parte per separare le cose?
 
         return kp, des
+
+# ritorna un array di matches (ritornato da BFMatch) e un array di nomi di img per ogni roi
+def paint_retrival(frame, ROIs, kp, des):
+    pass
+
+# prendo l'array di matches per ogni ROI e stampo a video i quadri raddrizzati
+def paint_rectification(frame, ROIs, kp, des, matches):
+    # create BFMatcher object
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+    # quadro centrale
+    d1 = des['085.png']
+
+    # ROI del quadro 085
+    roi = ROIs[1]
+
+    crop = frame[roi[1]:roi[3], roi[0]:roi[2]]
+
+    k, d2 = find_keypoint(crop)
+
+    # Match descriptors.
+    match = bf.match(d1, d2)
+    pass
