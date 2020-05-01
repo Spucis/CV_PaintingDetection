@@ -23,6 +23,9 @@ if __name__ == '__main__':
     #video_name = "VID_20180529_112828" # 010
 
     p_manager = PaintingManager(globals.VideoManager())
+    p_manager.keypoint_writedb()
+    p_manager.keypoint_readdb()
+
     p_manager.open_video(video_name)
 
     p_manager.paint_detection()

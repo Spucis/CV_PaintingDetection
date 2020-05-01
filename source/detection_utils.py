@@ -5,6 +5,7 @@ import cv2
 import time
 import matplotlib.pyplot as plt
 
+from json import *
 import random
 
 conf = globals.conf
@@ -13,6 +14,8 @@ conf = globals.conf
 def show_frame(d_frames):
     for label, frame in d_frames.items():
         cv2.imshow(label, frame)
+    cv2.waitKey()
+    cv2.waitKey()
     cv2.waitKey()
     cv2.destroyAllWindows()
 
@@ -420,8 +423,19 @@ def keypoints_detection(frame, show=True):
     kp, des = orb.compute(frame, kp)
     # draw only keypoints location,not size and orientation
     kp_frame = cv2.drawKeypoints(frame, kp, None, color=(0, 255, 0), flags=0)
-
     if show:
         show_frame({"KEY_POINTS_elapsedTime: {}".format(time.time()-start): kp_frame})
 
     return kp_frame
+
+def find_keypoint(img):
+        # Initiate ORB detector
+        orb = cv2.ORB_create()
+        # find the keypoints with ORB
+        kp = orb.detect(img,None)
+        # compute the descriptors with ORB
+        kp, des = orb.compute(img, kp)
+        # draw only keypoints location,not size and orientation
+        # in una funzione a parte per separare le cose?
+
+        return kp, des
