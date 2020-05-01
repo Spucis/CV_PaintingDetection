@@ -10,6 +10,9 @@ if __name__ == '__main__':
     #video_name = "VIRB0402"
 
     p_manager = PaintingManager(globals.VideoManager())
+    p_manager.keypoint_writedb()
+    p_manager.keypoint_readdb()
+
     p_manager.open_video(video_name)
 
     p_manager.paint_detection()

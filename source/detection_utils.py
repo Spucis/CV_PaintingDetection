@@ -2,6 +2,7 @@ from source import globals
 
 import numpy as np
 import cv2
+from json import *
 import random
 
 conf = globals.conf
@@ -10,6 +11,8 @@ conf = globals.conf
 def show_frame(d_frames):
     for label, frame in d_frames.items():
         cv2.imshow(label, frame)
+    cv2.waitKey()
+    cv2.waitKey()
     cv2.waitKey()
     cv2.destroyAllWindows()
 
@@ -235,3 +238,17 @@ def edge_detection(frame, debug = False, corners = False, frame_number = 0):
     show_frame(d_frames)
     # return mod_f2.astype(np.uint8)
     return gray, vis, mod_f
+
+
+def find_keypoint(img):
+        # Initiate ORB detector
+        orb = cv2.ORB_create()
+        # find the keypoints with ORB
+        kp = orb.detect(img,None)
+        # compute the descriptors with ORB
+        kp, des = orb.compute(img, kp)
+        # draw only keypoints location,not size and orientation
+        # in una funzione a parte per separare le cose?
+
+        return kp, des
+
