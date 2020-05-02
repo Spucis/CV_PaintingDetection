@@ -439,12 +439,30 @@ def find_keypoint(img):
         kp, des = orb.compute(img, kp)
         # draw only keypoints location,not size and orientation
         # in una funzione a parte per separare le cose?
-
         return kp, des
 
-# ritorna un array di matches (ritornato da BFMatch) e un array di nomi di img per ogni roi
-def paint_retrival(frame, ROIs, kp, des):
-    pass
+
+def matcher(des_crop, des_or):
+        # create BFMatcher object
+        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+        # Match descriptors.
+        matches = bf.match(des_crop, des_or)
+
+        # Sort them in the order of their distance.
+        matches = sorted(matches, key=lambda x:x.distance)
+
+        #true_matches = [m for m in matches if m.distance < 70]
+
+        sum = 0
+        for el in matches:
+            sum += el.distance
+            print("- " + str(el.distance) + " -")
+            # matches_dist.append(el.distance)
+
+        av = sum / len(matches)
+        return av
+
 
 # prendo l'array di matches per ogni ROI e stampo a video i quadri raddrizzati
 def paint_rectification(frame, ROIs, kp, des, matches):

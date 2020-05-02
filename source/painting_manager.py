@@ -16,6 +16,7 @@ class PaintingManager:
         self.inodes = None
         self.kp_dict = {}
         self.des_dict = {}
+        self.ROIs = []
 
     def open_video(self, video_name):
         self.cap, self.out = self.video_manager.open_video(video_name, self.input_path, conf['output_path'])
@@ -40,13 +41,14 @@ class PaintingManager:
             if ret == True:
                 if self.count == 0:
                     print("Edge detection function.")
-                mod_frame, ROIs = self.ROI_detection(frame)
+                mod_frame, self.ROIs = self.ROI_detection(frame.copy())
                 # hough_transform()
                 self.count += 1
                 if self.count % 100 == 0:
                     print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
                 self.out.write(mod_frame)
 
+                self.paint_retrival(frame)
 
                 all_video = True
                 if not all_video:
@@ -68,39 +70,39 @@ class PaintingManager:
             self.kp_dict[i] = kp
             self.des_dict[i] = des
 
-    def keypoint_readdb(self):
-        # create BFMatcher object
-        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    # ritorna un array di matches (ritornato da BFMatch) e un array di nomi di img per ogni roi
+    def paint_retrival(self, frame):
+        for roi in self.ROIs:
+            # Crop the image
+            #print(str(roi[0]) + " " + str(roi[1]) + " " + str(roi[2]) + " " + str(roi[3]))
+            crop = frame[roi[1]:roi[1]+roi[3], roi[0]:roi[0]+roi[2], :]
+            crop = cv2.GaussianBlur(crop, (11, 11), 0)
 
-        des1 = self.des_dict[self.inodes[0]]
-        des2 = self.des_dict[self.inodes[2]]
+            # kp and des of the crop
+            kp_crop, des_crop = find_keypoint(crop)
+            th = 60
 
-        # Match descriptors.
-        matches_d = bf.match(des1, des2)
-        matches_u = bf.match(des1, des1)
+            kp_crop = cv2.drawKeypoints(crop, kp_crop, color=(0, 255, 0), outImage=None)
 
-        # Sort them in the order of their distance.
-        matches = sorted(matches_d, key=lambda x:x.distance)
+            dist = []
+            imgs = []
+            for n in self.inodes:
+                av_dist = matcher(des_crop, self.des_dict[n])
+                dist.append(av_dist)
+                imgs.append(self.input_img + n)
 
-        d_d = []
-        d_u = []
-        for el in matches_d:
-            d_d.append(el.distance)
-        for el in matches_u:
-            d_u.append(el.distance)
+            s = sorted(zip(dist,imgs))
+            imgs = [img for _, img in s]
 
-        print("U: -> " + str(max(d_u)))
-        print("D: -> " + str(max(d_d)))
+            i = 0
+            for im in imgs:
+                i += 1
+                if im == self.input_img + "087.png":
+                    print("rank: " + str(i))
+            print("S: " + str(s))
 
-        img1 = cv2.imread(self.input_img + self.inodes[0])
-        img2 = cv2.imread(self.input_img + self.inodes[1])
-
-        kp1 = self.kp_dict[self.inodes[0]]
-        kp2 = self.kp_dict[self.inodes[1]]
-
-        # Draw first 10 matches.
-        img3 = cv2.drawMatches(img1,kp1,img2,kp2,matches[:], flags=2, outImg=None)
-
-        d_img = {}
-        d_img['matcher'] = img3
-        show_frame(d_img)
+            d = {}
+            d['crop'] = crop
+            d['found'] = cv2.imread(imgs[0])
+            d['kp_crop'] = kp_crop
+            show_frame(d)
