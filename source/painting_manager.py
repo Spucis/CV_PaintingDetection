@@ -25,13 +25,14 @@ class PaintingManager:
         self.out.release()
 
     def ROI_detection(self, or_frame):
+
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True,  frame_number=self.count)
         #kp_frame = keypoints_detection(or_frame, show=False)
-        ccl_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count)
+        roi_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count)
 
         #ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
 
-        return ccl_frame, ROIs
+        return roi_frame, ROIs
 
     def paint_detection(self):
         # Read until video is completed

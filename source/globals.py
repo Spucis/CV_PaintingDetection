@@ -22,7 +22,7 @@ class VideoManager:
 
     def open_video(self, video_name, input_path, output_path):
         cap = cv2.VideoCapture()
-        cap.open("{}{}.MP4".format(input_path, video_name))
+        cap.open("{}{}".format(input_path, video_name))
         # Check if camera opened successfully
         if cap.isOpened() == False:
             print("Error opening video stream or file")
@@ -34,11 +34,11 @@ class VideoManager:
             np.uint32)
         self.n_frame = np.around(cap.get(cv2.CAP_PROP_FRAME_COUNT)).astype(np.uint32)
                                                                                                 # *'mp4v'
-        out = cv2.VideoWriter("{}{}.MP4".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
+        out = cv2.VideoWriter("{}{}".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
                               np.around(self.in_fps).astype(np.uint32),
                               tuple(np.around(self.in_frameSize).astype(np.uint32)), True)
 
-        out.open("{}{}.MP4".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
+        out.open("{}{}".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
                  np.around(self.in_fps).astype(np.uint32),
                  tuple(np.around(self.in_frameSize).astype(np.uint32)))
 
