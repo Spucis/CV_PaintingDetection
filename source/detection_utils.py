@@ -311,7 +311,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
             img = cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
             trueROIs.append((x, y, w, h))
 
-        show_plots = True
+        show_plots = False
         total_var = 0
         if frame_number == 150 and show_plots:
             color = ('b', 'g', 'r')
@@ -454,31 +454,13 @@ def matcher(des_crop, des_or):
 
         #true_matches = [m for m in matches if m.distance < 70]
 
+        if len(matches) < globals.match_th:
+            return -1
+
         sum = 0
         for el in matches:
             sum += el.distance
-            print("- " + str(el.distance) + " -")
-            # matches_dist.append(el.distance)
+            #print("- " + str(el.distance) + " -")
 
         av = sum / len(matches)
         return av
-
-
-# prendo l'array di matches per ogni ROI e stampo a video i quadri raddrizzati
-def paint_rectification(frame, ROIs, kp, des, matches):
-    # create BFMatcher object
-    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-
-    # quadro centrale
-    d1 = des['085.png']
-
-    # ROI del quadro 085
-    roi = ROIs[1]
-
-    crop = frame[roi[1]:roi[3], roi[0]:roi[2]]
-
-    k, d2 = find_keypoint(crop)
-
-    # Match descriptors.
-    match = bf.match(d1, d2)
-    pass

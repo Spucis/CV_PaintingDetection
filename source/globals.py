@@ -6,6 +6,7 @@ file = open('conf.json', 'r').read()
 conf = JSONDecoder().decode(s=file)
 print("Config file: \n{}".format(conf))
 
+match_th = 5
 
 class VideoManager:
     def __init__(self):
@@ -22,7 +23,7 @@ class VideoManager:
 
     def open_video(self, video_name, input_path, output_path):
         cap = cv2.VideoCapture()
-        cap.open("{}{}.MP4".format(input_path, video_name))
+        cap.open("{}{}".format(input_path, video_name))
         # Check if camera opened successfully
         if cap.isOpened() == False:
             print("Error opening video stream or file")
