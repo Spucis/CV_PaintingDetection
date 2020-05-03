@@ -6,6 +6,7 @@ file = open('conf.json', 'r').read()
 conf = JSONDecoder().decode(s=file)
 print("Config file: \n{}".format(conf))
 
+match_th = 5
 
 class VideoManager:
     def __init__(self):
