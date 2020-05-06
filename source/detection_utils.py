@@ -5,11 +5,7 @@ import cv2
 import time
 import matplotlib.pyplot as plt
 
-from json import *
-import random
-
 conf = globals.conf
-
 
 def show_frame(d_frames):
     for label, frame in d_frames.items():
@@ -33,7 +29,6 @@ def calculateIntersection(a0, a1, b0, b1):
     return intersection
 
 def draw_ROI(frame, ROI, text=None, color=(0,0,255), text_color=(0,0,0), copy=False, only_text=False):
-
     if copy:
         img = frame.copy()
     else:
@@ -66,9 +61,6 @@ def draw_ROI(frame, ROI, text=None, color=(0,0,255), text_color=(0,0,0), copy=Fa
     return cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
 
 def ccl_detection(or_frame, gray_frame, frame, frame_number):
-
-
-
     """
         Marco
         Provo cv.connectedComponents(	image[, labels[, connectivity[, ltype]]]	)
@@ -107,10 +99,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
         currentContour = component[0]
         #currentHierarchy = component[1]
         x,y,w,h = cv2.boundingRect(currentContour)
-
         #hull.append(cv2.convexHull(currentContour))
-
-
 
         cleaning_boxes = True
         if cleaning_boxes:
@@ -146,7 +135,6 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
 
     # True ROIs array
     trueROIs = []
-
     global_thres, _ = cv2.threshold(gray_frame, 0, 255,
                                        cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -255,7 +243,6 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
     return img, trueROIs
 
 def edge_detection(frame, debug = False, frame_number = 0):
-
     selected_frame = 0
     d_frames = {}
 
@@ -274,7 +261,6 @@ def edge_detection(frame, debug = False, frame_number = 0):
     # blur = cv2.bilateralFilter(blur, 5, 5, 20)
 
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
-
     if debug and selected_frame == frame_number:
         d_frames['Blurred image'] = blur
         d_frames['Gray'] = gray
@@ -291,7 +277,6 @@ def edge_detection(frame, debug = False, frame_number = 0):
     #Threshold rumorose
     th = 400
     TH = 800
-
     mod_f = cv2.Canny(dst.astype(np.uint8), th, TH, apertureSize=5, L2gradient=True)
 
     # Frame with the edges highlighted in green
@@ -305,26 +290,8 @@ def edge_detection(frame, debug = False, frame_number = 0):
 
     # conversione colore
     mod_f2 = cv2.cvtColor(mod_f.astype(np.uint8), cv2.COLOR_GRAY2RGB)
-
     show_frame(d_frames)
-
     return gray, vis, mod_f
-
-def keypoints_detection(frame, show=True):
-
-    start = time.time()
-    # Initiate ORB detector
-    orb = cv2.ORB_create()
-    # find the keypoints with ORB
-    kp = orb.detect(frame, None)
-    # compute the descriptors with ORB
-    kp, des = orb.compute(frame, kp)
-    # draw only keypoints location,not size and orientation
-    kp_frame = cv2.drawKeypoints(frame, kp, None, color=(0, 255, 0), flags=0)
-    if show:
-        show_frame({"KEY_POINTS_elapsedTime: {}".format(time.time()-start): kp_frame})
-
-    return kp_frame
 
 def find_keypoint(img):
         # Initiate ORB detector
@@ -341,22 +308,28 @@ def find_keypoint(img):
 def matcher(des_crop, des_or):
         # create BFMatcher object
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-
         # Match descriptors.
         matches = bf.match(des_crop, des_or)
-
         # Sort them in the order of their distance.
         matches = sorted(matches, key=lambda x:x.distance)
-
         #true_matches = [m for m in matches if m.distance < 70]
 
         if len(matches) < globals.match_th:
             return -1
 
         sum = 0
+        sum_1 = 0
+        count = 0
         for el in matches:
+            if el.distance < 45:
+                sum_1 += el.distance - (el.distance*0.3)
+            elif el.distance > 65:
+                sum_1 += el.distance + (el.distance*0.3)
+            else:
+                sum_1 += el.distance
+
             sum += el.distance
-            #print("- " + str(el.distance) + " -")
 
         av = sum / len(matches)
-        return av
+        av_1 = sum_1 / len(matches)
+        return av, av_1

@@ -4,7 +4,6 @@ import json
 import os
 
 conf = globals.conf
-
 class PaintingManager:
     def __init__(self, video_manager):
         self.video_manager = video_manager
@@ -25,14 +24,23 @@ class PaintingManager:
         self.cap.release()
         self.out.release()
 
-    def ROI_detection(self, or_frame):
+    def db_keypoints(self):
+        self.inodes = os.listdir(self.input_img)
+        self.inodes.remove('.gitkeep')
+        self.inodes.sort()
 
+        for inode in self.inodes:
+            img = cv2.imread(self.input_img + inode)
+            kp, des = find_keypoint(img)
+
+            self.kp_dict[inode] = kp
+            self.des_dict[inode] = des
+
+    def ROI_detection(self, or_frame):
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True,  frame_number=self.count)
         #kp_frame = keypoints_detection(or_frame, show=False)
         roi_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count)
-
         #ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
-
         return roi_frame, ROIs
 
     def paint_detection(self):
@@ -43,14 +51,10 @@ class PaintingManager:
                 if self.count == 0:
                     print("Edge detection function.")
                 mod_frame, self.ROIs = self.ROI_detection(frame.copy())
-                # hough_transform()
 
                 # Paint retrival e rectification ogni 50 frame
                 if self.count % 50 == 0:
-                    for roi in self.ROIs:
-                        img_name = self.paint_retrival(frame, roi)
-                        if img_name != -1:
-                            self.paint_rectification(frame, roi, img_name)
+                    self.retrival_and_rectification(frame.copy())
 
                 self.count += 1
                 if self.count % 100 == 0:
@@ -65,17 +69,15 @@ class PaintingManager:
                 break
         print("Fine edge_detection.")
 
-    def keypoint_writedb(self):
-        self.inodes = os.listdir(self.input_img)
-        self.inodes.remove('.gitkeep')
-        self.inodes.sort()
-
-        for i in self.inodes:
-            img = cv2.imread(self.input_img + i)
-            kp, des = find_keypoint(img)
-
-            self.kp_dict[i] = kp
-            self.des_dict[i] = des
+    def retrival_and_rectification(self, frame):
+        for roi in self.ROIs:
+            #blur = cv2.GaussianBlur(frame.copy(), (11, 11), 0)
+            imgs_name = self.paint_retrival(frame, roi)
+            av_1 = 100
+            i = 0
+            while(av_1 >= 50 and i < 5):
+                av, av_1 = self.paint_rectification(frame, roi, imgs_name[i])
+                i += 1
 
     # ritorna il nome img corrispondente alla Roi
     def paint_retrival(self, frame, roi):
@@ -94,13 +96,13 @@ class PaintingManager:
         dist = []
         imgs = []
         for n in self.inodes:
-            av_dist = matcher(des_crop, self.des_dict[n])
-            if av_dist < 0:
+            av_dist, _ = matcher(des_crop, self.des_dict[n])
+            if av_dist < 0: # forse qui devi mettere av_dist > 0
                 return -1
-
             dist.append(av_dist)
             imgs.append(self.input_img + n)
 
+        # come può essere 0?
         if len(dist) == 0:
             return -1
 
@@ -118,38 +120,32 @@ class PaintingManager:
         d['found'] = cv2.imread(imgs[0])
         d['kp_crop'] = kp_crop
         show_frame(d)
-
-        return imgs[0]
+        return imgs
 
     # prendo la roi e il nome img corrispondente e mostro l'img raddrizzata
     def paint_rectification(self, frame, roi, img_name):
         crop = frame[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2], :]
-        # cv2.imwrite("./crop.png", crop)
-        #show_frame({"Crop": crop})
 
         if img_name == '':
             return
-
         trainImg = cv2.imread(img_name)
-
-        # KEYPOINTS METHOD
 
         # create BFMatcher object
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
         # quadro centrale
-        d1 = self.des_dict[os.path.basename(img_name)]
-        k1 = self.kp_dict[os.path.basename(img_name)]
+        kp_train = self.kp_dict[os.path.basename(img_name)]
+        des_train = self.des_dict[os.path.basename(img_name)]
 
-        k2, d2 = find_keypoint(crop)
-        if k2 is None or d2 is None:
+        kp_crop, des_crop = find_keypoint(crop)
+        if kp_crop is None or des_crop is None:
             return
 
-        kp_crop = cv2.drawKeypoints(crop, k2, None, color=(0, 255, 0), flags=0)
+        # kp_crop = cv2.drawKeypoints(crop, k2, None, color=(0, 255, 0), flags=0)
         # show_frame({"Crop Keypoints": kp_crop})
 
         # Match descriptors per gli indici dei k1 e k2
-        matchList = bf.match(d1, d2)
+        matchList = bf.match(des_train, des_crop)
 
         if len(matchList) < globals.match_th:
             return
@@ -159,8 +155,7 @@ class PaintingManager:
 
         # Sort matches based on distances
         # sortMatches = sorted(matchList, key=lambda val: val.distance)
-
-        matchImg = cv2.drawMatches(trainImg, k1, crop, k2, matchList, flags=2, outImg=None)
+        matchImg = cv2.drawMatches(trainImg, kp_train, crop, kp_crop, matchList, flags=2, outImg=None)
         show_frame({"Matches": matchImg})
 
         # Coordinate dei keypoints
@@ -169,8 +164,8 @@ class PaintingManager:
         for m in matchList:
             i = m.trainIdx
             j = m.queryIdx
-            trainPoints.append(k2[i].pt)
-            queryPoints.append(k1[j].pt)
+            trainPoints.append(kp_crop[i].pt)
+            queryPoints.append(kp_train[j].pt)
 
         """
         # HOUGH LINES METHOD
@@ -239,8 +234,15 @@ class PaintingManager:
         # show_frame({"Rectified image": rectified})
 
         # Show both images
-        cv2.imshow("ROI image", crop)
-        cv2.imshow("Rectified image", rectified)
-        cv2.imshow("Retrival image", trainImg)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+        d = {}
+        d["ROI image"] = crop
+        d["Rectified image"] = rectified
+        d["Retrival image"] = trainImg
+        show_frame(d)
+
+        kp_train, des_train = find_keypoint(trainImg)
+        kp_rect, des_rect = find_keypoint(rectified)
+
+        av, av_1 = matcher(des_train, des_rect)
+        print("AV: {}, AV_1: {}".format(av, av_1))
+        return av, av_1
