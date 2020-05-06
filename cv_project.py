@@ -4,21 +4,21 @@ from source.painting_manager import *
 conf = globals.conf
 
 if __name__ == '__main__':
-    video_name = "VIRB0401"     #000
-    video_name = "VIRB0391"
+    #video_name = "VIRB0401"     #000
+    video_name = "VIRB0391.mp4"
 
-    #video_name = "VIRB0400"
+    video_name = "VIRB0400.mp4"
     #video_name = "VIRB0402"
 
-    video_name = "20180206_114720.mp4" # 002
+    #video_name = "20180206_114720.mp4" # 002
     #video_name = "GOPR1926" #003
-    #video_name = "VIRB0420" #008
+    #video_name = "VIRB0420.mp4" #008
     #video_name = "VIRB0421" #008
 
     #video_name = "VID_20180529_112706.mp4" # 010
     #video_name = "VID_20180529_112951.mp4" # 010
 
-    #video_name = "VID_20180529_112849" # 010
+    #video_name = "VID_20180529_112849.mp4" # 010
     #video_name = "VID_20180529_112828" # 010
 
     p_manager = PaintingManager(globals.VideoManager())

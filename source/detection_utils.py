@@ -73,21 +73,72 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
         Marco
         Provo cv.connectedComponents(	image[, labels[, connectivity[, ltype]]]	)
     """
-
+    #gray_frame = cv2.bilateralFilter(gray_frame, 7, 7, 150)
+    #
+    #gray_frame = cv2.medianBlur(gray_frame, 5)
+    #gray_frame = cv2.adaptiveThreshold(gray_frame, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+    #show_frame({"adaptive": gray_frame})
+    #global_thres, th_frame = cv2.threshold(gray_frame, 0, 255,
+    #                                cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    #return gray_frame, None
     # Parametri delle modifiche apportate all'immagine. Verranno elencate nell'immagine finale.
     # nome -> valore
+
+    img = or_frame.copy()
+
+    dilations = 3
+    dilate_size = 3
+    dilate_kernel = np.full((dilate_size, dilate_size), 1, dtype=np.uint8)
+    cycles = 1
+    new_canny = frame.copy()
+    for _ in range(cycles):
+        new_canny = cv2.dilate(new_canny, dilate_kernel, iterations=dilations)
+        # show_frame({"dilation_{}ites".format(dilations): new_canny, "old": frame})
+        new_canny = cv2.erode(new_canny, dilate_kernel, iterations=dilations)
+        # show_frame({"erode_{}ites".format(dilations): new_canny})
+    #show_frame({"cycles_Canny": new_canny, "old": frame})
+    #return new_canny, None
+    num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(new_canny)
+
+    for label in range(1, num_labels):
+        color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+        label_x = stats[label, cv2.CC_STAT_LEFT]
+        label_y = stats[label, cv2.CC_STAT_TOP]
+        label_w = stats[label, cv2.CC_STAT_WIDTH]
+        label_h = stats[label, cv2.CC_STAT_HEIGHT]
+        centroid = (int(round(centroids[label, 0])), int(round(centroids[label, 1])))
+        #print("x{}\ny{}\nw{}\nh{}\ncent.{}".format(label_x, label_y, label_w, label_h, centroid))
+        img = cv2.drawMarker(img, centroid, color)
+        cv2.rectangle(img,(label_x, label_y), (label_x+label_w, label_y+label_h), color, 2)
+        cv2.arrowedLine(img, centroid, (label_x, label_y), color)
+
+    #show_frame({"connectedComponents_BBOX": img})
+    #return img, None
     params = {}
-    out = frame
+    """
+    out = frame.copy()
+    contours_iters = 1
 
     contours, hierarchy = cv2.findContours(out, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    out = cv2.drawContours(out, contours, -1, (255,255,255), 3)
+    cv2.drawContours(out, contours, -1, (255, 255, 255), 2)
     contours, hierarchy = cv2.findContours(out, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+
+    for iter in range(contours_iters):
+        new_out = np.zeros(out.shape, dtype=np.uint8)
+        contours, hierarchy = cv2.findContours(out, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+        cv2.drawContours(new_out, contours, -1, (255,255,255), 2)
+        contours, hierarchy = cv2.findContours(new_out, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+        new_out = np.zeros(out.shape, dtype=np.uint8)
+        cv2.drawContours(new_out, contours, -1, (255, 255, 255), 1)
+        out = new_out.copy()
+        #show_frame({"Contours_iter{}".format(iter): out, "Original CANNY": frame})
 
     #show_frame({"CANNY CONTOURS DILATED": out})
 
     #print(hierarchy.shape)
     # Tolgo la prima dimensione -- Da controllare, in generale
     hierarchy = hierarchy[0]
+    """
 
     i = 0
     ROIs = []
@@ -97,12 +148,38 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
     # 2. se l'area è minore di min_area, non è ammissibile
     # 3. se è contenuto in un'altra ROI o contiene un'altra ROI, quello con area minore non è ammissibile -- TODO
     # 4. (opzionale?) se l'overlap supera una certa soglia, la ROI con area minore non è ammissibile -- TODO
-    ratio_max = 4.5
+    ratio_max = 3
     global_area = frame.shape[0]*frame.shape[1]
-    min_area = 0.03 * global_area #almeno una % dell'area totale
-
+    min_area = 0.015 * global_area #almeno una % dell'area totale
     img = or_frame.copy()
 
+    for label in range(1, num_labels):
+
+        x = stats[label, cv2.CC_STAT_LEFT]
+        y = stats[label, cv2.CC_STAT_TOP]
+        w = stats[label, cv2.CC_STAT_WIDTH]
+        h = stats[label, cv2.CC_STAT_HEIGHT]
+
+        cleaning_boxes = True
+        if cleaning_boxes:
+            # 1.
+            feasible_ratio = abs(w) < abs(ratio_max * (h)) and abs(h) < abs(ratio_max * (w))
+            area = w * h
+            # 2.
+            feasible_area = area > min_area
+
+            params["Maximum ROI Aspect ratio"] = ratio_max
+            params["Minimun ROI Area"] = min_area
+
+            if feasible_ratio and feasible_area:
+                ROIs.append([(x, y), (x + w, y + h), w, h])
+            else:
+                #text = "RATIO:{:.2}-L_AREA:{}({:.2%})".format((max(h, w) / min(h, w)), h * w,h * w / (frame.shape[0] * frame.shape[1]))
+                #img = draw_ROI(img, (x, y, w, h), color=(255, 0, 0), text=text)
+                continue
+
+
+    """
     for component in zip(contours, hierarchy):
         currentContour = component[0]
         #currentHierarchy = component[1]
@@ -115,7 +192,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
         cleaning_boxes = True
         if cleaning_boxes:
             #1.
-            feasible_ratio = abs(h) < abs(ratio_max * (w)) and abs(w) < abs(ratio_max * (h))
+            feasible_ratio = abs(w) < abs(ratio_max * (h)) and abs(h) < abs(ratio_max * (w))
             area = w * h
             #2.
             feasible_area = area > min_area
@@ -126,19 +203,22 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
             if feasible_ratio and feasible_area:
                 ROIs.append([(x, y), (x + w, y + h), w, h])
             else:
+                #text = "RATIO:{}-L_AREA:{}({})".format((max(h, w) / min(h, w)), h * w,h * w / (frame.shape[0] * frame.shape[1]) * 100)
+                #img = draw_ROI(img, (x, y, w, h), color=(255, 0, 0), text=text)
                 continue
-                text += "RATIO:{}-L_AREA:{}({})".format((max(h,w)/min(h,w)),h * w,h * w / (frame.shape[0] * frame.shape[1]) * 100)
-                img = draw_ROI(img, (x, y, w, h), color=(255, 0, 0))
+
 
 
         else: #NO CLEANING BOXES
             img = cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
         i += 1
+    """
+
     i = 0
 
     # ARLGORITMO QUADRATICO RISPETTO AL NUMERO DELLE ROI, MIGLIORABILE? TODO
-    max_overlap = 0.6
+    max_overlap = 0.80
     params["Max ROI overlap"] = max_overlap
 
     # Initiate ORB detector
@@ -169,7 +249,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
             #print("C{} over C{} overlap: {}".format(i,j,percent))
 
             # must go over the max_overlap AND minor area
-            if percent >= max_overlap and roi[2] * roi[3] < roi2[2] * roi2[3]:
+            if percent >= max_overlap and roi[2] * roi[3] < roi2[2] * roi2[3] and roi2[2]*roi2[3] < 0.5*global_area:
                 drawable = False
                 #print("C{} over C{} overlap: {} ---- BREAK!".format(i, j, percent))
                 break
@@ -186,18 +266,19 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
         thres, thres_image = cv2.threshold(gray_frame[y:y + h, x:x + w], 0, 255,
                                            cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-        text += "-G_TH:{}-L_TH:{}-L_AREA:{}({})".format(global_thres, thres, h * w,
-                                                        h * w / (frame.shape[0] * frame.shape[1]) * 100)
+        #text += "-G_TH:{}-L_TH:{}-L_AREA:{}({})".format(global_thres, thres, h * w,
+        #                                               h * w / (frame.shape[0] * frame.shape[1]) * 100)
 
-        if thres > global_thres: # Escludo le roi che hanno local thresholding di otsu più alta della global.
-            #cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            drawable = False
+        #if thres > 0.90 * global_thres: # Escludo le roi che hanno local thresholding di otsu più alta della global.
+        #    #cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        #    drawable = False
 
         if not drawable:
             img = draw_ROI(img, (x,y,w,h), text=text, color=(0, 255, 0))
             continue
         else:
             img = draw_ROI(img, (x,y,w,h), text=text, color=(0, 0, 255))
+
             trueROIs.append((x, y, w, h))
 
         #PRINT GLOBAL AREA
@@ -291,6 +372,10 @@ def edge_detection(frame, debug = False, frame_number = 0):
     #Threshold rumorose
     th = 400
     TH = 800
+
+    #Threshold molto rumorose
+    th = 200
+    TH = 400
 
     mod_f = cv2.Canny(dst.astype(np.uint8), th, TH, apertureSize=5, L2gradient=True)
 

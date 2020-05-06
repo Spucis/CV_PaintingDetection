@@ -32,7 +32,7 @@ class PaintingManager:
         roi_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count)
 
         #ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
-
+        #roi_frame = cv2.cvtColor(roi_frame, cv2.COLOR_GRAY2BGR)
         return roi_frame, ROIs
 
     def paint_detection(self):
@@ -45,13 +45,14 @@ class PaintingManager:
                 mod_frame, self.ROIs = self.ROI_detection(frame.copy())
                 # hough_transform()
 
+                """ Commento per debuggare ROIs senza retrival
                 # Paint retrival e rectification ogni 50 frame
                 if self.count % 50 == 0:
                     for roi in self.ROIs:
                         img_name = self.paint_retrival(frame, roi)
                         if img_name != -1:
                             self.paint_rectification(frame, roi, img_name)
-
+                #"""
                 self.count += 1
                 if self.count % 100 == 0:
                     print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
