@@ -3,13 +3,10 @@ from source import globals
 import numpy as np
 import cv2
 import time
+import random
 import matplotlib.pyplot as plt
 
-from json import *
-import random
-
 conf = globals.conf
-
 
 def show_frame(d_frames):
     for label, frame in d_frames.items():
@@ -33,7 +30,6 @@ def calculateIntersection(a0, a1, b0, b1):
     return intersection
 
 def draw_ROI(frame, ROI, text=None, color=(0,0,255), text_color=(0,0,0), copy=False, only_text=False):
-
     if copy:
         img = frame.copy()
     else:
@@ -66,9 +62,6 @@ def draw_ROI(frame, ROI, text=None, color=(0,0,255), text_color=(0,0,0), copy=Fa
     return cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
 
 def ccl_detection(or_frame, gray_frame, frame, frame_number):
-
-
-
     """
         Marco
         Provo cv.connectedComponents(	image[, labels[, connectivity[, ltype]]]	)
@@ -178,43 +171,6 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
                 #img = draw_ROI(img, (x, y, w, h), color=(255, 0, 0), text=text)
                 continue
 
-
-    """
-    for component in zip(contours, hierarchy):
-        currentContour = component[0]
-        #currentHierarchy = component[1]
-        x,y,w,h = cv2.boundingRect(currentContour)
-
-        #hull.append(cv2.convexHull(currentContour))
-
-
-
-        cleaning_boxes = True
-        if cleaning_boxes:
-            #1.
-            feasible_ratio = abs(w) < abs(ratio_max * (h)) and abs(h) < abs(ratio_max * (w))
-            area = w * h
-            #2.
-            feasible_area = area > min_area
-
-            params["Maximum ROI Aspect ratio"] = ratio_max
-            params["Minimun ROI Area"] = min_area
-
-            if feasible_ratio and feasible_area:
-                ROIs.append([(x, y), (x + w, y + h), w, h])
-            else:
-                #text = "RATIO:{}-L_AREA:{}({})".format((max(h, w) / min(h, w)), h * w,h * w / (frame.shape[0] * frame.shape[1]) * 100)
-                #img = draw_ROI(img, (x, y, w, h), color=(255, 0, 0), text=text)
-                continue
-
-
-
-        else: #NO CLEANING BOXES
-            img = cv2.rectangle(or_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-
-        i += 1
-    """
-
     i = 0
 
     # ARLGORITMO QUADRATICO RISPETTO AL NUMERO DELLE ROI, MIGLIORABILE? TODO
@@ -226,7 +182,6 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
 
     # True ROIs array
     trueROIs = []
-
     global_thres, _ = cv2.threshold(gray_frame, 0, 255,
                                        cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -266,7 +221,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
         thres, thres_image = cv2.threshold(gray_frame[y:y + h, x:x + w], 0, 255,
                                            cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-        #text += "-G_TH:{}-L_TH:{}-L_AREA:{}({})".format(global_thres, thres, h * w,
+        # text += "-G_TH:{}-L_TH:{}-L_AREA:{}({})".format(global_thres, thres, h * w,
         #                                               h * w / (frame.shape[0] * frame.shape[1]) * 100)
 
         #if thres > 0.90 * global_thres: # Escludo le roi che hanno local thresholding di otsu più alta della global.
@@ -281,7 +236,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
 
             trueROIs.append((x, y, w, h))
 
-        #PRINT GLOBAL AREA
+        # PRINT GLOBAL AREA
         glob_text = "GLOBAL AREA: {}".format(frame.shape[0] * frame.shape[1])
         img = draw_ROI(img, (10, 10, 0, 0), text = glob_text, color=(0,0,255), only_text=True )
 
@@ -312,31 +267,16 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
             show_frame({"GRAY_FRAME": gray_frame})
             show_frame({"OTSU_FRAME_TH:{}".format(thres): thres_image})
 
-        """
-        fontFace = cv2.FONT_HERSHEY_SIMPLEX
-        fontScale = .5
-        thickness = 1
-        textSize, baseLine = cv2.getTextSize(text, fontFace, fontScale, thickness)
-
-        # To show the label also when at the upper corner of the image
-        label_rect_h = 5
-        label_offset = -textSize[1] - label_rect_h if y - textSize[1] - label_rect_h > 0 else textSize[1] + label_rect_h
-        text_offset = -label_rect_h if label_offset < 0 else textSize[1] + 2  # 1 of the border itself and 1 of spacing
-
-        img = cv2.rectangle(img, (x, y), (x + textSize[0], y + label_offset), (0, 0, 255), cv2.FILLED)
-        img = cv2.putText(img, text, (x, y + text_offset), fontFace, fontScale, (0, 0, 0), thickness)
-        """
         i += 1
 
     final_string = ""
     for name, value in params.items():
         final_string += "{}: {}; ".format(name, value)
 
-    #show_frame({"Relevant ROIs: " + final_string : img})
+    # show_frame({"Relevant ROIs: " + final_string : img})
     return img, trueROIs
 
 def edge_detection(frame, debug = False, frame_number = 0):
-
     selected_frame = 0
     d_frames = {}
 
@@ -350,12 +290,11 @@ def edge_detection(frame, debug = False, frame_number = 0):
         
         Sembra che funzioni meglio sul riconoscimento degli edge delle statue.
     """
-    #blur = cv2.medianBlur(blur, 11)
+    # blur = cv2.medianBlur(blur, 11)
     # Bilateral
     # blur = cv2.bilateralFilter(blur, 5, 5, 20)
 
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
-
     if debug and selected_frame == frame_number:
         d_frames['Blurred image'] = blur
         d_frames['Gray'] = gray
@@ -390,26 +329,8 @@ def edge_detection(frame, debug = False, frame_number = 0):
 
     # conversione colore
     mod_f2 = cv2.cvtColor(mod_f.astype(np.uint8), cv2.COLOR_GRAY2RGB)
-
     show_frame(d_frames)
-
     return gray, vis, mod_f
-
-def keypoints_detection(frame, show=True):
-
-    start = time.time()
-    # Initiate ORB detector
-    orb = cv2.ORB_create()
-    # find the keypoints with ORB
-    kp = orb.detect(frame, None)
-    # compute the descriptors with ORB
-    kp, des = orb.compute(frame, kp)
-    # draw only keypoints location,not size and orientation
-    kp_frame = cv2.drawKeypoints(frame, kp, None, color=(0, 255, 0), flags=0)
-    if show:
-        show_frame({"KEY_POINTS_elapsedTime: {}".format(time.time()-start): kp_frame})
-
-    return kp_frame
 
 def find_keypoint(img):
         # Initiate ORB detector
@@ -426,22 +347,23 @@ def find_keypoint(img):
 def matcher(des_crop, des_or):
         # create BFMatcher object
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-
         # Match descriptors.
         matches = bf.match(des_crop, des_or)
-
         # Sort them in the order of their distance.
         matches = sorted(matches, key=lambda x:x.distance)
-
         #true_matches = [m for m in matches if m.distance < 70]
 
         if len(matches) < globals.match_th:
             return -1
 
-        sum = 0
+        sum_1 = 0
         for el in matches:
-            sum += el.distance
-            #print("- " + str(el.distance) + " -")
+            if el.distance < 45:
+                sum_1 += el.distance - (el.distance*0.3)
+            elif el.distance > 65:
+                sum_1 += el.distance + (el.distance*0.3)
+            else:
+                sum_1 += el.distance
 
-        av = sum / len(matches)
-        return av
+        av_1 = sum_1 / len(matches)
+        return av_1
