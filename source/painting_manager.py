@@ -73,13 +73,13 @@ class PaintingManager:
             r += 1
             imgs_name = self.paint_retrival(frame, roi)
             if imgs_name != None:
-                av_list = []
+                av_dict = {}
                 av = 100
                 i = 0
                 while(av >= 50 and i < 5):
                     av = self.paint_rectification(frame, roi, imgs_name[i])
                     i += 1
-                    av_list.append(av)
+                    av_dict[av] = imgs_name[i]
 
                 # if(i < len(imgs_name)):
                 if(i < 5):
@@ -87,6 +87,15 @@ class PaintingManager:
                     d = {}
                     d["Chosen Img"] = img
                     show_frame(d)
+                else:
+                    av_keys = (list(av_dict.keys()))
+                    av_keys.sort()
+                    if(av_keys[0] < 55 and av_keys[1] > 65):
+                        img = cv2.imread(av[av_keys[0]])
+                        d = {}
+                        d["Chosen Img"] = img
+                        show_frame(d)
+
 
     def paint_retrival(self, frame, roi):
         # Crop the image
