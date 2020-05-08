@@ -339,8 +339,6 @@ def find_keypoint(img):
         kp = orb.detect(img,None)
         # compute the descriptors with ORB
         kp, des = orb.compute(img, kp)
-        # draw only keypoints location,not size and orientation
-        # in una funzione a parte per separare le cose?
         return kp, des
 
 
@@ -348,13 +346,16 @@ def matcher(des_crop, des_or):
         # create BFMatcher object
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         # Match descriptors.
-        matches = bf.match(des_crop, des_or)
+        try:
+            matches = bf.match(des_crop, des_or)
+        except:
+            return 100
         # Sort them in the order of their distance.
         matches = sorted(matches, key=lambda x:x.distance)
         #true_matches = [m for m in matches if m.distance < 70]
 
         if len(matches) < globals.match_th:
-            return -1
+            return 100
 
         sum_1 = 0
         for el in matches:
