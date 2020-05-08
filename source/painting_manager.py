@@ -38,9 +38,9 @@ class PaintingManager:
 
     def ROI_detection(self, or_frame):
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True,  frame_number=self.count)
-        #kp_frame = keypoints_detection(or_frame, show=False)
+        # kp_frame = keypoints_detection(or_frame, show=False)
         roi_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count)
-        #ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
+        # ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
         return roi_frame, ROIs
 
     def paint_detection(self):
@@ -55,9 +55,8 @@ class PaintingManager:
                     self.retrival_and_rectification(frame.copy())
                 self.count += 1
                 # ??????if self.count % 100 == 0:
-                #    print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
+                # print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
                 self.out.write(mod_frame)
-
                 all_video = True
                 if not all_video:
                     break
@@ -72,30 +71,27 @@ class PaintingManager:
         for roi in self.ROIs:
             print('ROI: {}'.format(r))
             r += 1
-            #blur = cv2.GaussianBlur(frame.copy(), (11, 11), 0)
             imgs_name = self.paint_retrival(frame, roi)
             if imgs_name != None:
-                av_1 = 100
+                av_list = []
+                av = 100
                 i = 0
-                while(av_1 >= 50 and i < 5):
-                    av_1 = self.paint_rectification(frame, roi, imgs_name[i])
+                while(av >= 50 and i < 5):
+                    av = self.paint_rectification(frame, roi, imgs_name[i])
                     i += 1
+                    av_list.append(av)
 
-                #if(i < len(imgs_name)):
+                # if(i < len(imgs_name)):
                 if(i < 5):
                     img = cv2.imread(imgs_name[i-1])
                     d = {}
                     d["Chosen Img"] = img
                     show_frame(d)
-                # d["Rectified image"] = rectified
-                # d["Retrival image"] = trainImg
 
     def paint_retrival(self, frame, roi):
         # Crop the image
-        #print(str(roi[0]) + " " + str(roi[1]) + " " + str(roi[2]) + " " + str(roi[3]))
         crop = frame[roi[1]:roi[1]+roi[3], roi[0]:roi[0]+roi[2], :]
         # crop = cv2.GaussianBlur(crop, (11, 11), 0)
-
         d = {}
         d['CROP'] = crop
         show_frame(d)
@@ -106,38 +102,25 @@ class PaintingManager:
             return None
 
         kp_crop = cv2.drawKeypoints(crop, kp_crop, color=(0, 255, 0), outImage=None)
-
         dist = []
         imgs = []
         for n in self.inodes:
             av_dist = matcher(des_crop, self.des_dict[n])
-            if av_dist < 0: # forse qui devi mettere av_dist > 0
-                return -1
             dist.append(av_dist)
             imgs.append(self.input_img + n)
-
-        # come può essere 0?
-        if len(dist) == 0:
-            return None
 
         s = sorted(zip(dist,imgs))
         imgs = [img for _, img in s]
 
-        i = 0
-        for d, im in s:
-            # print('{} : d = {};\timg = {}'.format(i, d, im))
-            i += 1
-        # print('\n\n\n')
-
-        d = {}
-        d['found'] = cv2.imread(imgs[0])
-        d['kp_crop'] = kp_crop
+        # d = {}
+        # d['found'] = cv2.imread(imgs[0])
+        #
+        # d['kp_crop'] = kp_crop
         # show_frame(d)
         return imgs
 
     def paint_rectification(self, frame, roi, img_name):
         crop = frame[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2], :]
-
         if img_name == '':
             return 100
         trainImg = cv2.imread(img_name)
@@ -145,13 +128,12 @@ class PaintingManager:
         # create BFMatcher object
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
-        # quadro centrale
         kp_train = self.kp_dict[os.path.basename(img_name)]
         des_train = self.des_dict[os.path.basename(img_name)]
 
         kp_crop, des_crop = find_keypoint(crop)
         if kp_crop is None or des_crop is None:
-            return
+            return 100
 
         # kp_crop = cv2.drawKeypoints(crop, k2, None, color=(0, 255, 0), flags=0)
         # show_frame({"Crop Keypoints": kp_crop})
@@ -161,9 +143,6 @@ class PaintingManager:
 
         if len(matchList) < globals.match_th:
             return 100
-
-        # take only matches with distance less than a threshold
-        # trueMatches = [m for m in matchList if m.distance < 50]
 
         # Sort matches based on distances
         # sortMatches = sorted(matchList, key=lambda val: val.distance)
@@ -183,10 +162,14 @@ class PaintingManager:
         trainPoints = np.array(trainPoints, dtype=np.float32)
         queryPoints = np.array(queryPoints, dtype=np.float32)
         H, retval = cv2.findHomography(trainPoints, queryPoints, cv2.RANSAC)
+        # Secondo me si può dire che se H ritornato = None, allora è un muro
 
-        # Rectify crop image
-        rectified = cv2.warpPerspective(crop, H, (trainImg.shape[1], trainImg.shape[0]))
-        # show_frame({"Rectified image": rectified})
+        try:
+            # Rectify crop image
+            rectified = cv2.warpPerspective(crop, H, (trainImg.shape[1], trainImg.shape[0]))
+            # show_frame({"Rectified image": rectified})
+        except:
+            return 100
 
         # Show both images
         d = {}
