@@ -90,10 +90,11 @@ class PaintingManager:
                 else:
                     av_keys = (list(av_dict.keys()))
                     av_keys.sort()
-                    if(av_keys[0] < 55 and av_keys[1] > 65):
-                        img = cv2.imread(av[av_keys[0]])
+                    print("{}, {}".format(av_keys[0], av_dict[av_keys[0]]))
+                    if(av_keys[0] < 55):
+                        img = cv2.imread(av_dict[av_keys[0]])
                         d = {}
-                        d["Chosen Img"] = img
+                        d["Chosen Img Dopo"] = img
                         show_frame(d)
 
 
