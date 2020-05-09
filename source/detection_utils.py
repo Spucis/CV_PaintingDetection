@@ -342,7 +342,6 @@ def find_keypoint(img):
 
 
 def matcher(des_crop, des_or):
-        # create BFMatcher object
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         # Match descriptors.
         try:
@@ -351,19 +350,18 @@ def matcher(des_crop, des_or):
             return 100
         # Sort them in the order of their distance.
         matches = sorted(matches, key=lambda x:x.distance)
-        #true_matches = [m for m in matches if m.distance < 70]
 
         if len(matches) < globals.match_th:
             return 100
 
-        sum_1 = 0
+        sum = 0
         for el in matches:
             if el.distance < 45:
-                sum_1 += el.distance - (el.distance*0.3)
+                sum += el.distance - (el.distance*0.3)
             elif el.distance > 65:
-                sum_1 += el.distance + (el.distance*0.3)
+                sum += el.distance + (el.distance*0.3)
             else:
-                sum_1 += el.distance
+                sum += el.distance
 
-        av_1 = sum_1 / len(matches)
+        av_1 = sum / len(matches)
         return av_1
