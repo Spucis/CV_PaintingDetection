@@ -39,7 +39,7 @@ class PaintingManager:
     def ROI_detection(self, or_frame):
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True,  frame_number=self.count)
         #kp_frame = keypoints_detection(or_frame, show=False)
-        roi_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count)
+        roi_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count, otsu_opt_enabled=True)
         #ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
         return roi_frame, ROIs
 
@@ -51,11 +51,15 @@ class PaintingManager:
                 if self.count == 0:
                     print("Edge detection function.")
                 mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+                """
                 if self.count % 50 == 0:
                     self.retrival_and_rectification(frame.copy())
+                """
                 self.count += 1
-                # ??????if self.count % 100 == 0:
+                #if self.count % 100 == 0:
                 #    print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
+                
+
                 self.out.write(mod_frame)
 
                 all_video = True

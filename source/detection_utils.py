@@ -61,7 +61,7 @@ def draw_ROI(frame, ROI, text=None, color=(0,0,255), text_color=(0,0,0), copy=Fa
 
     return cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
 
-def ccl_detection(or_frame, gray_frame, frame, frame_number):
+def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=False):
     """
         Marco
         Provo cv.connectedComponents(	image[, labels[, connectivity[, ltype]]]	)
@@ -224,16 +224,15 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number):
         # text += "-G_TH:{}-L_TH:{}-L_AREA:{}({})".format(global_thres, thres, h * w,
         #                                               h * w / (frame.shape[0] * frame.shape[1]) * 100)
 
-        #if thres > 0.90 * global_thres: # Escludo le roi che hanno local thresholding di otsu più alta della global.
-        #    #cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        #    drawable = False
+        if otsu_opt_enabled and thres > 1.2 * global_thres: # Escludo le roi che hanno local thresholding di otsu più alta della global.
+            img = draw_ROI(img, (x-2, y-2, w+4, h+4), text=text+"G_TH{}-ROI_TH{}".format(global_thres, thres), text_color=(255, 255, 255), color=(255, 0, 0))
+            drawable = False
 
         if not drawable:
             img = draw_ROI(img, (x,y,w,h), text=text, color=(0, 255, 0))
             continue
         else:
             img = draw_ROI(img, (x,y,w,h), text=text, color=(0, 0, 255))
-
             trueROIs.append((x, y, w, h))
 
         # PRINT GLOBAL AREA

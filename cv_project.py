@@ -18,7 +18,7 @@ if __name__ == '__main__':
     #video_name = "VIRB0421.MP4" #008
 
 
-    video_name = "VID_20180529_112706.mp4" # 010 # IMP 2 Primo da fare vedere
+    #video_name = "VID_20180529_112706.mp4" # 010 # IMP 2 Primo da fare vedere
     #video_name = "VID_20180529_112951.mp4" # 010
     #video_name = "VID_20180529_112951.mp4"
 
