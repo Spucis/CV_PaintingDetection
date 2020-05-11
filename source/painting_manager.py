@@ -1,6 +1,7 @@
 from source import globals
 from source.detection_utils import *
 import json
+import pandas as pd
 import os
 
 conf = globals.conf
@@ -16,6 +17,14 @@ class PaintingManager:
         self.kp_dict = {}
         self.des_dict = {}
         self.ROIs = []
+        self.ROIs_names = []
+        self.room = None
+        self.data = None # Sarà di tipo pd.DataFrame()
+
+        #Il quadro "x" è nella stanza self.room?
+        self.room_dict = {
+            #"000.png" : True/False
+        }
 
     def open_video(self, video_name):
         self.cap, self.out = self.video_manager.open_video(video_name, self.input_path, conf['output_path'])
@@ -29,12 +38,114 @@ class PaintingManager:
         self.inodes.remove('.gitkeep')
         self.inodes.sort()
 
+        #Marco, inizializzo room_dict
+        for key in self.inodes:
+            self.room_dict[key] = False
+
+        print(self.room_dict)
+
         for inode in self.inodes:
             img = cv2.imread(self.input_img + inode)
             kp, des = find_keypoint(img)
 
             self.kp_dict[inode] = kp
             self.des_dict[inode] = des
+
+    def set_room_dict(self, img_name, verbose = False):
+        """
+        Imposta il dizionario interno room_dict a True se la relativa immagine (la chiave del dizionario)
+        è contenuta nella stessa stanza dell'immagine 'img_name'.
+        False altrimenti.
+        La stanza di img_name si ottiene dall'incrocio dei dati del .csv
+
+        :param img_name:
+            Nome dell'immagine della quale devo determinare la stanza
+        :param verbose:
+            Se true, mostra a terminale informazioni aggiuntive sull'andamento del parsing del file csv
+        :return:
+            No return.
+            Imposta solo il dizionario interno.
+        """
+
+        # mi serve solo il nome, senza il path
+        img_name = os.path.basename(img_name)
+
+        if not self.data:
+            self.data = pd.read_csv(conf["data_csv"])
+        header = self.data.columns.values
+
+        if verbose:
+            print("Detected header: {}".format(header))
+            print(self.data)
+
+        curr_row = self.data[self.data["Image"] == img_name]
+        self.room = curr_row["Room"].values[0]
+        room = self.room
+
+        if verbose:
+            print("Il quadro {} è nella stanza {}:\nTitle: {}\nAuthor: {}\nRoom: {}\nImage: {}".format(
+                img_name,
+                room,
+                curr_row[header[0]].values[0],
+                curr_row[header[1]].values[0],
+                curr_row[header[2]].values[0],
+                curr_row[header[3]].values[0]
+            ))
+
+        room_paintings = self.data[self.data["Room"] == room]["Image"].values
+
+        # Per sicurezza scorro comunque TUTTO il dizionario,
+        # settando a True se il dipinto appartiene alla stanza
+        #          a False altrimenti.
+
+        for painting in self.room_dict.keys():
+            if painting in room_paintings:
+                self.room_dict[painting] = True
+            else:
+                self.room_dict[painting] = False
+
+        if verbose:
+            print("==== room_dict ====\nQuadri nella stanza {}:".format(room))
+            for key, value in self.room_dict.items():
+                print("{}: {}".format(key, value))
+            print("===================")
+
+
+    def ROI_labeling(self, frame, show_details = False, verbose = False):
+        """
+        Dato un frame, l'insieme delle ROI al suo interno e i nomi dei file delle immagini relative alle ROI,
+        determina il nome del quadro e lo associa alla ROI corrispondente.
+
+        :param frame:
+            Il frame da utilizzare
+        :return:
+            Labeled frame
+        """
+        labeled_frame = frame.copy()
+        if verbose:
+            print("ROI LABELING")
+
+        for i, roi in enumerate(self.ROIs):
+            img_name = os.path.basename(self.ROIs_names[i])
+            row = self.data[self.data["Image"] == img_name]
+            if row.empty or self.ROIs_names[i] == "":
+                text = "Non disponibile nel database [{}]".format(img_name)
+                color = (0,0,255)
+            else:
+                title = row["Title"].values[0]
+                author = row["Author"].values[0]
+                painting = "{}".format(img_name)
+                text = str(title) + " \n " + str(author)+ " \n "+ str(painting)
+                color = (0,255,0)
+            draw_ROI(labeled_frame, roi, text=text, color=color)
+
+            draw_ROI(labeled_frame, (10, frame.shape[0]-100, 0, 0), text="Stanza "+str(self.room), color=(255,255,0), only_text=True)
+
+        if show_details:
+            show_frame({"Labeled_frame" : labeled_frame})
+
+        return labeled_frame
+
 
     def ROI_detection(self, or_frame):
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True,  frame_number=self.count)
@@ -45,69 +156,127 @@ class PaintingManager:
 
         return roi_frame, ROIs
 
-    def paint_detection(self):
+    def paint_detection(self, step = 20):
         # Read until video is completed
+
+        start = time.time()
+
         while (self.cap.isOpened() and self.out.isOpened()):
             ret, frame = self.cap.read()
             if ret == True:
                 if self.count == 0:
-                    print("Edge detection function.")
+                    print("Paint detection function.")
                 mod_frame, self.ROIs = self.ROI_detection(frame.copy())
-                """
-                if self.count % 50 == 0:
-                    self.retrival_and_rectification(frame.copy())
-                """
+
+                if self.count % step == 0:# or True:
+                    self.retrival_and_rectification(frame.copy(), show_details=True, verbose=True) #show_details = True, verbose = True
+                    # ROI LABELING
+                    mod_frame = self.ROI_labeling(frame.copy(), show_details=True, verbose=True)
+
+                if self.count % step == 0:
+                    print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
+
+                if self.count % step == 0:
+                    self.out.write(mod_frame)
+
                 self.count += 1
 
-                self.out.write(mod_frame)
                 all_video = True
                 if not all_video:
                     break
             else:
                 print("Problema durante la lettura del video... stop al frame {}: {}".format(self.count, frame))
                 break
-        print("Fine edge_detection.")
 
-    def retrival_and_rectification(self, frame):
-        print('Frame {}:'.format(self.count))
+
+        print("Fine paint detection.\nElapsed time: {}".format(time.time() - start))
+
+    def retrival_and_rectification(self, frame, show_details=False, verbose = False):
+        if verbose:
+            print('Frame {}:'.format(self.count))
         r = 0
+        self.ROIs_names = []
+
         for roi in self.ROIs:
-            print('ROI: {}'.format(r))
+            if verbose:
+                print('ROI: {}'.format(r))
             r += 1
-            imgs_name = self.paint_retrival(frame, roi)
+            imgs_name = self.paint_retrival(frame, roi, show_details = show_details, verbose=verbose)
             if imgs_name != None:
                 av_dict = {}
+                template_matchings = []
                 av = 100
                 i = 0
                 while(av >= 50 and i < 5):
-                    av = self.paint_rectification(frame, roi, imgs_name[i])
+                    av = self.paint_rectification(frame, roi, imgs_name[i], show_details = show_details, verbose=verbose)
+                    """ PROVA TEMPLATE MATCHING
+                    try:
+                        curr_roi = frame[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2], :]
+                        curr_db_paint = cv2.imread(imgs_name[i])
+                        curr_roi_area = curr_roi.shape[0] * curr_roi.shape[1]
+                        curr_db_paint_area = curr_db_paint.shape[0] * curr_db_paint.shape[1]
+
+                        bigger = curr_roi if curr_roi_area > curr_db_paint_area else curr_db_paint
+                        smaller = curr_db_paint if curr_roi_area > curr_db_paint_area else curr_roi
+
+                        temp_match_measure = cv2.matchTemplate(bigger, smaller, cv2.TM_SQDIFF_NORMED)
+                        print(temp_match_measure)
+                    except:
+                        pass
+                        #print("Qualche errore nella template matching.")
+                    """
                     i += 1
                     av_dict[av] = imgs_name[i]
 
                 # if(i < len(imgs_name)):
-                if(i < 5): # and self.room == None
-                    img = cv2.imread(imgs_name[i-1])
-                    d = {}
-                    d["Chosen Img"] = img
-                    show_frame(d)
-                    # e se av < 35 chiamo la funzione che inizializza la stanza
-                # elif(i < 5 and self.room != None):
+                if(i < 5 and self.room == None):
+                    if show_details:
+                        img = cv2.imread(imgs_name[i - 1])
+                        d = {}
+                        d["Chosen Img"] = img
+                        show_frame(d)
+                    if av < 45:
+                        self.set_room_dict(imgs_name[i-1], verbose=verbose)
+
+                    self.ROIs_names.append(imgs_name[i-1])
+
+                elif(i < 5 and self.room != None): # TODO
                     # come sopra ma controllo anche che il quadro sia nella stanza
-                else: # elif(self.room != none)
+                    img_name = os.path.basename(imgs_name[i-1])
+                    if self.room_dict[img_name] == True:
+                        self.ROIs_names.append(imgs_name[i-1])
+                    else:
+                        # Per il momento stringa vuota
+                        self.ROIs_names.append("")
+
+                elif(self.room != None):
                     av_keys = (list(av_dict.keys()))
                     av_keys.sort()
+                    found = False
                     for k in av_keys:
-                        if k < 60: # and checkimage in stanza con il dict
-                            pass
+                        if k < 60 and not found: # and checkimage in stanza con il dict
+                            img_name = os.path.basename(av_dict[k])
                             # allora hai trovato l'immagine
+                            if self.room_dict[img_name] == True:
+                                self.ROIs_names.append(av_dict[k])
+                                found = True
 
-    def paint_retrival(self, frame, roi):
+                    if not found:
+                        self.ROIs_names.append("")
+                else:
+                    self.ROIs_names.append("")
+            else:  # se imgs_name == None
+                self.ROIs_names.append("")
+
+
+    def paint_retrival(self, frame, roi, show_details = False, verbose=False):
         # Crop the image
         crop = frame[roi[1]:roi[1]+roi[3], roi[0]:roi[0]+roi[2], :]
         # crop = cv2.GaussianBlur(crop, (11, 11), 0)
-        d = {}
-        d['CROP'] = crop
-        show_frame(d)
+        if show_details:
+            d = {}
+            d['CROP'] = crop
+            show_frame(d)
 
         # kp and des of the crop
         kp_crop, des_crop = find_keypoint(crop)
@@ -132,7 +301,7 @@ class PaintingManager:
         # show_frame(d)
         return imgs
 
-    def paint_rectification(self, frame, roi, img_name):
+    def paint_rectification(self, frame, roi, img_name, show_details = False, verbose=False):
         crop = frame[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2], :]
         if img_name == '':
             return 100
@@ -160,7 +329,9 @@ class PaintingManager:
         # Sort matches based on distances
         # sortMatches = sorted(matchList, key=lambda val: val.distance)
         matchImg = cv2.drawMatches(trainImg, kp_train, crop, kp_crop, matchList, flags=2, outImg=None)
-        #show_frame({"Matches": matchImg})
+
+        if show_details:
+            show_frame({"Matches": matchImg})
 
         # Coordinate dei keypoints
         trainPoints = []
@@ -184,16 +355,18 @@ class PaintingManager:
         except:
             return 100
 
-        # Show both images
-        d = {}
-        d["ROI image"] = crop
-        d["Rectified image"] = rectified
-        d["Retrival image"] = trainImg
-        show_frame(d)
+        if show_details:
+            # Show both images
+            d = {}
+            d["ROI image"] = crop
+            d["Rectified image"] = rectified
+            d["Retrival image"] = trainImg
+            show_frame(d)
 
         kp_train, des_train = find_keypoint(trainImg)
         kp_rect, des_rect = find_keypoint(rectified)
 
         av = matcher(des_train, des_rect)
-        print("Img: {}, AV: {}".format(os.path.basename(img_name), av))
+        if verbose:
+            print("Img: {}, AV: {}".format(os.path.basename(img_name), av))
         return av
