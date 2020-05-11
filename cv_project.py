@@ -11,11 +11,11 @@ if __name__ == '__main__':
     #video_name = "VIRB0402"
 
     video_name = "20180206_114720.mp4" # 002 # IMP 1
+    video_name = "20180206_113716.mp4"
     #video_name = "GOPR1926" #003
     #video_name = "VIRB0420.mp4" #008
     #video_name = "VIRB0421" #008
-    #video_name = "VIRB0420" #008
-    #video_name = "VIRB0421.MP4" #008
+    #video_name = "VIRB0413.mp4" #008
 
 
     #video_name = "VID_20180529_112706.mp4" # 010 # IMP 2 Primo da fare vedere
