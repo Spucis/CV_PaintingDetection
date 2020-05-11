@@ -54,8 +54,6 @@ class PaintingManager:
                 if self.count % 50 == 0:
                     self.retrival_and_rectification(frame.copy())
                 self.count += 1
-                # ??????if self.count % 100 == 0:
-                # print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
                 self.out.write(mod_frame)
                 all_video = True
                 if not all_video:
@@ -82,21 +80,21 @@ class PaintingManager:
                     av_dict[av] = imgs_name[i]
 
                 # if(i < len(imgs_name)):
-                if(i < 5):
+                if(i < 5): # and self.room == None
                     img = cv2.imread(imgs_name[i-1])
                     d = {}
                     d["Chosen Img"] = img
                     show_frame(d)
-                else:
+                    # e se av < 35 chiamo la funzione che inizializza la stanza
+                # elif(i < 5 and self.room != None):
+                    # come sopra ma controllo anche che il quadro sia nella stanza
+                else: # elif(self.room != none)
                     av_keys = (list(av_dict.keys()))
                     av_keys.sort()
-                    print("{}, {}".format(av_keys[0], av_dict[av_keys[0]]))
-                    if(av_keys[0] < 55):
-                        img = cv2.imread(av_dict[av_keys[0]])
-                        d = {}
-                        d["Chosen Img Dopo"] = img
-                        show_frame(d)
-
+                    for k in av_keys:
+                        if k < 60: # and checkimage in stanza con il dict
+                            pass
+                            # allora hai trovato l'immagine
 
     def paint_retrival(self, frame, roi):
         # Crop the image
