@@ -49,15 +49,24 @@ def draw_ROI(frame, ROI, text=None, color=(0,0,255), text_color=(0,0,0), copy=Fa
         fontFace = cv2.FONT_HERSHEY_SIMPLEX
         fontScale = .5
         thickness = 1
-        textSize, baseLine = cv2.getTextSize(text, fontFace, fontScale, thickness)
+
+        texts = text.split("\n")
+        textSizes = []
+        for curr_text in texts:
+            textSize, baseLine = cv2.getTextSize(curr_text, fontFace, fontScale, thickness)
+            textSizes.append(textSize)
 
         # To show the label also when at the upper corner of the image
         label_rect_h = 5
-        label_offset = -textSize[1] - label_rect_h if y - textSize[1] - label_rect_h > 0 else textSize[1] + label_rect_h
-        text_offset = -label_rect_h if label_offset < 0 else textSize[1] + 2  # 1 of the border itself and 1 of spacing
+        label_offset = -textSizes[0][1] - label_rect_h if y - textSizes[0][1]*len(texts) - label_rect_h > 0 else textSizes[0][1] + label_rect_h
+        text_offset = -label_rect_h if label_offset < 0 else textSizes[0][1] + 2  # 1 of the border itself and 1 of spacing
 
-        img = cv2.rectangle(img, (x, y), (x + textSize[0], y + label_offset), color, cv2.FILLED)
-        img = cv2.putText(img, text, (x, y + text_offset), fontFace, fontScale, text_color, thickness)
+
+        for index, curr_text in enumerate(texts):
+            img = cv2.rectangle(img, (x, y + label_offset*(index)), (x + textSizes[index][0], y + label_offset*(index+1)), color, cv2.FILLED)
+        for index, curr_text in enumerate(texts):
+            add_offset = label_offset*(index) #if label_offset < 0 else label_offset*(index)
+            img = cv2.putText(img, curr_text, (x, y + text_offset + add_offset), fontFace, fontScale, text_color, thickness)
 
     return cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
 
@@ -79,11 +88,13 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
 
     img = or_frame.copy()
 
+    #Dilation and erosion phase over Canny, to connect the borders
     dilations = 3
     dilate_size = 3
     dilate_kernel = np.full((dilate_size, dilate_size), 1, dtype=np.uint8)
     cycles = 1
     new_canny = frame.copy()
+
     for _ in range(cycles):
         new_canny = cv2.dilate(new_canny, dilate_kernel, iterations=dilations)
         # show_frame({"dilation_{}ites".format(dilations): new_canny, "old": frame})
@@ -91,6 +102,8 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
         # show_frame({"erode_{}ites".format(dilations): new_canny})
     #show_frame({"cycles_Canny": new_canny, "old": frame})
     #return new_canny, None
+
+    # Determine the roi by finding the connected components in dilated and eroded canny
     num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(new_canny)
 
     for label in range(1, num_labels):
@@ -139,8 +152,8 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
     # CLEANING ROIs RULES
     # 1. se il rapporto di aspetto è più di 'ratio_max' volte, considero la ROI non ammissibile
     # 2. se l'area è minore di min_area, non è ammissibile
-    # 3. se è contenuto in un'altra ROI o contiene un'altra ROI, quello con area minore non è ammissibile -- TODO
-    # 4. (opzionale?) se l'overlap supera una certa soglia, la ROI con area minore non è ammissibile -- TODO
+    # 3. se è contenuto in un'altra ROI o contiene un'altra ROI, quello con area minore non è ammissibile (solo se area maggiore è >50% del frame)
+    # 4. (opzionale?) se l'overlap supera una certa soglia, la ROI con area minore non è ammissibile
     ratio_max = 3
     global_area = frame.shape[0]*frame.shape[1]
     min_area = 0.015 * global_area #almeno una % dell'area totale
@@ -182,6 +195,8 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
 
     # True ROIs array
     trueROIs = []
+    big_ROI_discarded = []
+
     global_thres, _ = cv2.threshold(gray_frame, 0, 255,
                                        cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -224,7 +239,8 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
         # text += "-G_TH:{}-L_TH:{}-L_AREA:{}({})".format(global_thres, thres, h * w,
         #                                               h * w / (frame.shape[0] * frame.shape[1]) * 100)
 
-        if otsu_opt_enabled and thres > 1.2 * global_thres: # Escludo le roi che hanno local thresholding di otsu più alta della global.
+        otsu_factor = 1.15 #1.3
+        if otsu_opt_enabled and thres >  otsu_factor * global_thres: # # Escludo le roi che hanno local thresholding di otsu più alta della global.
             img = draw_ROI(img, (x-2, y-2, w+4, h+4), text=text+"G_TH{}-ROI_TH{}".format(global_thres, thres), text_color=(255, 255, 255), color=(255, 0, 0))
             drawable = False
 
@@ -272,18 +288,22 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
     for name, value in params.items():
         final_string += "{}: {}; ".format(name, value)
 
+
+
     # show_frame({"Relevant ROIs: " + final_string : img})
     return img, trueROIs
 
 def edge_detection(frame, debug = False, frame_number = 0):
     selected_frame = 0
     d_frames = {}
-
+    gray = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2GRAY)
     # To apply more blur without modifing frame
-    blur = frame
+    blur = gray.copy()
 
     # Gaussian filter
-    blur = cv2.GaussianBlur(blur, (9, 9), 0)
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    #blur = cv2.medianBlur(blur, 9)
+    blur = cv2.bilateralFilter(blur, 7, 500, 500)
     """
         Median -- UTILE PER LE STATUE?
         
@@ -293,7 +313,7 @@ def edge_detection(frame, debug = False, frame_number = 0):
     # Bilateral
     # blur = cv2.bilateralFilter(blur, 5, 5, 20)
 
-    gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
+
     if debug and selected_frame == frame_number:
         d_frames['Blurred image'] = blur
         d_frames['Gray'] = gray
@@ -312,7 +332,7 @@ def edge_detection(frame, debug = False, frame_number = 0):
     TH = 800
 
     #Threshold molto rumorose
-    th = 200
+    th = 400
     TH = 400
 
     mod_f = cv2.Canny(dst.astype(np.uint8), th, TH, apertureSize=5, L2gradient=True)

@@ -1,5 +1,6 @@
 from source import globals
 from source.detection_utils import *
+from yolo import detect, darknet
 import json
 import pandas as pd
 import os
@@ -20,6 +21,8 @@ class PaintingManager:
         self.ROIs_names = []
         self.room = None
         self.data = None # Sarà di tipo pd.DataFrame()
+        self.isData = False # Variabile che mi dice se dentro data ho qualcosa
+        self.yolo_people_model = None # yolo people model
 
         #Il quadro "x" è nella stanza self.room?
         self.room_dict = {
@@ -51,7 +54,7 @@ class PaintingManager:
             self.kp_dict[inode] = kp
             self.des_dict[inode] = des
 
-    def set_room_dict(self, img_name, verbose = False):
+    def set_room_dict(self, img_name, verbose = False, draw_map=False):
         """
         Imposta il dizionario interno room_dict a True se la relativa immagine (la chiave del dizionario)
         è contenuta nella stessa stanza dell'immagine 'img_name'.
@@ -70,8 +73,9 @@ class PaintingManager:
         # mi serve solo il nome, senza il path
         img_name = os.path.basename(img_name)
 
-        if not self.data:
-            self.data = pd.read_csv(conf["data_csv"])
+        if not self.isData and not self.data:
+            self.isData = True
+            self.data = pd.read_csv(conf["data_csv"], sep=",")
         header = self.data.columns.values
 
         if verbose:
@@ -79,8 +83,12 @@ class PaintingManager:
             print(self.data)
 
         curr_row = self.data[self.data["Image"] == img_name]
+
         self.room = curr_row["Room"].values[0]
         room = self.room
+
+        if draw_map:
+            self.rooms_map_highlight(room=room, color=(0,0,255))
 
         if verbose:
             print("Il quadro {} è nella stanza {}:\nTitle: {}\nAuthor: {}\nRoom: {}\nImage: {}".format(
@@ -111,6 +119,25 @@ class PaintingManager:
             print("===================")
 
 
+    def rooms_map_highlight(self, room=1, color=(255,0,0)):
+        """
+        Mostra la mappa del museo con evidenziata la stanza in cui ci si trova.
+
+        :return:
+        """
+
+        #la riga 0 è vuota. le stanze sono coerenti con i quadri.
+        rooms_roi = pd.read_csv("rooms_roi.csv")
+        header = rooms_roi.columns.values # room, x, y, w, h
+
+        curr_roi = rooms_roi[rooms_roi["room"] == room]
+        map = cv2.imread("."+conf['slash']+"input"+conf['slash']+"map.png")
+
+        cv2.rectangle(map,(curr_roi['x'], curr_roi['y']),(curr_roi['x']+curr_roi['w'], curr_roi['y']+curr_roi['h']), color)
+
+        show_frame({"map": map})
+        return map
+
     def ROI_labeling(self, frame, show_details = False, verbose = False):
         """
         Dato un frame, l'insieme delle ROI al suo interno e i nomi dei file delle immagini relative alle ROI,
@@ -125,17 +152,22 @@ class PaintingManager:
         if verbose:
             print("ROI LABELING")
 
+        if not self.isData and not self.data:
+            self.isData = True
+            self.data = pd.read_csv(conf["data_csv"], sep=",")
+
+
         for i, roi in enumerate(self.ROIs):
             img_name = os.path.basename(self.ROIs_names[i])
             row = self.data[self.data["Image"] == img_name]
             if row.empty or self.ROIs_names[i] == "":
-                text = "Non disponibile nel database [{}]".format(img_name)
-                color = (0,0,255)
+                text = "Quadro non indentificato"
+                color = (0,255,255) # giallo
             else:
                 title = row["Title"].values[0]
                 author = row["Author"].values[0]
                 painting = "{}".format(img_name)
-                text = str(title) + " \n " + str(author)+ " \n "+ str(painting)
+                text = str(title) + "\n" + str(author)+ "\n"+ str(painting)
                 color = (0,255,0)
             draw_ROI(labeled_frame, roi, text=text, color=color)
 
@@ -148,13 +180,32 @@ class PaintingManager:
 
 
     def ROI_detection(self, or_frame):
-        gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True,  frame_number=self.count)
+        gray_frame, marked_frame, ed_frame = edge_detection(or_frame.copy(), debug=True,  frame_number=self.count)
 
         #kp_frame = keypoints_detection(or_frame, show=False)
-        roi_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count, otsu_opt_enabled=True)
+        roi_frame, ROIs = ccl_detection(or_frame.copy(), gray_frame, ed_frame, frame_number=self.count, otsu_opt_enabled=True)
         #ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
 
         return roi_frame, ROIs
+
+    def init_yolo_people(self):
+        """
+        Initialize the yolo people detection with config file (conf[yolo people cfg]) and weights file.
+        :return:
+        """
+        self.yolo_people_model = darknet.Darknet(conf['yolo_people_cfg'])
+        self.yolo_people_model.load_weights(conf['yolo_people_weights'])
+
+    def people_detection(self, frame = None, verbose=False, show_details=False):
+
+        if not self.yolo_people_model:
+            self.init_yolo_people()
+        people_ROIs, people_mod_frame = detect.detect(specific_frame = frame, separator=conf['slash'], verbose=verbose, model=self.yolo_people_model, room=self.room) # people detection
+        people_mod_frame = people_mod_frame[0]
+
+        if show_details:
+            show_frame({"people_mod_frame": people_mod_frame})
+        return people_ROIs, people_mod_frame
 
     def paint_detection(self, step = 20):
         # Read until video is completed
@@ -166,15 +217,21 @@ class PaintingManager:
             if ret == True:
                 if self.count == 0:
                     print("Paint detection function.")
-                mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+                    #people_ROIs, mod_frame = self.people_detection(frame=frame)
 
                 if self.count % step == 0:# or True:
-                    self.retrival_and_rectification(frame.copy(), show_details=True, verbose=True) #show_details = True, verbose = True
+                    mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+                    self.retrival_and_rectification(frame.copy(), show_details=False, verbose=False) #show_details = True, verbose = True
                     # ROI LABELING
-                    mod_frame = self.ROI_labeling(frame.copy(), show_details=True, verbose=True)
+                    mod_frame = self.ROI_labeling(frame.copy(), show_details=False, verbose=False)
+                    people_ROIs, mod_frame = self.people_detection(mod_frame.copy(), show_details=False, verbose=False)
+
 
                 if self.count % step == 0:
                     print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
+
+                #if self.count == 0 or self.count == 400:
+                #    show_frame({"SHOW": mod_frame})
 
                 if self.count % step == 0:
                     self.out.write(mod_frame)
@@ -235,8 +292,8 @@ class PaintingManager:
                         d = {}
                         d["Chosen Img"] = img
                         show_frame(d)
-                    if av < 45:
-                        self.set_room_dict(imgs_name[i-1], verbose=verbose)
+                    if av < 35:
+                        self.set_room_dict(imgs_name[i-1], verbose=verbose, draw_map=True)
 
                     self.ROIs_names.append(imgs_name[i-1])
 
