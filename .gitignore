@@ -14,3 +14,11 @@ output/videos/*
 !output/videos/.gitkeep
 .idea
 conf.json
+yolo/yolov3.weights
+yolo/det
+yolo/imgs
+yolo_training/cfg/yolov3.weights
+yolo_training/checkpoints
+yolo_training/data
+yolo_training/det
+yolo_training/imgs
