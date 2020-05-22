@@ -1,5 +1,6 @@
 from source import edge_detection, hough_transform, globals
 from source.painting_manager import *
+import split_dataset
 
 conf = globals.conf
 
@@ -18,15 +19,32 @@ if __name__ == '__main__':
     #video_name = "VIRB0421.MP4" #008
 
 
-    #video_name = "VID_20180529_112706.mp4" # 010 # IMP 2 Primo da fare vedere
+    video_name = "VID_20180529_112706.mp4" # 010 # IMP 2 Primo da fare vedere
     #video_name = "VID_20180529_112951.mp4" # 010
     #video_name = "VID_20180529_112951.mp4"
 
     #video_name = "VID_20180529_112849.mp4" # 010
     #video_name = "VID_20180529_112828" # 010
 
-    p_manager = PaintingManager(globals.VideoManager())
-    p_manager.db_keypoints()
-    p_manager.open_video(video_name)
-    p_manager.paint_detection()
-    p_manager.close_video()
+    # Labels
+    create_labels = True
+
+    p_manager = PaintingManager(globals.VideoManager(create_labels), create_labels)
+
+    print("CREATE LABELS: {}".format(create_labels))
+
+    if create_labels:
+
+        split_dataset.split_dataset(conf)
+
+        nodes = os.listdir("{}{}".format(conf['input_path'], conf['in_dir']))
+        nodes.sort()
+        for node in nodes:
+            p_manager.open_video(node)
+            p_manager.paint_detection()
+            p_manager.close_video()
+    else:
+        p_manager.db_keypoints()
+        p_manager.open_video(video_name)
+        p_manager.paint_detection()
+        p_manager.close_video()

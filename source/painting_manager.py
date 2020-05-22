@@ -5,7 +5,7 @@ import os
 
 conf = globals.conf
 class PaintingManager:
-    def __init__(self, video_manager):
+    def __init__(self, video_manager, create_labels):
         self.video_manager = video_manager
         self.input_path = conf['input_path'] + conf['in_dir'] + conf['slash']
         self.input_img = conf['input_img']
@@ -16,13 +16,17 @@ class PaintingManager:
         self.kp_dict = {}
         self.des_dict = {}
         self.ROIs = []
+        self.video_name = ""
+        self.create_labels = create_labels
 
     def open_video(self, video_name):
+        self.video_name = video_name
         self.cap, self.out = self.video_manager.open_video(video_name, self.input_path, conf['output_path'])
 
     def close_video(self):
         self.cap.release()
-        self.out.release()
+        if not self.create_labels:
+            self.out.release()
 
     def db_keypoints(self):
         self.inodes = os.listdir(self.input_img)
@@ -36,8 +40,51 @@ class PaintingManager:
             self.kp_dict[inode] = kp
             self.des_dict[inode] = des
 
+    def create_labelme_json(self, frame):
+        img_name = "{}{}__{}.png".format(conf['labeling_img'], os.path.splitext(self.video_name)[0], self.count)
+        cv2.imwrite(img_name, frame)
+
+        json_data = dict({'imageData' : None})
+        json_data['version'] = "4.2.10"
+        json_data['flags'] = {}
+        shapes = []
+        for roi in self.ROIs:
+            shape = dict({'label': "quadro", 'group_id' : None})
+            shape['shape_type'] = "rectangle"
+            shape['flags'] = {}
+            xy = [(int)(roi[0]), (int)(roi[1])]
+            xy2 = [(int)(roi[0] + roi[2]), (int)(roi[1] + roi[3])]
+            shape['points'] = [xy, xy2]
+            shapes.append(shape)
+        json_data['shapes'] = shapes
+        json_data['imageHeight'] = frame.shape[0]
+        json_data['imagePath'] = "{}{}__{}.png".format(conf['relative_img'], os.path.splitext(self.video_name)[0], self.count)
+        json_data['imageWidth'] = frame.shape[1]
+        json_name = "{}{}__{}.json".format(conf['labeling_labels'], os.path.splitext(self.video_name)[0], self.count)
+
+        with open(json_name, 'w') as outfile:
+            json.dump(json_data, outfile, indent=2)
+            print("JSON -> {}\n".format(json_name))
+            outfile.close()
+
+    def create_yolomark_txt(self, frame):
+        img_name = "{}{}__{}__{}".format(conf['labeling_img'], conf['in_dir'], os.path.splitext(self.video_name)[0], self.count)
+        cv2.imwrite("{}.png".format(img_name), frame)
+
+        with open("{}.txt".format(img_name), 'w') as outfile:
+            for roi in self.ROIs:
+                # values in perc
+                cx = (roi[0] + roi[2] / 2) / frame.shape[1]
+                cy = (roi[1] + roi[3] / 2) / frame.shape[0]
+                w = roi[2] / frame.shape[1]
+                h = roi[3] / frame.shape[0]
+                row = "0 {} {} {} {}\n".format(cx, cy, w, h)
+                outfile.write(row)
+            print("TXT -> {}.txt\n".format(img_name))
+            outfile.close()
+
     def ROI_detection(self, or_frame):
-        gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=True,  frame_number=self.count)
+        gray_frame, marked_frame, ed_frame = edge_detection(or_frame, debug=False,  frame_number=self.count)
 
         #kp_frame = keypoints_detection(or_frame, show=False)
         roi_frame, ROIs = ccl_detection(or_frame, gray_frame, ed_frame, frame_number=self.count, otsu_opt_enabled=True)
@@ -47,28 +94,48 @@ class PaintingManager:
 
     def paint_detection(self):
         # Read until video is completed
-        while (self.cap.isOpened() and self.out.isOpened()):
+        self.count = 0
+
+        out_is_ok = False
+        if self.create_labels:
+            out_is_ok = True
+        else:
+            out_is_ok = self.out.isOpened()
+
+        while (self.cap.isOpened() and out_is_ok):
             ret, frame = self.cap.read()
             if ret == True:
                 if self.count == 0:
-                    print("Edge detection function.")
-                mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+                    print("START: " + self.video_name)
+
+                if self.create_labels:
+                    if self.count % 250 == 0:
+                        mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+                        #show_frame({'ROIs': mod_frame})
+                        self.create_yolomark_txt(frame.copy())
+                        #self.create_labelme_json(frame.copy())
+                else:
+                    mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+
                 """
                 if self.count % 50 == 0:
                     self.retrival_and_rectification(frame.copy())
                 """
+
                 self.count += 1
                 # ??????if self.count % 100 == 0:
                 # print("Frame count: {}/{}".format(self.count, self.video_manager.n_frame))
 
-                self.out.write(mod_frame)
+                if not self.create_labels:
+                    self.out.write(mod_frame)
+
                 all_video = True
                 if not all_video:
                     break
             else:
                 print("Problema durante la lettura del video... stop al frame {}: {}".format(self.count, frame))
                 break
-        print("Fine edge_detection.")
+        print("END: " + self.video_name)
 
     def retrival_and_rectification(self, frame):
         print('Frame {}:'.format(self.count))
