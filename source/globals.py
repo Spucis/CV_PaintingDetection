@@ -9,11 +9,12 @@ print("Config file: \n{}".format(conf))
 match_th = 5
 
 class VideoManager:
-    def __init__(self):
+    def __init__(self, create_labels):
         self.in_codec = None
         self.in_fps = None
         self.in_frameSize = None
         self.n_frame = None
+        self.create_labels = create_labels
 
     def print_info(self):
         print("Frame count: {}".format(self.n_frame))
@@ -35,16 +36,18 @@ class VideoManager:
             np.uint32)
         self.n_frame = np.around(cap.get(cv2.CAP_PROP_FRAME_COUNT)).astype(np.uint32)
                                                                                                 # *'mp4v'
-        out = cv2.VideoWriter("{}{}".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
-                              np.around(self.in_fps).astype(np.uint32),
-                              tuple(np.around(self.in_frameSize).astype(np.uint32)), True)
+        out = None
+        if not self.create_labels:
+            out = cv2.VideoWriter("{}{}".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
+                                  np.around(self.in_fps).astype(np.uint32),
+                                  tuple(np.around(self.in_frameSize).astype(np.uint32)), True)
 
-        out.open("{}{}".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
-                 np.around(self.in_fps).astype(np.uint32),
-                 tuple(np.around(self.in_frameSize).astype(np.uint32)))
+            out.open("{}{}".format(output_path, video_name), cv2.VideoWriter_fourcc(*'mp4v'),
+                     np.around(self.in_fps).astype(np.uint32),
+                     tuple(np.around(self.in_frameSize).astype(np.uint32)))
 
-        if out.isOpened() == False:
-            print("Error opening out video stream or file")
-            return None, None
+            if out.isOpened() == False:
+                print("Error opening out video stream or file")
+                return None, None
 
         return cap, out

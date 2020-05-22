@@ -51,7 +51,7 @@ def detect(specific_frame=None, verbose=True, draw_images=True, write_on_disk=Fa
     confidence = float(args.confidence)
     nms_thesh = float(args.nms_thresh)
     start = 0
-    CUDA = torch.cuda.is_available()
+    CUDA = False #torch.cuda.is_available()
 
 
 
