@@ -239,7 +239,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
         # text += "-G_TH:{}-L_TH:{}-L_AREA:{}({})".format(global_thres, thres, h * w,
         #                                               h * w / (frame.shape[0] * frame.shape[1]) * 100)
 
-        otsu_factor = 1.15 #1.3
+        otsu_factor = 1.3 #1.3
         if otsu_opt_enabled and thres >  otsu_factor * global_thres: # # Escludo le roi che hanno local thresholding di otsu più alta della global.
             img = draw_ROI(img, (x-2, y-2, w+4, h+4), text=text+"G_TH{}-ROI_TH{}".format(global_thres, thres), text_color=(255, 255, 255), color=(255, 0, 0))
             drawable = False

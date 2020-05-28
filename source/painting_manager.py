@@ -23,6 +23,7 @@ class PaintingManager:
         self.data = None # Sarà di tipo pd.DataFrame()
         self.isData = False # Variabile che mi dice se dentro data ho qualcosa
         self.yolo_people_model = None # yolo people model
+        self.json_output = {} # the dict that will be parsed to make the ouput_details file
 
         #Il quadro "x" è nella stanza self.room?
         self.room_dict = {
@@ -143,7 +144,7 @@ class PaintingManager:
         show_frame({"map": map})
         return map
 
-    def ROI_labeling(self, frame, show_details = False, verbose = False):
+    def ROI_labeling(self, frame, show_details = False, verbose = False, json_output_details=False):
         """
         Dato un frame, l'insieme delle ROI al suo interno e i nomi dei file delle immagini relative alle ROI,
         determina il nome del quadro e lo associa alla ROI corrispondente.
@@ -161,22 +162,36 @@ class PaintingManager:
             self.isData = True
             self.data = pd.read_csv(conf["data_csv"], sep=",")
 
-
+        #curr_frame_out = {}
         for i, roi in enumerate(self.ROIs):
+            curr_roi_out = {}
             img_name = os.path.basename(self.ROIs_names[i])
             row = self.data[self.data["Image"] == img_name]
             if row.empty or self.ROIs_names[i] == "":
-                text = "Quadro non indentificato"
+                roi_id = "ID {} - ".format(i)
+
+                text = "{}Unidentified object".format(roi_id)
+                if json_output_details:
+                    curr_roi_out["text"] = "Unidentified object"
+                    curr_roi_out["id"] = i
                 color = (0,255,255) # giallo
             else:
                 title = row["Title"].values[0]
                 author = row["Author"].values[0]
                 painting = "{}".format(img_name)
-                text = str(title) + "\n" + str(author)+ "\n"+ str(painting)
+                roi_id = "ID {} - ".format(i)
+                text = str(title) + "\n" + str(author)+ "\n"+ str(roi_id) +str(painting)
+                if json_output_details:
+                    curr_roi_out["id"] = i
+                    curr_roi_out["title"] = title
+                    curr_roi_out["author"] = author
+                    curr_roi_out["img_name"] = painting
                 color = (0,255,0)
-            draw_ROI(labeled_frame, roi, text=text, color=color)
+            if json_output_details:
+                self.json_output["FRAME {}".format(self.count)]["ROI {}".format(i)].update(curr_roi_out)
 
-            draw_ROI(labeled_frame, (10, frame.shape[0]-100, 0, 0), text="Stanza "+str(self.room), color=(255,255,0), only_text=True)
+            draw_ROI(labeled_frame, roi, text=text, color=color)
+            draw_ROI(labeled_frame, (10, frame.shape[0]-10, 0, 0), text="Frame {} - Stanza {}".format(self.count, self.room), color=(255,255,0), only_text=True)
 
         if show_details:
             show_frame({"Labeled_frame" : labeled_frame})
@@ -255,7 +270,7 @@ class PaintingManager:
             show_frame({"people_mod_frame": people_mod_frame})
         return people_ROIs, people_mod_frame
 
-    def paint_detection(self, step = 20):
+    def paint_detection(self, json_output_details=False, step = 1):
         # Read until video is completed
 
         start = time.time()
@@ -279,14 +294,31 @@ class PaintingManager:
                         self.create_yolomark_txt(frame.copy())
                 else:
                     if self.count % step == 0:  # or True:
-                        mod_frame, self.ROIs = self.ROI_detection(frame.copy())
-                        self.retrival_and_rectification(frame.copy(), show_details=False,
-                                                        verbose=False)  # show_details = True, verbose = True
-                        # ROI LABELING
-                        mod_frame = self.ROI_labeling(frame.copy(), show_details=False, verbose=False)
-                        people_ROIs, mod_frame = self.people_detection(mod_frame.copy(), show_details=False,
-                                                                       verbose=False)
+                        '''
+                            'show_details' option set "True" will enable the show_frame(...) functions.
+                                           The execution will stop to show each retrieved painting,
+                                           its rectification attempt and its rectified version.
+                            
+                            'verbose'      option set "True" will enable more detailed output.
+                                           More info will be printed, including the content of the csv file, 
+                                           the matching list of the painting retrieval phase, the scores of the 
+                                           painting matching step and all the similarity measures used will be shown. 
+                        '''
 
+                        mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+                        self.retrival_and_rectification(frame.copy(),
+                                                        show_details=False,
+                                                        verbose=False,
+                                                        json_output_details=json_output_details)  # show_details = True, verbose = True
+                        # ROI LABELING
+                        mod_frame = self.ROI_labeling(frame.copy(),
+                                                      show_details=False,
+                                                      verbose=False,
+                                                      json_output_details=json_output_details)
+                        people_ROIs, mod_frame = self.people_detection(mod_frame.copy(),
+                                                                       show_details=False,
+                                                                       verbose=False)
+                        self.json_output["FRAME {}".format(self.count)]["room"] = str(self.room) if self.room != None else "No room"
                 self.count += 1
 
                 if self.count % step == 0:
@@ -302,30 +334,63 @@ class PaintingManager:
                 if not all_video:
                     break
             else:
-                print("Problema durante la lettura del video... stop al frame {}: {}".format(self.count, frame))
+                if json_output_details:
+
+                    print("Building the output_details.json file...")
+                    with open("output_details.json", "w") as outfile:
+                        json.dump(self.json_output, outfile, indent="   ")
+
                 break
 
         print("\nElapsed time: {}".format(time.time() - start))
         print("END: " + self.video_name)
 
 
-    def retrival_and_rectification(self, frame, show_details=False, verbose = False):
+    def parse_imgs_details(self, imgs_details):
+        curr_d = {}
+        for item in imgs_details:
+            curr_d["{:10}".format(item[1])] = "{:.3f}".format(item[0])
+        return curr_d
+
+    def parse_av(self, av_dict):
+        av_d = {}
+        for av, img in av_dict.items():
+            av_d[img] = av
+        return av_d
+
+    def retrival_and_rectification(self, frame, show_details=False, verbose = False, json_output_details=False):
+
         if verbose:
             print('Frame {}:'.format(self.count))
         r = 0
         self.ROIs_names = []
+        curr_json_out = {}
 
-        for roi in self.ROIs:
+        matching_threshold = 50             # threshold di distanza per selezionare un quadro come corretto
+        matching_room_threshold = 35        # "strong threshold" per selezionare il quadro come "ancora" e per scegliere la stanza
+        matching_threshold_with_room = 60   # "weak threshold" per selezionare un quadro anche con distanza più alta, se è nella stanza corrente.
+
+        for roi_index, roi in enumerate(self.ROIs):
+            comments = ""
+            curr_roi_json_out = {}
+
             if verbose:
                 print('ROI: {}'.format(r))
             r += 1
-            imgs_name = self.paint_retrival(frame, roi, show_details = show_details, verbose=verbose)
+            imgs_name, imgs_details = self.paint_retrival(frame, roi, show_details = show_details, verbose=verbose)
+
+            if json_output_details:
+                #making an entry in the output json dictionary
+                curr_roi_json_out["imgs_details"] = self.parse_imgs_details(imgs_details)
+
+            if verbose:
+                print("==== ROI {} Painting retrieval ====\n{}\n==================================".format(roi_index, "Image name  Match. distance\n" + "\n".join(["{:10}  {:.3f}".format(os.path.basename(x[1]), x[0]) for x in imgs_details])))
+            av_dict = {}
             if imgs_name != None:
-                av_dict = {}
                 template_matchings = []
                 av = 100
                 i = 0
-                while(av >= 50 and i < 5):
+                while(av >= matching_threshold and i < 5):
                     av = self.paint_rectification(frame, roi, imgs_name[i], show_details = show_details, verbose=verbose)
                     """ PROVA TEMPLATE MATCHING
                     try:
@@ -343,8 +408,9 @@ class PaintingManager:
                         pass
                         #print("Qualche errore nella template matching.")
                     """
-                    i += 1
+
                     av_dict[av] = imgs_name[i]
+                    i += 1
 
                 # if(i < len(imgs_name)):
                 if(i < 5 and self.room == None):
@@ -353,38 +419,62 @@ class PaintingManager:
                         d = {}
                         d["Chosen Img"] = img
                         show_frame(d)
-                    if av < 35:
+
+                    comments += "Matching found (av < {}): chosen image is {}.\n".format(matching_threshold, os.path.basename(imgs_name[i-1]))
+                    if av < matching_room_threshold:
                         self.set_room_dict(imgs_name[i-1], verbose=verbose, draw_map=True)
+                        comments+="Strong matching (av <  {}): the room is set to the matched painting's room.\n".format(matching_room_threshold)
 
                     self.ROIs_names.append(imgs_name[i-1])
 
-                elif(i < 5 and self.room != None): # TODO
+                elif(i < 5 and self.room != None):
                     # come sopra ma controllo anche che il quadro sia nella stanza
                     img_name = os.path.basename(imgs_name[i-1])
                     if self.room_dict[img_name] == True:
                         self.ROIs_names.append(imgs_name[i-1])
+                        comments += "Matching found (av < {}) and it's in the same room: chosen image is {}.\n".format(matching_threshold,
+                                                                                               os.path.basename(
+                                                                                                   imgs_name[i-1]))
                     else:
                         # Per il momento stringa vuota
                         self.ROIs_names.append("")
+                        comments += "Matching found (av < {}) but paiting is not in the same room: NO MATCH.\n".format(matching_threshold)
 
                 elif(self.room != None):
                     av_keys = (list(av_dict.keys()))
                     av_keys.sort()
                     found = False
                     for k in av_keys:
-                        if k < 60 and not found: # and checkimage in stanza con il dict
+                        if k < matching_threshold_with_room and not found: # and checkimage in stanza con il dict
                             img_name = os.path.basename(av_dict[k])
                             # allora hai trovato l'immagine
                             if self.room_dict[img_name] == True:
                                 self.ROIs_names.append(av_dict[k])
+                                comments += "No match found (av > {}) but this paiting is in the same room, and therefore its distance is feasible (av < {}): chosen image is {}.\n".format(
+                                    matching_threshold, matching_threshold_with_room,img_name)
                                 found = True
 
                     if not found:
                         self.ROIs_names.append("")
+
+                        comments += "No feasible match found.\n"
                 else:
                     self.ROIs_names.append("")
+                    comments += "No feasible match found.\n"
             else:  # se imgs_name == None
                 self.ROIs_names.append("")
+                comments += "No feasible match found.\n"
+
+            if json_output_details:
+                curr_roi_json_out["av_distances"] = self.parse_av(av_dict)
+                curr_roi_json_out["comments"] = list(filter(None,comments.split("\n")))
+                curr_json_out["ROI {}".format(roi_index)] = curr_roi_json_out
+            if verbose:
+                print("===== COMMENTS: FRAME {} ROI {} =====\n{}======== END COMMENTS ========".format(self.count, roi_index, comments))
+
+        if json_output_details:
+            #making the partial entry for the current frame, it will also be updated by the ROI labeling function
+            self.json_output["FRAME {}".format(self.count)] = curr_json_out
 
 
     def paint_retrival(self, frame, roi, show_details = False, verbose=False):
@@ -399,7 +489,7 @@ class PaintingManager:
         # kp and des of the crop
         kp_crop, des_crop = find_keypoint(crop)
         if kp_crop is None or des_crop is None:
-            return None
+            return None, [(0, "No match")]
 
         kp_crop = cv2.drawKeypoints(crop, kp_crop, color=(0, 255, 0), outImage=None)
         dist = []
@@ -417,7 +507,7 @@ class PaintingManager:
         #
         # d['kp_crop'] = kp_crop
         # show_frame(d)
-        return imgs
+        return imgs, s
 
     def paint_rectification(self, frame, roi, img_name, show_details = False, verbose=False):
         crop = frame[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2], :]
