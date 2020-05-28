@@ -10,6 +10,10 @@ from yolo_training.utils.utils import build_targets
 from collections import defaultdict
 
 import cv2
+import warnings
+
+
+warnings.filterwarnings("ignore")
 
 
 def create_modules(module_defs):
@@ -348,13 +352,15 @@ class Darknet(nn.Module):
         fp.close()
 
 
+"""
 class Accuracy(nn.Module):
 
     def __init__(self):
         super(Accuracy, self).__init__()
 
     def forward(self, y_pred: torch.Tensor, y_true: torch.Tensor):
-        """
+"""
+"""
         Given y_pred (predictions) and y_true (groundtruth labels), this method
         should return the number of right predictions.
         y_pred: predictions -> shape (B, numBB, 7) (float)  shape[2] = [obj_prob, cx, cy, w, h, class1, class2]
@@ -363,7 +369,8 @@ class Accuracy(nn.Module):
         y_pred: [[0.25, 0.25, 0.5], [0.1, 0.7, 0.2], [0.3, 0.1, 0.6]]
         y_true: [2, 0, 2]
         Expected return value: 2
-        """
+"""
+"""
         y_pred_classes = np.argmax(y_pred, axis=1)
         y_correct = y_pred_classes == y_true
         return torch.sum(y_correct)  # torch.randint(B, 1)
@@ -391,3 +398,4 @@ def eval_acc(model: nn.Module, data_loader: torch.utils.data.DataLoader,
             total += y_pred.size(0)
 
     return correct / total
+"""

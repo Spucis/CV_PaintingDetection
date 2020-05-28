@@ -1,3 +1,9 @@
+import warnings
+
+
+warnings.filterwarnings("ignore")
+
+
 def parse_model_config(path):
     """Parses the yolo-v3 layer configuration file and returns module definitions"""
     file = open(path, 'r')
