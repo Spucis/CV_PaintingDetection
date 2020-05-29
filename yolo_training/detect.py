@@ -15,13 +15,9 @@ import pandas as pd
 import random
 #import source.globals
 
-conf = {}
-conf['slash'] = "\\"
-
 def arg_parse():
     """
     Parse arguements to the detect module
-    
     """
     
     parser = argparse.ArgumentParser(description='YOLO v3 Detection Module')
@@ -33,20 +29,20 @@ def arg_parse():
                         "Image / Directory to store detections to",
                         default = "det", type = str)
     parser.add_argument("--bs", dest = "bs", help = "Batch size", default = 1)
-    parser.add_argument("--confidence", dest = "confidence", help = "Object Confidence to filter predictions", default = 0.8)#0.5
-    parser.add_argument("--nms_thresh", dest = "nms_thresh", help = "NMS Threshhold", default = 0.2)#0.4
+    parser.add_argument("--confidence", dest = "confidence", help = "Object Confidence to filter predictions", default = 0.8) # 0.5
+    parser.add_argument("--nms_thresh", dest = "nms_thresh", help = "NMS Threshhold", default = 0.4) # 0.4
     parser.add_argument("--cfg", dest = 'cfgfile', help = 
                         "Config file",
-                        default = "cfg{}yolov3.cfg".format(conf['slash']), type = str)
+                        default = "cfg/yolov3.cfg", type = str)
     parser.add_argument("--weights", dest = 'weightsfile', help = 
                         "weightsfile",
-                        default = "checkpoints{0}10.weights".format(conf['slash']), type = str)
+                        default = "checkpoints/50__AP_21169__LR_004.weights", type = str)     # 20 | 60
     parser.add_argument("--reso", dest = 'reso', help = 
                         "Input resolution of the network. Increase to increase accuracy. Decrease to increase speed",
                         default = "416", type = str)
     parser.add_argument("--valid", dest='valid', help=
                         "validation file containing images filename to perform detection upon",
-                        default="data{0}museum{0}val.txt".format(conf['slash']), type=str)
+                        default="data/museum/val.txt", type=str)
     
     return parser.parse_args()
     
@@ -62,7 +58,7 @@ CUDA = torch.cuda.is_available()
 
 
 num_classes = 2
-classes = load_classes("cfg{}museum.names".format(conf['slash']))
+classes = load_classes("cfg/museum.names")
 
 
 
@@ -145,7 +141,7 @@ for i, batch in enumerate(im_batches):
 
         for im_num, image in enumerate(imlist[i*batch_size: min((i +  1)*batch_size, len(imlist))]):
             im_id = i*batch_size + im_num
-            print("{0:20s} predicted in {1:6.3f} seconds".format(image.split(conf['slash'])[-1], (end - start)/batch_size))
+            print("{0:20s} predicted in {1:6.3f} seconds".format(image.split('/')[-1], (end - start)/batch_size))
             print("{0:20s} {1:s}".format("Objects Detected:", ""))
             print("----------------------------------------------------------")
         continue
@@ -161,7 +157,7 @@ for i, batch in enumerate(im_batches):
     for im_num, image in enumerate(imlist[i*batch_size: min((i +  1)*batch_size, len(imlist))]):
         im_id = i*batch_size + im_num
         objs = [classes[int(x[-1])] for x in output if int(x[0]) == im_id]
-        print("{0:20s} predicted in {1:6.3f} seconds".format(image.split(conf['slash'])[-1], (end - start)/batch_size))
+        print("{0:20s} predicted in {1:6.3f} seconds".format(image.split('/')[-1], (end - start)/batch_size))
         print("{0:20s} {1:s}".format("Objects Detected:", " ".join(objs)))
         print("----------------------------------------------------------")
 
@@ -214,7 +210,7 @@ def write(x, results):
 
 list(map(lambda x: write(x, loaded_ims), output))
 
-det_names = pd.Series(imlist).apply(lambda x: "{}{}det_{}".format(args.det,conf['slash'],x.split(conf['slash'])[-1]))
+det_names = pd.Series(imlist).apply(lambda x: "{}/det_{}".format(args.det, x.split('/')[-1]))
 
 list(map(cv2.imwrite, det_names, loaded_ims))
 

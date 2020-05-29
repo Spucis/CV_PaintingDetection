@@ -18,6 +18,7 @@ yolo/yolov3.weights
 yolo/det
 yolo/imgs
 yolo_training/cfg/yolov3.weights
+yolo_training/cfg/*.weights
 yolo_training/checkpoints
 yolo_training/data
 yolo_training/det
