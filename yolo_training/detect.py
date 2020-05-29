@@ -13,11 +13,11 @@ from yolo_training.darknet import Darknet
 import pickle as pkl
 import pandas as pd
 import random
-#import source.globals
 
 def arg_parse():
     """
     Parse arguements to the detect module
+    
     """
     
     parser = argparse.ArgumentParser(description='YOLO v3 Detection Module')
@@ -39,7 +39,7 @@ def arg_parse():
                         default = "checkpoints/50__AP_21169__LR_004.weights", type = str)     # 20 | 60
     parser.add_argument("--reso", dest = 'reso', help = 
                         "Input resolution of the network. Increase to increase accuracy. Decrease to increase speed",
-                        default = "416", type = str)
+                        default = "640", type = str)
     parser.add_argument("--valid", dest='valid', help=
                         "validation file containing images filename to perform detection upon",
                         default="data/museum/val.txt", type=str)
@@ -82,21 +82,19 @@ if CUDA:
 model.eval()
 
 read_dir = time.time()
-isValidation = False
-if isValidation:
-    #Detection phase
-    with open(valid_file, 'r') as file:
-        imlist = [f.replace('\n', '') for f in file.readlines()]
-else:
-    try:
-        imlist = [osp.join(osp.realpath('.'), images, img) for img in os.listdir(images)]
-    except NotADirectoryError:
-        imlist = []
-        imlist.append(osp.join(osp.realpath('.'), images))
-    except FileNotFoundError:
-        print ("No file or directory with the name {}".format(images))
-        exit()
-
+#Detection phase
+with open(valid_file, 'r') as file:
+    imlist = [f.replace('\n', '') for f in file.readlines()]
+"""
+try:
+    imlist = [osp.join(osp.realpath('.'), images, img) for img in os.listdir(images)]
+except NotADirectoryError:
+    imlist = []
+    imlist.append(osp.join(osp.realpath('.'), images))
+except FileNotFoundError:
+    print ("No file or directory with the name {}".format(images))
+    exit()
+"""
 
 if not os.path.exists(args.det):
     os.makedirs(args.det)
@@ -141,7 +139,7 @@ for i, batch in enumerate(im_batches):
 
         for im_num, image in enumerate(imlist[i*batch_size: min((i +  1)*batch_size, len(imlist))]):
             im_id = i*batch_size + im_num
-            print("{0:20s} predicted in {1:6.3f} seconds".format(image.split('/')[-1], (end - start)/batch_size))
+            print("{0:20s} predicted in {1:6.3f} seconds".format(image.split("/")[-1], (end - start)/batch_size))
             print("{0:20s} {1:s}".format("Objects Detected:", ""))
             print("----------------------------------------------------------")
         continue
@@ -157,7 +155,7 @@ for i, batch in enumerate(im_batches):
     for im_num, image in enumerate(imlist[i*batch_size: min((i +  1)*batch_size, len(imlist))]):
         im_id = i*batch_size + im_num
         objs = [classes[int(x[-1])] for x in output if int(x[0]) == im_id]
-        print("{0:20s} predicted in {1:6.3f} seconds".format(image.split('/')[-1], (end - start)/batch_size))
+        print("{0:20s} predicted in {1:6.3f} seconds".format(image.split("/")[-1], (end - start)/batch_size))
         print("{0:20s} {1:s}".format("Objects Detected:", " ".join(objs)))
         print("----------------------------------------------------------")
 
@@ -210,7 +208,7 @@ def write(x, results):
 
 list(map(lambda x: write(x, loaded_ims), output))
 
-det_names = pd.Series(imlist).apply(lambda x: "{}/det_{}".format(args.det, x.split('/')[-1]))
+det_names = pd.Series(imlist).apply(lambda x: "{}/det_{}".format(args.det,x.split("/")[-1]))
 
 list(map(cv2.imwrite, det_names, loaded_ims))
 
