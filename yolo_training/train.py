@@ -19,12 +19,12 @@ import warnings
 warnings.filterwarnings("ignore")
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--epochs", type=int, default=50, help="number of epochs")
+parser.add_argument("--epochs", type=int, default=1000, help="number of epochs")
 parser.add_argument("--image_folder", type=str, default="data/museum/images", help="path to dataset")
 parser.add_argument("--batch_size", type=int, default=2, help="size of each image batch")
 parser.add_argument("--model_config_path", type=str, default="cfg/yolov3.cfg", help="path to model config file")
 parser.add_argument("--data_config_path", type=str, default="cfg/museum.data", help="path to data config file")
-parser.add_argument("--weights_path", type=str, default="checkpoints/restart_20.weights", help="path to weights file")
+parser.add_argument("--weights_path", type=str, default="cfg/yolov3.weights", help="path to weights file")
 parser.add_argument("--class_path", type=str, default="cfg/museum.names", help="path to class label file")
 parser.add_argument("--conf_thres", type=float, default=0.8, help="object confidence threshold")
 parser.add_argument("--nms_thres", type=float, default=0.4, help="iou thresshold for non-maximum suppression")
@@ -45,7 +45,7 @@ classes = load_classes(opt.class_path)
 # Get data configuration
 data_config = parse_data_config(opt.data_config_path)
 train_path = data_config["train"]
-#valid_path = data_config["valid"]
+valid_path = data_config["valid"]
 
 # Get hyper parameters
 hyperparams = parse_model_config(opt.model_config_path)[0]
@@ -63,18 +63,16 @@ if cuda:
     torch.cuda.empty_cache()
     model = model.cuda()
 
-model.train()
+# model.train()
 
 # Get dataloader
 dataloader = torch.utils.data.DataLoader(
     ListDataset(train_path), batch_size=opt.batch_size, shuffle=False, num_workers=opt.n_cpu
 )
 
-"""
 test_set = torch.utils.data.DataLoader(
     ListDataset(valid_path), batch_size=opt.batch_size, shuffle=False, num_workers=opt.n_cpu
 )
-"""
 
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
@@ -83,6 +81,9 @@ optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters(
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 best_ap = 0
+best_tot_loss = 100000
+patience = 5
+epoch_counter = 0
 
 with open("train_log__LR_00{}.csv".format(int(learning_rate * 1000)), "w") as f:
     for epoch in range(opt.epochs):
@@ -93,10 +94,13 @@ with open("train_log__LR_00{}.csv".format(int(learning_rate * 1000)), "w") as f:
         start = time.time()
 
         losses = {"x": 0, "y": 0, "w": 0, "h": 0, "conf": 0, "cls": 0, "total": 0, "recall": 0, "precision": 0}
+        test_losses = {"x": 0, "y": 0, "w": 0, "h": 0, "conf": 0, "cls": 0, "total": 0, "recall": 0, "precision": 0}
         lst_recall = []
         lst_precision = []
 
         save_weights = False
+
+        model.train()
 
         for batch_i, (_, imgs, targets) in enumerate(dataloader):
             imgs = Variable(imgs.type(Tensor))
@@ -138,8 +142,8 @@ with open("train_log__LR_00{}.csv".format(int(learning_rate * 1000)), "w") as f:
             losses["recall"] += model.losses["recall"]
             losses["precision"] += model.losses["precision"]
 
-            lst_recall.append(losses["recall"])
-            lst_precision.append(losses["precision"])
+            #lst_recall.append(losses["recall"])
+            #lst_precision.append(losses["precision"])
 
             model.seen += imgs.size(0)
 
@@ -172,14 +176,81 @@ with open("train_log__LR_00{}.csv".format(int(learning_rate * 1000)), "w") as f:
             )
         )
 
+        # evaluation mode
+        model.eval()
+        for batch_i, (_, imgs, targets) in enumerate(test_set):
+            imgs = Variable(imgs.type(Tensor))
+            targets = Variable(targets.type(Tensor), requires_grad=False)
+
+            loss_test = model(imgs, targets)
+
+            print(
+                "[TEST Epoch %d/%d, Batch %d/%d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"
+                % (
+                    epoch + 1,
+                    opt.epochs,
+                    batch_i + 1,
+                    len(test_set),
+                    model.losses["x"],
+                    model.losses["y"],
+                    model.losses["w"],
+                    model.losses["h"],
+                    model.losses["conf"],
+                    model.losses["cls"],
+                    loss_test.item(),
+                    model.losses["recall"],
+                    model.losses["precision"],
+                )
+            )
+
+            test_losses["x"] += model.losses["x"]
+            test_losses["y"] += model.losses["y"]
+            test_losses["w"] += model.losses["w"]
+            test_losses["h"] += model.losses["h"]
+            test_losses["conf"] += model.losses["conf"]
+            test_losses["cls"] += model.losses["cls"]
+            test_losses["total"] += loss_test.item()
+            test_losses["recall"] += model.losses["recall"]
+            test_losses["precision"] += model.losses["precision"]
+
+            lst_recall.append(test_losses["recall"])
+            lst_precision.append(test_losses["precision"])
+
+        test_losses["x"] /= len(test_set)
+        test_losses["y"] /= len(test_set)
+        test_losses["w"] /= len(test_set)
+        test_losses["h"] /= len(test_set)
+        test_losses["conf"] /= len(test_set)
+        test_losses["cls"] /= len(test_set)
+        test_losses["total"] /= len(test_set)
+        test_losses["recall"] /= len(test_set)
+        test_losses["precision"] /= len(test_set)
+
+        print(
+            "[TEST Epoch %d/%d] [AVERAGE Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"
+            % (
+                epoch + 1,
+                opt.epochs,
+                test_losses["x"],
+                test_losses["y"],
+                test_losses["w"],
+                test_losses["h"],
+                test_losses["conf"],
+                test_losses["cls"],
+                test_losses["total"],
+                test_losses["recall"],
+                test_losses["precision"],
+            )
+        )
+
         avg_precision = compute_ap(lst_recall, lst_precision)
-        print("[Epoch {}/{}] AVG PRECISION = {}\n".format(epoch + 1, opt.epochs, avg_precision))
+        print("[TEST Epoch {}/{}] AVG PRECISION = {}\n".format(epoch + 1, opt.epochs, avg_precision))
 
         # Formato File csv per grafici
         # lossX, lossY, lossW, lossH, lossConf, lossCls, lossTotal, recall, precision, AP
-        row = "{},{},{},{},{},{},{},{},{},{}\n".format(losses["x"], losses["y"], losses["w"], losses["h"],
-                                                          losses["conf"], losses["cls"], losses["total"], losses["recall"],
-                                                          losses["precision"], avg_precision)
+        row = "{},{},{},{},{},{},{},{},{},{}\n".format(test_losses["x"], test_losses["y"], test_losses["w"], test_losses["h"],
+                                                          test_losses["conf"], test_losses["cls"], test_losses["total"], test_losses["recall"],
+                                                          test_losses["precision"], avg_precision)
         f.write(row)
 
         #print(f"Epoch {epoch + 1}/{opt.epochs} train acc.: {eval_acc(model, dataloader, device):.3f} "
@@ -192,5 +263,13 @@ with open("train_log__LR_00{}.csv".format(int(learning_rate * 1000)), "w") as f:
         #if (epoch + 1) % opt.checkpoint_interval == 0:
         if save_weights:
             model.save_weights("%s/%d__AP_%d__LR_00%d.weights" % (opt.checkpoint_dir, epoch + 1, int(np.round(avg_precision)), int(learning_rate * 1000)))
+
+        # control when to exit
+        if test_losses["total"] < best_tot_loss:
+            epoch_counter = 0
+        else:
+            epoch_counter += 1
+            if epoch_counter == patience:
+                break
 
 f.close()
