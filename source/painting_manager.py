@@ -202,7 +202,10 @@ class PaintingManager:
     def ROI_detection(self, or_frame):
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame.copy(), debug=True,  frame_number=self.count)
         # kp_frame = keypoints_detection(or_frame, show=False)
-        roi_frame, ROIs = ccl_detection(or_frame.copy(), gray_frame, ed_frame, frame_number=self.count,
+        roi_frame, ROIs = ccl_detection(or_frame.copy(),
+                                        gray_frame,
+                                        ed_frame,
+                                        frame_number=self.count,
                                         otsu_opt_enabled=True)
         # ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
 
@@ -263,7 +266,11 @@ class PaintingManager:
 
         if not self.yolo_people_model:
             self.init_yolo_people()
-        people_ROIs, people_mod_frame = detect.detect(specific_frame = frame, separator=conf['slash'], verbose=verbose, model=self.yolo_people_model, room=self.room) # people detection
+        people_ROIs, people_mod_frame = detect.detect(specific_frame = frame,
+                                                      separator=conf['slash'],
+                                                      verbose=verbose,
+                                                      model=self.yolo_people_model,
+                                                      room=self.room) # people detection
         people_mod_frame = people_mod_frame[0]
 
         if show_details:
