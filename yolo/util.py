@@ -20,8 +20,8 @@ def unique(tensor):
 def bbox_iou(box1, box2):
     """
     Returns the IoU of two bounding boxes 
-    
-    
+
+
     """
     #Get the coordinates of bounding boxes
     b1_x1, b1_y1, b1_x2, b1_y2 = box1[:,0], box1[:,1], box1[:,2], box1[:,3]
@@ -46,7 +46,7 @@ def bbox_iou(box1, box2):
 
 def predict_transform(prediction, inp_dim, anchors, num_classes, CUDA = True):
 
-    
+
     batch_size = prediction.size(0)
     stride =  inp_dim // prediction.size(2)
     grid_size = inp_dim // stride

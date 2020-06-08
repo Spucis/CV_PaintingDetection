@@ -42,6 +42,7 @@ print("CREATE LABELS: {}".format(create_labels))
 
 if create_labels:
 
+
     split_dataset.split_dataset(conf)
 
     nodes = os.listdir("{}{}".format(conf['input_path'], conf['in_dir']))
@@ -56,5 +57,6 @@ else:
     # 'json_ouput_details' will produce a json file "output_details.json"
     # containing all the details made by this program
     # 'step': the frame will be processed each 'step' frames
+    p_manager.segmentation()
     p_manager.paint_detection(json_output_details=True, step=20)
     p_manager.close_video()

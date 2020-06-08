@@ -345,7 +345,6 @@ class PaintingManager:
         print("\nElapsed time: {}".format(time.time() - start))
         print("END: " + self.video_name)
 
-
     def parse_imgs_details(self, imgs_details):
         curr_d = {}
         for item in imgs_details:
@@ -578,3 +577,62 @@ class PaintingManager:
         if verbose:
             print("Img: {}, AV: {}".format(os.path.basename(img_name), av))
         return av
+
+    def segmentation(self):
+        imgs_name = os.listdir(conf['segmentation_path'])
+        # Kernel
+        kernel_d = np.ones((13,13), np.uint8)
+        kernel_e = np.ones((5,5), np.uint8)
+        kernel_d_1 = np.ones((11,11), np.uint8)
+        kernel_e_1 = np.ones((3,3), np.uint8)
+        for name in imgs_name:
+            # edge detection to black the statue
+            img = cv2.imread("{}{}".format(conf['segmentation_path'], name))
+            _, _, edge = edge_detection(img, 100, 300)
+            show_frame({"Segmentation":img})
+            #show_frame({"Edge_prima_dil":edge})
+            edge = cv2.dilate(edge,kernel_d,iterations=3)
+            edge = cv2.erode(edge,kernel_e,iterations=3)
+            #edge = cv2.dilate(edge,kernel_d_1,iterations=3)
+            #edge = cv2.erode(edge,kernel_e_1,iterations=3)
+            edge = 255 - edge
+            #show_frame({"edge_dilatat":edge})
+            gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+            show_frame({"BLACL":gray})
+            #gray = cv2.equalizeHist(gray)
+            show_frame({"BLACL":gray})
+            gray[edge == 0] = 0
+            #show_frame({"BLACL":gray})
+            ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+            show_frame({"Thresh":thresh})
+
+            # noise removal
+            kernel = np.ones((3,3),np.uint8)
+            opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations=3)
+
+            # sure background area
+            sure_bg = cv2.dilate(opening,kernel_d,iterations=3)
+
+            #show_frame({"Opening":opening})
+            #show_frame({"Sure_BG":sure_bg})
+
+            # Finding sure foreground area
+            dist_transform = cv2.distanceTransform(opening,cv2.DIST_L2,3)
+            ret, sure_fg = cv2.threshold(dist_transform,0.2*dist_transform.max(),255,0)
+            #show_frame({"Sure_fG":sure_fg})
+
+            # Finding unknown region
+            sure_fg = np.uint8(sure_fg)
+            unknown = cv2.subtract(sure_bg,sure_fg)
+
+            # Marker labelling
+            ret, markers = cv2.connectedComponents(sure_fg)
+            # Add one to all labels so that sure background is not 0, but 1
+            markers = markers+1
+            # Now, mark the region of unknown with zero
+            markers[unknown==255] = 0
+
+            markers = cv2.watershed(img,markers)
+            img[markers == -1] = [0,255,0]
+
+            show_frame({"Water":img})
