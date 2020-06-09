@@ -14,7 +14,7 @@ import pickle as pkl
 import pandas as pd
 import random
 
-def arg_parse(separator = "\\", base_path='yolo'):
+def arg_parse(separator = "\\", base_path='yolo_training', weights_name='177__AP_335__LR_004'):
     """
     Parse arguements to the detect module
 
@@ -36,7 +36,7 @@ def arg_parse(separator = "\\", base_path='yolo'):
                         default="{}cfg{}yolov3.cfg".format(base_path+separator, separator), type=str)
     parser.add_argument("--weights", dest='weightsfile', help=
     "weightsfile",
-                        default="{}yolov3.weights".format(base_path+separator), type=str)
+                        default="{}checkpoints{}{}.weights".format(base_path+separator, separator, weights_name), type=str)
     parser.add_argument("--reso", dest='reso', help=
     "Input resolution of the network. Increase to increase accuracy. Decrease to increase speed",
                         default="416", type=str)
@@ -44,7 +44,7 @@ def arg_parse(separator = "\\", base_path='yolo'):
     return parser.parse_args()
 
 
-def detect(specific_frame=None, verbose=True, draw_images=False, write_on_disk=False, separator="\\", base_path='yolo', model=None, room=None):
+def detect_statues(specific_frame=None, verbose=True, draw_images=False, write_on_disk=False, separator="\\", base_path='yolo_training', model=None):
     args = arg_parse(separator=separator, base_path=base_path)
     images = args.images
     batch_size = int(args.bs)
@@ -53,12 +53,8 @@ def detect(specific_frame=None, verbose=True, draw_images=False, write_on_disk=F
     start = 0
     CUDA = False #torch.cuda.is_available()
 
-
-
-    num_classes = 80
-    classes = load_classes("{}{}data{}coco.names".format(base_path,separator,separator))
-
-
+    num_classes = 2
+    classes = load_classes("{}{}cfg{}museum.names".format(base_path,separator,separator))
 
     #Set up the neural network
 
@@ -175,7 +171,7 @@ def detect(specific_frame=None, verbose=True, draw_images=False, write_on_disk=F
     except NameError:
         if verbose:
             print ("No detections were made")
-        return [], loaded_ims # MARCO. No detections, so i return empty list for rois and the loaded_ims
+        return [] #, loaded_ims # MARCO. No detections, so i return empty list for rois and the loaded_ims
         #exit()
 
     im_dim_list = torch.index_select(im_dim_list, 0, output[:,0].long())
@@ -199,6 +195,7 @@ def detect(specific_frame=None, verbose=True, draw_images=False, write_on_disk=F
     class_load = time.time()
     colors = pkl.load(open("{}pallete".format(base_path+separator), "rb"))
 
+    """
     if draw_images:
         draw = time.time()
 
@@ -232,7 +229,7 @@ def detect(specific_frame=None, verbose=True, draw_images=False, write_on_disk=F
 
         if write_on_disk:
             list(map(cv2.imwrite, det_names, loaded_ims))
-
+    """
 
     end = time.time()
 
@@ -245,17 +242,17 @@ def detect(specific_frame=None, verbose=True, draw_images=False, write_on_disk=F
         print("{:25s}: {:2.3f}".format("Loading batch", start_det_loop - load_batch))
         print("{:25s}: {:2.3f}".format("Detection (" + str(len(imlist)) +  " images)", output_recast - start_det_loop))
         print("{:25s}: {:2.3f}".format("Output Processing", class_load - output_recast))
-        print("{:25s}: {:2.3f}".format("Drawing Boxes", end - draw))
+        # print("{:25s}: {:2.3f}".format("Drawing Boxes", end - draw))
         print("{:25s}: {:2.3f}".format("Average time_per_img", (end - load_batch)/len(imlist)))
         print("----------------------------------------------------------")
 
 
     torch.cuda.empty_cache()
 
-    output_people_ROIs = []
+    output_statue_ROIs = []
     for index, element in enumerate(output.numpy()):
-        if classes[int(element[-1])] == 'person':
-            output_people_ROIs.append((element[1:3],element[3:5]))
+        if classes[int(element[-1])] == 'statue':
+            output_statue_ROIs.append((element[1:3],element[3:5]))
         """
         print("-------\nImage: {}\nBBox:\n{}\n{}\nClass: {}[{}]".format(imlist[int(element[0])], element[1:3],
                                                                         element[3:5], element[-1],
@@ -264,7 +261,7 @@ def detect(specific_frame=None, verbose=True, draw_images=False, write_on_disk=F
         """
 
 
-    return output_people_ROIs, loaded_ims
+    return output_statue_ROIs # , loaded_ims
 
 if __name__ == "__main__":
-    detect()
+    detect_statues()

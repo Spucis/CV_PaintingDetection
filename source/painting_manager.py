@@ -1,6 +1,6 @@
 from source import globals
 from source.detection_utils import *
-from yolo import detect, darknet
+from yolo import detect, darknet, detect_statues
 import json
 import pandas as pd
 import os
@@ -23,6 +23,7 @@ class PaintingManager:
         self.data = None # Sarà di tipo pd.DataFrame()
         self.isData = False # Variabile che mi dice se dentro data ho qualcosa
         self.yolo_people_model = None # yolo people model
+        self.yolo_statue_model = None # yolo statue model
         self.json_output = {} # the dict that will be parsed to make the ouput_details file
 
         #Il quadro "x" è nella stanza self.room?
@@ -144,6 +145,7 @@ class PaintingManager:
         show_frame({"map": map})
         return map
 
+
     def ROI_labeling(self, frame, show_details = False, verbose = False, json_output_details=False):
         """
         Dato un frame, l'insieme delle ROI al suo interno e i nomi dei file delle immagini relative alle ROI,
@@ -167,14 +169,24 @@ class PaintingManager:
             curr_roi_out = {}
             img_name = os.path.basename(self.ROIs_names[i])
             row = self.data[self.data["Image"] == img_name]
-            if row.empty or self.ROIs_names[i] == "":
-                roi_id = "ID {} - ".format(i)
+            if row.empty:
+                if self.ROIs_names[i] == "":
+                    roi_id = "ID {} - ".format(i)
 
-                text = "{}Unidentified object".format(roi_id)
-                if json_output_details:
-                    curr_roi_out["text"] = "Unidentified object"
-                    curr_roi_out["id"] = i
-                color = (0,255,255) # giallo
+                    text = "{}Unidentified object".format(roi_id)
+                    if json_output_details:
+                        curr_roi_out["text"] = "Unidentified object"
+                        curr_roi_out["id"] = i
+                    color = (0,255,255) # giallo
+                elif self.ROIs_names[i] == "statue":
+                    roi_id = "ID {} - ".format(i)
+
+                    text = "{}Statue".format(roi_id)
+                    if json_output_details:
+                        curr_roi_out["text"] = "Statue"
+                        curr_roi_out["id"] = i
+                        self.json_output["FRAME {}".format(self.count)].update({"ROI {}".format(i) : {}})
+                    color = (255, 0, 0)  # blu
             else:
                 title = row["Title"].values[0]
                 author = row["Author"].values[0]
@@ -211,6 +223,7 @@ class PaintingManager:
 
         return roi_frame, ROIs
 
+
     def create_labelme_json(self, frame):
         img_name = "{}{}__{}.png".format(conf['labeling_img'], os.path.splitext(self.video_name)[0], self.count)
         cv2.imwrite(img_name, frame)
@@ -238,6 +251,7 @@ class PaintingManager:
             print("JSON -> {}\n".format(json_name))
             outfile.close()
 
+
     def create_yolomark_txt(self, frame):
         img_name = "{}{}__{}__{}".format(conf['labeling_img'], conf['in_dir'], os.path.splitext(self.video_name)[0], self.count)
         cv2.imwrite("{}.png".format(img_name), frame)
@@ -254,6 +268,7 @@ class PaintingManager:
             print("TXT -> {}.txt\n".format(img_name))
             outfile.close()
 
+
     def init_yolo_people(self):
         """
         Initialize the yolo people detection with config file (conf[yolo people cfg]) and weights file.
@@ -261,6 +276,16 @@ class PaintingManager:
         """
         self.yolo_people_model = darknet.Darknet(conf['yolo_people_cfg'])
         self.yolo_people_model.load_weights(conf['yolo_people_weights'])
+
+
+    def init_yolo_statue(self):
+        """
+        Initialize the yolo statues detection with config file (conf[yolo statue cfg]) and weights file.
+        :return:
+        """
+        self.yolo_statue_model = darknet.Darknet(conf['yolo_statue_cfg'])
+        self.yolo_statue_model.load_weights(conf['yolo_statue_weights'])
+
 
     def people_detection(self, frame = None, verbose=False, show_details=False):
 
@@ -276,6 +301,106 @@ class PaintingManager:
         if show_details:
             show_frame({"people_mod_frame": people_mod_frame})
         return people_ROIs, people_mod_frame
+
+
+    def statue_detection(self, frame = None, verbose=False):  # , show_details=False):
+
+        if not self.yolo_statue_model:
+            self.init_yolo_statue()
+        statue_list = detect_statues.detect_statues(specific_frame = frame, separator=conf['slash'], verbose=verbose, model=self.yolo_statue_model) # statue detection
+        # statue_mod_frame = statue_mod_frame[0]
+
+        # if show_details:
+        #    show_frame({"people_mod_frame": statue_mod_frame})
+
+        statue_ROIs = []
+        for s in statue_list:
+            # x, y, w, h
+            w = abs(s[1][0] - s[0][0])
+            h = abs(s[1][1] - s[0][1])
+            roi = list([int(s[0][0]), int(s[0][1]), int(w), int(h)])
+            statue_ROIs.append(roi)
+
+        return statue_ROIs
+
+
+    def clean_ROIs(self, frame, ROIs, ROIs_names, ratio_max=3, statue=False):
+        temp_ROIs = []
+        temp_names = []
+
+        # CLEANING ROIs RULES
+        # 1. se il rapporto di aspetto è più di 'ratio_max' volte, considero la ROI non ammissibile
+        # 2. se l'area è minore di min_area, non è ammissibile
+        # 3. se è contenuto in un'altra ROI o contiene un'altra ROI, quello con area minore non è ammissibile (solo se area maggiore è >50% del frame)
+        # 4. (opzionale?) se l'overlap supera una certa soglia, la ROI con area minore non è ammissibile
+        #ratio_max = 3
+        global_area = frame.shape[0] * frame.shape[1]
+        min_area = 0.015 * global_area  # almeno una % dell'area totale
+
+        for i, roi in enumerate(ROIs):
+
+            x = roi[0]
+            y = roi[1]
+            w = roi[2]
+            h = roi[3]
+
+            cleaning_boxes = True
+            if cleaning_boxes:
+                # 1.
+                feasible_ratio = abs(w) < abs(ratio_max * (h)) and abs(h) < abs(ratio_max * (w))
+                area = w * h
+                # 2.
+                feasible_area = area > min_area
+
+                if feasible_ratio and feasible_area:
+                    temp_ROIs.append([(x, y), (x + w, y + h), w, h])
+                    temp_names.append(ROIs_names[i])
+
+        max_overlap = 0.80
+
+        if len(temp_ROIs) == 1:
+            return [[temp_ROIs[0][0][0], temp_ROIs[0][0][1], temp_ROIs[0][2], temp_ROIs[0][3]]], temp_names
+
+        # True ROIs array
+        trueROIs = []
+        trueNames = []
+
+        roi_mask = [True for _ in temp_ROIs]
+
+        for i, roi in enumerate(temp_ROIs):
+
+            # If I discarded this ROI
+            if not roi_mask[i]:
+                continue
+
+            j = 0
+            for roi2 in temp_ROIs:
+
+                if roi[0][0] == roi2[0][0] and roi[0][1] == roi2[0][1] and roi[1][0] == roi2[1][0] and roi[1][1] == \
+                        roi2[1][1]:
+                    j += 1
+                    continue
+
+                width = calculateIntersection(roi[0][0], roi[1][0], roi2[0][0], roi2[1][0])
+                height = calculateIntersection(roi[0][1], roi[1][1], roi2[0][1], roi2[1][1])
+                area = width * height
+                percent = area / (roi[2] * roi[3])
+
+                # must go over the max_overlap AND minor area
+                if percent >= max_overlap and roi[2] * roi[3] < roi2[2] * roi2[3]:
+                    if statue:
+                        roi_mask[i] = False
+                    elif temp_names[i] == '':
+                        roi_mask[i] = False
+                    break
+
+                j += 1
+
+        trueROIs = [[roi[0][0], roi[0][1], roi[2], roi[3]] for i, roi in enumerate(temp_ROIs) if roi_mask[i]]
+        trueNames = [e for i, e in enumerate(temp_names) if roi_mask[i]]
+
+        return trueROIs, trueNames
+
 
     def paint_detection(self, json_output_details=False, step = 1):
         # Read until video is completed
@@ -317,15 +442,33 @@ class PaintingManager:
                                                         show_details=False,
                                                         verbose=False,
                                                         json_output_details=json_output_details)  # show_details = True, verbose = True
+                        statue_ROIs = self.statue_detection(frame.copy(), verbose=False)
+
+                        # Clean all ROIs
+                        statue_names = []
+                        for _ in statue_ROIs:
+                            statue_names.append("statue")
+                        statue_ROIs, _ = self.clean_ROIs(frame, statue_ROIs, statue_names, statue=True)
+                        all_ROIs = list()
+                        all_ROIs.extend(self.ROIs)
+                        all_ROIs.extend(statue_ROIs)
+                        for _ in statue_ROIs:
+                            self.ROIs_names.append("statue")
+                        self.ROIs, self.ROIs_names = self.clean_ROIs(frame, all_ROIs, self.ROIs_names)
+
                         # ROI LABELING
                         mod_frame = self.ROI_labeling(frame.copy(),
                                                       show_details=False,
                                                       verbose=False,
                                                       json_output_details=json_output_details)
                         people_ROIs, mod_frame = self.people_detection(mod_frame.copy(),
-                                                                       show_details=False,
-                                                                       verbose=False)
-                        self.json_output["FRAME {}".format(self.count)]["room"] = str(self.room) if self.room != None else "No room"
+                                                               show_details=False,
+                                                               verbose=False)
+
+                        # show_frame({'Statue Detection', mod_frame})
+
+                        if json_output_details:
+                            self.json_output["FRAME {}".format(self.count)]["room"] = str(self.room) if self.room != None else "No room"
                 self.count += 1
 
                 if self.count % step == 0:
@@ -359,11 +502,13 @@ class PaintingManager:
             curr_d["{:10}".format(item[1])] = "{:.3f}".format(item[0])
         return curr_d
 
+
     def parse_av(self, av_dict):
         av_d = {}
         for av, img in av_dict.items():
             av_d[img] = av
         return av_d
+
 
     def retrival_and_rectification(self, frame, show_details=False, verbose = False, json_output_details=False):
 

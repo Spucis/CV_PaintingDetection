@@ -5,7 +5,7 @@ import numpy as np
 import warnings
 
 
-warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore", module='torch')
 
 
 def load_classes(path):

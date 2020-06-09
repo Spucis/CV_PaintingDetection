@@ -11,7 +11,7 @@ from skimage.transform import resize
 import warnings
 
 
-warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore", module='torch')
 
 
 class ImageFolder(Dataset):

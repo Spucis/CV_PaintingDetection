@@ -36,10 +36,10 @@ def arg_parse():
                         default = "cfg/yolov3.cfg", type = str)
     parser.add_argument("--weights", dest = 'weightsfile', help = 
                         "weightsfile",
-                        default = "checkpoints/50__AP_21169__LR_004.weights", type = str)     # 20 | 60
+                        default = "checkpoints/177__AP_335__LR_004.weights", type = str)     # 20 | 60
     parser.add_argument("--reso", dest = 'reso', help = 
                         "Input resolution of the network. Increase to increase accuracy. Decrease to increase speed",
-                        default = "640", type = str)
+                        default = "416", type = str)
     parser.add_argument("--valid", dest='valid', help=
                         "validation file containing images filename to perform detection upon",
                         default="data/museum/val.txt", type=str)
