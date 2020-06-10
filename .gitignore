@@ -23,3 +23,5 @@ yolo_training/checkpoints
 yolo_training/data
 yolo_training/det
 yolo_training/imgs
+yolo_training/imgs_1
+Segmentation/
