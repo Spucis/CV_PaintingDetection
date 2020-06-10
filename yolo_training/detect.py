@@ -36,7 +36,7 @@ def arg_parse():
                         default = "cfg/yolov3.cfg", type = str)
     parser.add_argument("--weights", dest = 'weightsfile', help = 
                         "weightsfile",
-                        default = "checkpoints/177__AP_335__LR_004.weights", type = str)     # 20 | 60
+                        default = "cfg/177__AP_335__LR_004.weights", type = str)     # 20 | 60
     parser.add_argument("--reso", dest = 'reso', help = 
                         "Input resolution of the network. Increase to increase accuracy. Decrease to increase speed",
                         default = "416", type = str)
@@ -83,9 +83,9 @@ model.eval()
 
 read_dir = time.time()
 #Detection phase
-with open(valid_file, 'r') as file:
-    imlist = [f.replace('\n', '') for f in file.readlines()]
-"""
+# with open(valid_file, 'r') as file:
+#    imlist = [f.replace('\n', '') for f in file.readlines()]
+
 try:
     imlist = [osp.join(osp.realpath('.'), images, img) for img in os.listdir(images)]
 except NotADirectoryError:
@@ -94,7 +94,6 @@ except NotADirectoryError:
 except FileNotFoundError:
     print ("No file or directory with the name {}".format(images))
     exit()
-"""
 
 if not os.path.exists(args.det):
     os.makedirs(args.det)

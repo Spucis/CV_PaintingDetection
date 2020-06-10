@@ -456,6 +456,9 @@ class PaintingManager:
                             self.ROIs_names.append("statue")
                         self.ROIs, self.ROIs_names = self.clean_ROIs(frame, all_ROIs, self.ROIs_names)
 
+                        # Segmentation
+                        self.segmentation(frame.copy())
+
                         # ROI LABELING
                         mod_frame = self.ROI_labeling(frame.copy(),
                                                       show_details=False,
@@ -494,7 +497,6 @@ class PaintingManager:
 
         print("\nElapsed time: {}".format(time.time() - start))
         print("END: " + self.video_name)
-
 
     def parse_imgs_details(self, imgs_details):
         curr_d = {}
@@ -730,3 +732,104 @@ class PaintingManager:
         if verbose:
             print("Img: {}, AV: {}".format(os.path.basename(img_name), av))
         return av
+
+    def segmentation(self, frame):
+        statues_ROIs = [roi for i, roi in enumerate(self.ROIs) if self.ROIs_names[i] == "statue"]
+
+        for roi in statues_ROIs:
+            show_frame({"Frame":frame})
+
+            x = roi[0]
+            y = roi[1]
+            w = roi[2]
+            h = roi[3]
+            Lx = int(round(w * 30/100))
+            Ly = int(round(h * 30/100))
+
+            Lx_2 = int(round(w * 15/100))
+            Ly_2 = int(round(h * 15/100))
+
+            y1 = y-Ly if y-Ly >= 0 else 0
+            #y2 = y+h+Ly if y+h+Ly >= 0 else 0
+            x1 = x-Lx if x-Lx >= 0 else 0
+            #x2 = x+w+Lx if y-Ly >= 0 else 0
+
+            img = frame[y1:y+h+Ly,x1:x+w+Lx]
+            show_frame({"IMG":img})
+            img_rect = img.copy()
+            img_rect = cv2.rectangle(img_rect, (Lx - Lx_2, Ly - Ly_2), (Lx+w, Ly+h), (0, 0, 255), 3)
+            show_frame({"Rect":img_rect})
+            mask = np.zeros(img.shape[:2],np.uint8)
+            bgdModel = np.zeros((1,65),np.float64)
+            fgdModel = np.zeros((1,65),np.float64)
+            rect = (Lx - Lx_2, Ly - Ly_2, Lx+w, Ly+h)
+            cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
+            mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+            img_2 = img*mask2[:,:,np.newaxis]
+            show_frame({"OUT":img_2})
+
+    """
+    def segmentation(self, frame):
+        #imgs_name = os.listdir(conf['segmentation_path'])
+        # Kernel
+
+        statues_ROIs = [roi for i, roi in enumerate(self.ROIs) if self.ROIs_names[i] == "statue"]
+
+        kernel_d = np.ones((13,13), np.uint8)
+        kernel_e = np.ones((5,5), np.uint8)
+        kernel_d_1 = np.ones((11,11), np.uint8)
+        kernel_e_1 = np.ones((3,3), np.uint8)
+        for roi in statues_ROIs:
+            show_frame({"Frame":frame})
+            # edge detection to black the statue
+            img = frame[roi[1]:roi[1]+roi[3], roi[0]:roi[0]+roi[2]]
+            _, _, edge = edge_detection(img, 100, 300)
+            show_frame({"Segmentation":img})
+            #show_frame({"Edge_prima_dil":edge})
+            edge = cv2.dilate(edge,kernel_d,iterations=4)
+            edge = cv2.erode(edge,kernel_e,iterations=2)
+            edge = cv2.dilate(edge,kernel_d_1,iterations=3)
+
+            edge = cv2.erode(edge,kernel_e_1,iterations=3)
+            edge = 255 - edge
+            #show_frame({"edge_dilatat":edge})
+            gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+            show_frame({"BLACL":gray})
+            #gray = cv2.equalizeHist(gray)
+            show_frame({"BLACL":gray})
+            gray[edge == 0] = 0
+            #show_frame({"BLACL":gray})
+            ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+            show_frame({"Thresh":thresh})
+
+            # noise removal
+            kernel = np.ones((3,3),np.uint8)
+            opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations=3)
+
+            # sure background area
+            sure_bg = cv2.dilate(opening,kernel_d,iterations=3)
+
+            #show_frame({"Opening":opening})
+            #show_frame({"Sure_BG":sure_bg})
+
+            # Finding sure foreground area
+            dist_transform = cv2.distanceTransform(opening,cv2.DIST_L2,3)
+            ret, sure_fg = cv2.threshold(dist_transform,0.5*dist_transform.max(),255,0)
+            #show_frame({"Sure_fG":sure_fg})
+
+            # Finding unknown region
+            sure_fg = np.uint8(sure_fg)
+            unknown = cv2.subtract(sure_bg,sure_fg)
+
+            # Marker labelling
+            ret, markers = cv2.connectedComponents(sure_fg)
+            # Add one to all labels so that sure background is not 0, but 1
+            markers = markers+1
+            # Now, mark the region of unknown with zero
+            markers[unknown==255] = 0
+
+            markers = cv2.watershed(img,markers)
+            img[markers == -1] = [0,255,0]
+
+            show_frame({"Water":img})
+        """

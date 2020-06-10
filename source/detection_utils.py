@@ -293,7 +293,7 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
     # show_frame({"Relevant ROIs: " + final_string : img})
     return img, trueROIs
 
-def edge_detection(frame, debug = False, frame_number = 0):
+def edge_detection(frame, th=400, TH=400, debug = False, frame_number = 0):
     selected_frame = 0
     d_frames = {}
     gray = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2GRAY)
@@ -324,16 +324,16 @@ def edge_detection(frame, debug = False, frame_number = 0):
     # th = 550
     # TH = 1750
     # Threshold con un po' più di rumore
-    th = 500
-    TH = 1300
+    #th = 500
+    #TH = 1300
 
     #Threshold rumorose
-    th = 400
-    TH = 800
+    #th = 400
+    #TH = 800
 
     #Threshold molto rumorose
-    th = 400
-    TH = 400
+    #th = 400
+    #TH = 400
 
     mod_f = cv2.Canny(dst.astype(np.uint8), th, TH, apertureSize=5, L2gradient=True)
 
