@@ -734,9 +734,10 @@ class PaintingManager:
         return av
 
     def segmentation(self, frame):
-        statues_ROIs = [roi for i, roi in enumerate(self.ROIs) if self.ROIs_names[i] == "statue"]
+        ROIs = [roi for i, roi in enumerate(self.ROIs) if self.ROIs_names[i] != ""]
+        names = [names for i, names in enumerate(self.ROIs_names) if self.ROIs_names[i] != ""]
 
-        for roi in statues_ROIs:
+        for i, roi in enumerate(ROIs):
             show_frame({"Frame":frame})
 
             x = roi[0]
@@ -746,27 +747,42 @@ class PaintingManager:
             Lx = int(round(w * 30/100))
             Ly = int(round(h * 30/100))
 
-            Lx_2 = int(round(w * 15/100))
-            Ly_2 = int(round(h * 15/100))
+            Lx_2 = int(round(w * 5/100))
+            Ly_2 = int(round(h * 5/100))
 
             y1 = y-Ly if y-Ly >= 0 else 0
-            #y2 = y+h+Ly if y+h+Ly >= 0 else 0
+            y2 = y+h+Ly if y+h+Ly <= frame.shape[0] else frame.shape[0]
             x1 = x-Lx if x-Lx >= 0 else 0
-            #x2 = x+w+Lx if y-Ly >= 0 else 0
+            x2 = x+w+Lx if x+w+Lx <= frame.shape[1] else frame.shape[1]
+
+            #frame_rect = cv2.rectangle(frame, (x1, y1), (x+w+Lx, y+h+Ly), (0, 0, 255), 3)
+            #show_frame({"FRame_Rect":frame_rect})
 
             img = frame[y1:y+h+Ly,x1:x+w+Lx]
             show_frame({"IMG":img})
             img_rect = img.copy()
-            img_rect = cv2.rectangle(img_rect, (Lx - Lx_2, Ly - Ly_2), (Lx+w, Ly+h), (0, 0, 255), 3)
-            show_frame({"Rect":img_rect})
+            Nx = abs(x1 - x)
+            Ny = abs(y1 - y)
+            #img_rect = cv2.rectangle(img_rect, (Nx, Ny), (Nx+w, Ny+h), (0, 0, 255), 3)
+            #show_frame({"Rect":img_rect})
             mask = np.zeros(img.shape[:2],np.uint8)
             bgdModel = np.zeros((1,65),np.float64)
             fgdModel = np.zeros((1,65),np.float64)
-            rect = (Lx - Lx_2, Ly - Ly_2, Lx+w, Ly+h)
+            """
+            if names[i] == "statue":
+                ShiftX = Nx - Lx_2 if Nx - Lx_2 >= 0 else 0
+                ShiftY = Ny - Ly_2 if Ny - Ly_2 >= 0 else 0
+                ShiftW = w + Lx_2 if w + Lx_2 <= img.shape[1] else img.shape[1]
+                ShiftH = h + Ly_2 if h + Ly_2 <= img.shape[0] else img.shape[0]
+                rect = (ShiftX, ShiftY, ShiftW, ShiftH)
+            else:
+            """
+            rect = (Nx, Ny, w, h)
             cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
             mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
             img_2 = img*mask2[:,:,np.newaxis]
-            show_frame({"OUT":img_2})
+            img[mask2 == 1] += np.array((0, 50, 0), dtype=np.uint8)
+            show_frame({"OUT":img})
 
     """
     def segmentation(self, frame):
