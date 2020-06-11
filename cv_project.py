@@ -15,6 +15,7 @@ video_name = "VIRB0401.MP4" #000
 #video_name = "20180206_112930.mp4"
 #video_name = "20180206_114408.mp4"
 #video_name = "20180206_114009.mp4"
+#video_name = "20180206_112930.mp4"
 
 #video_name = "GOPR1926" #003
 #video_name = "GOPR1932.MP4"
@@ -59,5 +60,7 @@ else:
     # 'json_ouput_details' will produce a json file "output_details.json"
     # containing all the details made by this program
     # 'step': the frame will be processed each 'step' frames
-    p_manager.paint_detection(json_output_details=True, step=20)
+    p_manager.paint_detection(json_output_details=True,
+                              en_segmentation=True,
+                              step=1)
     p_manager.close_video()

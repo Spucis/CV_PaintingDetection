@@ -29,7 +29,7 @@ def arg_parse(separator = "\\", base_path='yolo'):
     "Image / Directory to store detections to",
                         default="{}det".format(base_path+separator), type=str)
     parser.add_argument("--bs", dest="bs", help="Batch size", default=1)
-    parser.add_argument("--confidence", dest="confidence", help="Object Confidence to filter predictions", default=0.5)
+    parser.add_argument("--confidence", dest="confidence", help="Object Confidence to filter predictions", default=0.75)
     parser.add_argument("--nms_thresh", dest="nms_thresh", help="NMS Threshhold", default=0.4)
     parser.add_argument("--cfg", dest='cfgfile', help=
     "Config file",
@@ -265,6 +265,3 @@ def detect(specific_frame=None, verbose=True, draw_images=False, write_on_disk=F
 
 
     return output_people_ROIs, loaded_ims
-
-if __name__ == "__main__":
-    detect()

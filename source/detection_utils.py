@@ -291,6 +291,9 @@ def ccl_detection(or_frame, gray_frame, frame, frame_number, otsu_opt_enabled=Fa
 
 
     # show_frame({"Relevant ROIs: " + final_string : img})
+    #don't output the modified frame at this level
+    img = or_frame
+
     return img, trueROIs
 
 def edge_detection(frame, th=400, TH=400, debug = False, frame_number = 0):

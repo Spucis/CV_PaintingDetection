@@ -25,6 +25,7 @@ class PaintingManager:
         self.yolo_people_model = None # yolo people model
         self.yolo_statue_model = None # yolo statue model
         self.json_output = {} # the dict that will be parsed to make the ouput_details file
+        self.feasible_ROIs = []
 
         #Il quadro "x" è nella stanza self.room?
         self.room_dict = {
@@ -169,6 +170,7 @@ class PaintingManager:
             curr_roi_out = {}
             img_name = os.path.basename(self.ROIs_names[i])
             row = self.data[self.data["Image"] == img_name]
+
             if row.empty:
                 if self.ROIs_names[i] == "":
                     roi_id = "ID {} - ".format(i)
@@ -185,7 +187,7 @@ class PaintingManager:
                     if json_output_details:
                         curr_roi_out["text"] = "Statue"
                         curr_roi_out["id"] = i
-                        self.json_output["FRAME {}".format(self.count)].update({"ROI {}".format(i) : {}})
+
                     color = (255, 0, 0)  # blu
             else:
                 title = row["Title"].values[0]
@@ -203,7 +205,7 @@ class PaintingManager:
                 self.json_output["FRAME {}".format(self.count)]["ROI {}".format(i)].update(curr_roi_out)
 
             draw_ROI(labeled_frame, roi, text=text, color=color)
-            draw_ROI(labeled_frame, (10, frame.shape[0]-10, 0, 0), text="Frame {} - Stanza {}".format(self.count, self.room), color=(255,255,0), only_text=True)
+            draw_ROI(labeled_frame, (10, frame.shape[0]-10, 0, 0), text="Frame {} - Stanza {}".format(self.count, self.room if self.room != None else "non identificata"), color=(255,255,0), only_text=True)
 
         if show_details:
             show_frame({"Labeled_frame" : labeled_frame})
@@ -211,14 +213,14 @@ class PaintingManager:
         return labeled_frame
 
 
-    def ROI_detection(self, or_frame):
+    def ROI_detection(self, or_frame, otsu_opt_enabled=True):
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame.copy(), debug=True,  frame_number=self.count)
         # kp_frame = keypoints_detection(or_frame, show=False)
         roi_frame, ROIs = ccl_detection(or_frame.copy(),
                                         gray_frame,
                                         ed_frame,
                                         frame_number=self.count,
-                                        otsu_opt_enabled=True)
+                                        otsu_opt_enabled=otsu_opt_enabled)
         # ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
 
         return roi_frame, ROIs
@@ -324,10 +326,10 @@ class PaintingManager:
         return statue_ROIs
 
 
-    def clean_ROIs(self, frame, ROIs, ROIs_names, ratio_max=3, statue=False):
+    def clean_ROIs(self, frame, ROIs, ROIs_names, ratio_max=3, statue=False, json_output_details=False):
         temp_ROIs = []
         temp_names = []
-
+        self.feasible_ROIs = []
         # CLEANING ROIs RULES
         # 1. se il rapporto di aspetto è più di 'ratio_max' volte, considero la ROI non ammissibile
         # 2. se l'area è minore di min_area, non è ammissibile
@@ -396,13 +398,33 @@ class PaintingManager:
 
                 j += 1
 
+
         trueROIs = [[roi[0][0], roi[0][1], roi[2], roi[3]] for i, roi in enumerate(temp_ROIs) if roi_mask[i]]
         trueNames = [e for i, e in enumerate(temp_names) if roi_mask[i]]
+
+        new_json_output = {}
+
+        if not statue:
+            self.feasible_ROIs = [index for index, _ in enumerate(temp_ROIs) if roi_mask[index]]
+            if json_output_details:
+                """
+                   removes the ROIs entries in the json 
+                   file which are no longer feasible ROIs
+                """
+                dict_keys = self.json_output["FRAME {}".format(self.count)].keys()
+                new_json_output["FRAME {}".format(self.count)] = {}
+                counter = 0
+                for index, _ in enumerate(temp_ROIs):
+                    if index in self.feasible_ROIs:
+                        new_json_output["FRAME {}".format(self.count)]["ROI {}".format(counter)] = \
+                            self.json_output["FRAME {}".format(self.count)]["ROI {}".format(index)]
+                        counter += 1
+                self.json_output["FRAME {}".format(self.count)] = new_json_output["FRAME {}".format(self.count)]
 
         return trueROIs, trueNames
 
 
-    def paint_detection(self, json_output_details=False, step = 1):
+    def paint_detection(self, json_output_details=False, en_segmentation=False, step = 1):
         # Read until video is completed
 
         start = time.time()
@@ -437,7 +459,8 @@ class PaintingManager:
                                            painting matching step and all the similarity measures used will be shown. 
                         '''
 
-                        mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+                        mod_frame, self.ROIs = self.ROI_detection(frame.copy(),
+                                                                  otsu_opt_enabled=False)
                         self.retrival_and_rectification(frame.copy(),
                                                         show_details=False,
                                                         verbose=False,
@@ -449,26 +472,62 @@ class PaintingManager:
                         for _ in statue_ROIs:
                             statue_names.append("statue")
                         statue_ROIs, _ = self.clean_ROIs(frame, statue_ROIs, statue_names, statue=True)
+
                         all_ROIs = list()
                         all_ROIs.extend(self.ROIs)
                         all_ROIs.extend(statue_ROIs)
                         for _ in statue_ROIs:
                             self.ROIs_names.append("statue")
-                        self.ROIs, self.ROIs_names = self.clean_ROIs(frame, all_ROIs, self.ROIs_names)
 
-                        # Segmentation
-                        self.segmentation(frame.copy())
+                        if json_output_details:
+                            for index, roi in enumerate(all_ROIs):
+                                if self.ROIs_names[index] == "statue":
+                                    self.json_output["FRAME {}".format(self.count)].update({"ROI {}".format(index): {}})
 
+                        self.ROIs, self.ROIs_names = self.clean_ROIs(frame, all_ROIs,
+                                                                     self.ROIs_names,
+                                                                     json_output_details=json_output_details)
+
+                        if en_segmentation:
+                            # Segmentation
+                            mod_frame = self.segmentation(frame.copy())
+
+                        #show_frame({"ASDAS": mod_frame})
                         # ROI LABELING
-                        mod_frame = self.ROI_labeling(frame.copy(),
+                        mod_frame = self.ROI_labeling(mod_frame.copy(),
                                                       show_details=False,
                                                       verbose=False,
                                                       json_output_details=json_output_details)
-                        people_ROIs, mod_frame = self.people_detection(mod_frame.copy(),
+                        people_ROIs, _ = self.people_detection(frame=mod_frame.copy(),
                                                                show_details=False,
                                                                verbose=False)
+                        if json_output_details:
+                            for index, roi in enumerate(people_ROIs):
+                                self.json_output["FRAME {}".format(self.count)].update({"ROI {}".format(index+len(self.ROIs)): {"text": "Person", "id": index+len(self.ROIs)}})
 
+                        #print(people_ROIs)
                         # show_frame({'Statue Detection', mod_frame})
+                        for index, p_roi in enumerate(people_ROIs):
+                            color = (255,255,0)#random.choice(colors)
+                            c1 = tuple(p_roi[0])
+                            c2 = tuple(p_roi[1])
+
+                            room_label = "- Stanza non id." if not self.room else "- Stanza " + str(self.room)
+                            label = "ID - {0} {1} {2}".format( index+len(self.ROIs),"Person", room_label)
+                            mod_frame = cv2.rectangle(mod_frame, c1, c2, color, 1)
+
+                            t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1, 1)[0]
+                            c2 = list((c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 9))
+
+                            c2 = tuple(np.round(c2).astype(np.int32))
+                            c1 = tuple(np.round(c1).astype(np.int32))
+
+                            mod_frame = cv2.rectangle(mod_frame.astype(np.uint8), c1, c2, color, cv2.FILLED)
+                            mod_frame = cv2.putText(mod_frame, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1,
+                                                    (0,0,0), 1)
+
+
+                        #show_frame({"ASDASASDSAD2222": mod_frame})
 
                         if json_output_details:
                             self.json_output["FRAME {}".format(self.count)]["room"] = str(self.room) if self.room != None else "No room"
@@ -544,7 +603,7 @@ class PaintingManager:
                 template_matchings = []
                 av = 100
                 i = 0
-                while(av >= matching_threshold and i < 5):
+                while(av >= matching_threshold and i < len(imgs_name)):
                     av = self.paint_rectification(frame, roi, imgs_name[i], show_details = show_details, verbose=verbose)
                     """ PROVA TEMPLATE MATCHING
                     try:
@@ -567,7 +626,8 @@ class PaintingManager:
                     i += 1
 
                 # if(i < len(imgs_name)):
-                if(i < 5 and self.room == None):
+                # prima era i < 5
+                if(i < len(imgs_name) and self.room == None):
                     if show_details:
                         img = cv2.imread(imgs_name[i - 1])
                         d = {}
@@ -581,7 +641,7 @@ class PaintingManager:
 
                     self.ROIs_names.append(imgs_name[i-1])
 
-                elif(i < 5 and self.room != None):
+                elif(i < len(imgs_name) and self.room != None):
                     # come sopra ma controllo anche che il quadro sia nella stanza
                     img_name = os.path.basename(imgs_name[i-1])
                     if self.room_dict[img_name] == True:
@@ -738,7 +798,7 @@ class PaintingManager:
         names = [names for i, names in enumerate(self.ROIs_names) if self.ROIs_names[i] != ""]
 
         for i, roi in enumerate(ROIs):
-            show_frame({"Frame":frame})
+            #show_frame({"Frame":frame})
 
             x = roi[0]
             y = roi[1]
@@ -747,16 +807,16 @@ class PaintingManager:
             Lx = int(round(w * 30/100))
             Ly = int(round(h * 30/100))
 
-            Lx_2 = int(round(w * 5/100))
-            Ly_2 = int(round(h * 5/100))
+            #Lx_2 = int(round(w * 5/100))
+            #Ly_2 = int(round(h * 5/100))
 
             y1 = y-Ly if y-Ly >= 0 else 0
             y2 = y+h+Ly if y+h+Ly <= frame.shape[0] else frame.shape[0]
             x1 = x-Lx if x-Lx >= 0 else 0
             x2 = x+w+Lx if x+w+Lx <= frame.shape[1] else frame.shape[1]
 
-            img = frame[y1:y+h+Ly,x1:x+w+Lx]
-            show_frame({"IMG":img})
+            img = frame[y1:y2,x1:x2]
+            #show_frame({"IMG":img})
             img_rect = img.copy()
             Nx = abs(x1 - x)
             Ny = abs(y1 - y)
@@ -777,5 +837,10 @@ class PaintingManager:
             cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
             mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
             img_2 = img*mask2[:,:,np.newaxis]
-            img[mask2 == 1] += np.array((0, 50, 0), dtype=np.uint8)
-            show_frame({"OUT":img})
+
+            img[mask2 == 1] = np.clip(img[mask2 == 1].astype(np.int32) + np.array((0, 50, 0), dtype=np.uint8), 0, 255).astype(np.uint8)
+            #img.clip(0,255).astype(np.uint8)
+            #frame[Ny:Ny+h,Nx:Nx+w] = img
+            # show_frame({"OUT":img})
+        return frame
+
