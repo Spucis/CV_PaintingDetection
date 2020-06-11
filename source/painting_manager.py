@@ -25,6 +25,7 @@ class PaintingManager:
         self.yolo_people_model = None # yolo people model
         self.yolo_statue_model = None # yolo statue model
         self.json_output = {} # the dict that will be parsed to make the ouput_details file
+        self.feasible_ROIs = []
 
         #Il quadro "x" è nella stanza self.room?
         self.room_dict = {
@@ -169,6 +170,7 @@ class PaintingManager:
             curr_roi_out = {}
             img_name = os.path.basename(self.ROIs_names[i])
             row = self.data[self.data["Image"] == img_name]
+
             if row.empty:
                 if self.ROIs_names[i] == "":
                     roi_id = "ID {} - ".format(i)
@@ -185,7 +187,7 @@ class PaintingManager:
                     if json_output_details:
                         curr_roi_out["text"] = "Statue"
                         curr_roi_out["id"] = i
-                        self.json_output["FRAME {}".format(self.count)].update({"ROI {}".format(i) : {}})
+
                     color = (255, 0, 0)  # blu
             else:
                 title = row["Title"].values[0]
@@ -203,7 +205,7 @@ class PaintingManager:
                 self.json_output["FRAME {}".format(self.count)]["ROI {}".format(i)].update(curr_roi_out)
 
             draw_ROI(labeled_frame, roi, text=text, color=color)
-            draw_ROI(labeled_frame, (10, frame.shape[0]-10, 0, 0), text="Frame {} - Stanza {}".format(self.count, self.room), color=(255,255,0), only_text=True)
+            draw_ROI(labeled_frame, (10, frame.shape[0]-10, 0, 0), text="Frame {} - Stanza {}".format(self.count, self.room if self.room != None else "non identificata"), color=(255,255,0), only_text=True)
 
         if show_details:
             show_frame({"Labeled_frame" : labeled_frame})
@@ -211,14 +213,14 @@ class PaintingManager:
         return labeled_frame
 
 
-    def ROI_detection(self, or_frame):
+    def ROI_detection(self, or_frame, otsu_opt_enabled=True):
         gray_frame, marked_frame, ed_frame = edge_detection(or_frame.copy(), debug=True,  frame_number=self.count)
         # kp_frame = keypoints_detection(or_frame, show=False)
         roi_frame, ROIs = ccl_detection(or_frame.copy(),
                                         gray_frame,
                                         ed_frame,
                                         frame_number=self.count,
-                                        otsu_opt_enabled=True)
+                                        otsu_opt_enabled=otsu_opt_enabled)
         # ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
 
         return roi_frame, ROIs
@@ -324,10 +326,10 @@ class PaintingManager:
         return statue_ROIs
 
 
-    def clean_ROIs(self, frame, ROIs, ROIs_names, ratio_max=3, statue=False):
+    def clean_ROIs(self, frame, ROIs, ROIs_names, ratio_max=3, statue=False, json_output_details=False):
         temp_ROIs = []
         temp_names = []
-
+        self.feasible_ROIs = []
         # CLEANING ROIs RULES
         # 1. se il rapporto di aspetto è più di 'ratio_max' volte, considero la ROI non ammissibile
         # 2. se l'area è minore di min_area, non è ammissibile
@@ -396,8 +398,28 @@ class PaintingManager:
 
                 j += 1
 
+
         trueROIs = [[roi[0][0], roi[0][1], roi[2], roi[3]] for i, roi in enumerate(temp_ROIs) if roi_mask[i]]
         trueNames = [e for i, e in enumerate(temp_names) if roi_mask[i]]
+
+        new_json_output = {}
+
+        if not statue:
+            self.feasible_ROIs = [index for index, _ in enumerate(temp_ROIs) if roi_mask[index]]
+            if json_output_details:
+                """
+                   removes the ROIs entries in the json 
+                   file which are no longer feasible ROIs
+                """
+                dict_keys = self.json_output["FRAME {}".format(self.count)].keys()
+                new_json_output["FRAME {}".format(self.count)] = {}
+                counter = 0
+                for index, _ in enumerate(temp_ROIs):
+                    if index in self.feasible_ROIs:
+                        new_json_output["FRAME {}".format(self.count)]["ROI {}".format(counter)] = \
+                            self.json_output["FRAME {}".format(self.count)]["ROI {}".format(index)]
+                        counter += 1
+                self.json_output["FRAME {}".format(self.count)] = new_json_output["FRAME {}".format(self.count)]
 
         return trueROIs, trueNames
 
@@ -437,7 +459,8 @@ class PaintingManager:
                                            painting matching step and all the similarity measures used will be shown. 
                         '''
 
-                        mod_frame, self.ROIs = self.ROI_detection(frame.copy())
+                        mod_frame, self.ROIs = self.ROI_detection(frame.copy(),
+                                                                  otsu_opt_enabled=False)
                         self.retrival_and_rectification(frame.copy(),
                                                         show_details=False,
                                                         verbose=False,
@@ -449,23 +472,53 @@ class PaintingManager:
                         for _ in statue_ROIs:
                             statue_names.append("statue")
                         statue_ROIs, _ = self.clean_ROIs(frame, statue_ROIs, statue_names, statue=True)
+
                         all_ROIs = list()
                         all_ROIs.extend(self.ROIs)
                         all_ROIs.extend(statue_ROIs)
                         for _ in statue_ROIs:
                             self.ROIs_names.append("statue")
-                        self.ROIs, self.ROIs_names = self.clean_ROIs(frame, all_ROIs, self.ROIs_names)
+
+                        if json_output_details:
+                            for index, roi in enumerate(all_ROIs):
+                                if self.ROIs_names[index] == "statue":
+                                    self.json_output["FRAME {}".format(self.count)].update({"ROI {}".format(index): {}})
+
+                        self.ROIs, self.ROIs_names = self.clean_ROIs(frame, all_ROIs, self.ROIs_names,
+                                                                     json_output_details=json_output_details)
 
                         # ROI LABELING
                         mod_frame = self.ROI_labeling(frame.copy(),
                                                       show_details=False,
                                                       verbose=False,
                                                       json_output_details=json_output_details)
-                        people_ROIs, mod_frame = self.people_detection(mod_frame.copy(),
+                        people_ROIs, _ = self.people_detection(frame=mod_frame.copy(),
                                                                show_details=False,
                                                                verbose=False)
+                        if json_output_details:
+                            for index, roi in enumerate(people_ROIs):
+                                self.json_output["FRAME {}".format(self.count)].update({"ROI {}".format(index+len(self.ROIs)): {"text": "Person", "id": index+len(self.ROIs)}})
 
+                        #print(people_ROIs)
                         # show_frame({'Statue Detection', mod_frame})
+                        for index, p_roi in enumerate(people_ROIs):
+                            color = (255,255,0)#random.choice(colors)
+                            c1 = tuple(p_roi[0])
+                            c2 = tuple(p_roi[1])
+
+                            room_label = "- Stanza non id." if not self.room else "- Stanza " + str(self.room)
+                            label = "ID - {0} {1} {2}".format( index+len(self.ROIs),"Person", room_label)
+                            mod_frame = cv2.rectangle(mod_frame, c1, c2, color, 1)
+
+                            t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1, 1)[0]
+                            c2 = list((c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 9))
+
+                            c2 = tuple(np.round(c2).astype(np.int32))
+                            c1 = tuple(np.round(c1).astype(np.int32))
+
+                            mod_frame = cv2.rectangle(mod_frame.astype(np.uint8), c1, c2, color, cv2.FILLED)
+                            mod_frame = cv2.putText(mod_frame, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1,
+                                                    (0,0,0), 1);
 
                         if json_output_details:
                             self.json_output["FRAME {}".format(self.count)]["room"] = str(self.room) if self.room != None else "No room"

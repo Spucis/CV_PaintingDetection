@@ -10,15 +10,16 @@ video_name = "VIRB0401.MP4" #000
 #video_name = "VIRB0400.mp4"
 #video_name = "VIRB0402"
 
-#video_name = "20180206_114720.mp4" # 002 # IMP 1
+video_name = "20180206_114720.mp4" # 002 # IMP 1
 #video_name = "20180206_113716.mp4"
 #video_name = "20180206_112930.mp4"
 #video_name = "20180206_114408.mp4"
 #video_name = "20180206_114009.mp4"
+video_name = "20180206_112930.mp4"
 
 #video_name = "GOPR1926" #003
 #video_name = "GOPR1932.MP4"
-video_name = "GOPR2040.MP4" #006
+#video_name = "GOPR2040.MP4" #006
 
 #video_name = "IMG_3814.MOV" #004
 #video_name = "IMG_3812.MOV"
