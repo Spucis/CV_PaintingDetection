@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{subfig}
 
 % Include other packages here, before hyperref.
 
@@ -91,19 +92,114 @@ painting db we expanded the CSV file accordingly to maintain consistency.
 
 \section{Related works}
 
-Parlare di altri paper che trattano di questo problema
+To detect the paintings and statues in the museum we trained a YOLOv3 network with
+our custom annotated dataset. We choosed YOLOv3 because it can achieve good performaces
+both in terms of detection and speed as described in YOLOv3 paper:
+\begin{quote}
+   At 320$\times$320 YOLOv3 runs in 22 ms at 28.2 mAP, as accurate as SSD but three times faster. 
+   When we look at the old .5 IOU mAP detection metric YOLOv3 is quite good. It achieves
+   57.9 $AP_{50}$ in 51 ms on a Titan X, compared to 57.5 $AP_{50}$ in 198 ms by RetinaNet,
+   similar performance but 3.8$\times$ faster.
+
+   [1] Redmon, Joseph and Farhadi, Ali 
+   ``YOLOv3: An Incremental Improvement''.
+   arXiv, 2018.
+\end{quote}
 
 \section{Approach}
 
-Suddividere in varie sezioni:\\
-- Painting Detection:\\
-	- Edge Detection\\
-	- CCL\\
-	- ROI Clean rules\\
-- Painting Retrival\\
-- Painting Rectification\\
-- People Detection\\
-- Statue Detection and Segmentation
+\subsection{Painting Detection}
+
+- Edge Detection\\
+- CCL\\
+- ROI Clean rules
+
+\subsection{Painting Retrival}
+
+\subsection{Painting Rectification}
+
+\subsection{People Detection}
+
+\subsection{Statue Detection}
+
+To detect the statues in the museum we fine-tuned the YOLOv3 network starting from
+weights trained on COCO dataset. At the beginning we thought to detect statues and paintings
+to improve the detection made with the Image Processing approach, so we trained the network
+on 2 classes: Paintings and Statues.
+
+We made our custom annotated dataset ripping frames from all videos of the museum, storing
+them with a step of 250 frames for each video, obtaining 605 images mainly composed by paintings 
+with only a 10\% of images containing statues.
+We tried to train the network with this small and unbalanced dataset using different {\tt Learning Rate} 
+values but the result was unsufficient.
+
+After those tries we thought to use the network only to detect the statues, because the Image Processing
+method was still better to detect paintings but often it wasn't able to detect statues.
+So we learned the lesson and we tried to balance the dataset selecting manually frames with statues
+from videos obtaining 282 images, each containg at least a statue with different point of views.
+We annotated those images with more focus on statues than paintings, then we made a simple data 
+augmentation script to flip all statues frames, obtaining 564 images with statues.
+Finally our dataset contains 1169 images, slightly balanced in number of paintings and statues.
+
+Using Adam optimizer with {\tt Non Maxima Suppression} value of 0.4, {\tt Confidence Threshold} of 0.8 
+and a {\tt Learning Rate} of 0.004 we achieved an AP of {\bf 6.39\%}, considering also the painting class that we 
+discarded in detection phase. 
+
+To train the network we used an Nvidia GTX 1050 with 4Gb and it took us almost 4 days to
+reach the 242th epoch with a batch size of 2, then we just stopped the training due to overfitting on 
+{\tt confidence loss} [2]. 
+We achieved the best results of AP with the 177th epoch and we used those weights to detect
+statues on videos trying different combinations of {\tt Non Maxima Suppression} and {\tt Confidence Threshold} values,
+defining them to 0.1 and 0.98 respectively.
+
+\begin{figure}
+    \centering
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{loss_x.eps}}
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{loss_y.eps}}\\
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{loss_width.eps}}
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{loss_height.eps}}
+    \caption{(a) Loss X, (b) Loss Y, (c) Loss Width and (d) Loss Height}
+    \label{fig:foobar}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+   \includegraphics[width=1\linewidth]{loss_conf.eps}
+\end{center}
+   \caption{The Loss Confidence begins to overfit after few epochs, probably due to bad labeling of
+paintings when we expanded the dataset.}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+   \includegraphics[width=1\linewidth]{loss_class.eps}
+\end{center}
+   \caption{The Loss Class has a good trend.}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+   \includegraphics[width=1\linewidth]{loss_total.eps}
+\end{center}
+   \caption{The Total Loss is affected mainly by the loss confidence curve [2], 
+while the loss class [3] and localization losses [1] are good enough to improve the precision [5].}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{recall.eps}}
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{precision.eps}}
+    \caption{(a) Recall  and (b) Precision curves}
+    \label{fig:foobar}
+\end{figure}
+
+\subsection{Segmentation}
 
 \section{Results}
 

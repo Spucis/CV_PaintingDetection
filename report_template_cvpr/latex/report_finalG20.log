@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  12 JUN 2020 18:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  13 JUN 2020 12:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -156,7 +156,51 @@ Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 ))
-(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/subfig/subfig.sty
+Package: subfig 2005/06/28 ver: 1.3 subfig package
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2016/02/04 v1.7-139 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
+\captionmargin=\dimen119
+\captionmargin@=\dimen120
+\captionwidth=\dimen121
+\caption@tempdima=\dimen122
+\caption@indent=\dimen123
+\caption@parindent=\dimen124
+\caption@hangindent=\dimen125
+Package caption Info: Unknown document class (or package),
+(caption)             standard defaults will be used.
+)
+
+Package caption Warning: Unsupported document class (or package) detected,
+(caption)                usage of the caption package is not recommended.
+See the caption package documentation for explanation.
+
+Package caption Info: \@makecaption = \long macro:#1#2-> \setbox \@tempboxa \hb
+ox {\small \noindent #1.~#2} \setlength {\@ctmp }{\hsize } \addtolength {\@ctmp
+ }{-\@figindent }\addtolength {\@ctmp }{-\@figindent } \ifdim \wd \@tempboxa >\
+@ctmp {\small #1.~#2\par } \else \hbox to\hsize {\hfil \box \@tempboxa \hfil } 
+\fi .
+\c@ContinuedFloat=\count105
+)
+\c@KVtest=\count106
+\sf@farskip=\skip48
+\sf@captopadj=\dimen126
+\sf@capskip=\skip49
+\sf@nearskip=\skip50
+\c@subfigure=\count107
+\c@subfigure@save=\count108
+\c@lofdepth=\count109
+\c@subtable=\count110
+\c@subtable@save=\count111
+\c@lotdepth=\count112
+\sf@top=\skip51
+\sf@bottom=\skip52
+) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
 
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
@@ -213,14 +257,14 @@ Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
 (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
 Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
 )
-\@linkdim=\dimen119
-\Hy@linkcounter=\count105
-\Hy@pagecounter=\count106
+\@linkdim=\dimen127
+\Hy@linkcounter=\count113
+\Hy@pagecounter=\count114
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
 )
-\Hy@SavedSpaceFactor=\count107
+\Hy@SavedSpaceFactor=\count115
 
 (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/hyperref.cfg
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
@@ -234,17 +278,17 @@ Package hyperref Info: Plain pages OFF on input line 4458.
 Package hyperref Info: Backreferencing OFF on input line 4463.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks OFF on input line 4694.
-\c@Hy@tempcnt=\count108
+\c@Hy@tempcnt=\count116
 
 (/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip11
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 5041.
-\XeTeXLinkMargin=\dimen120
-\Fld@menulength=\count109
-\Field@Width=\dimen121
-\Fld@charsize=\dimen122
+\XeTeXLinkMargin=\dimen128
+\Fld@menulength=\count117
+\Field@Width=\dimen129
+\Fld@charsize=\dimen130
 Package hyperref Info: Hyper figures OFF on input line 6295.
 Package hyperref Info: Link nesting OFF on input line 6300.
 Package hyperref Info: Hyper index ON on input line 6303.
@@ -254,45 +298,66 @@ Package hyperref Info: Link coloring with OCG OFF on input line 6320.
 Package hyperref Info: PDF/A mode OFF on input line 6325.
 LaTeX Info: Redefining \ref on input line 6365.
 LaTeX Info: Redefining \pageref on input line 6369.
-\Hy@abspage=\count110
-\c@Item=\count111
-\c@Hfootnote=\count112
+\Hy@abspage=\count118
+\c@Item=\count119
+\c@Hfootnote=\count120
 )
 
 Package hyperref Message: Driver (autodetected): hpdftex.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
 File: hpdftex.def 2012/11/06 v6.83m Hyperref driver for pdfTeX
-\Fld@listcount=\count113
-\c@bookmark@seq@number=\count114
+\Fld@listcount=\count121
+\c@bookmark@seq@number=\count122
 
 (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
 Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 82.
 )
-\Hy@SectionHShift=\skip48
+\Hy@SectionHShift=\skip53
 )
-(./report_finalG20.aux)
+(./report_finalG20.aux
+
+LaTeX Warning: Label `fig:long' multiply defined.
+
+
+LaTeX Warning: Label `fig:onecol' multiply defined.
+
+
+LaTeX Warning: Label `fig:long' multiply defined.
+
+
+LaTeX Warning: Label `fig:onecol' multiply defined.
+
+
+LaTeX Warning: Label `fig:foobar' multiply defined.
+
+
+LaTeX Warning: Label `fig:long' multiply defined.
+
+
+LaTeX Warning: Label `fig:onecol' multiply defined.
+
+)
 \openout1 = `report_finalG20.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 25.
-
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 26.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 ABD: EveryShipout initializing macros
@@ -306,16 +371,16 @@ Package color Info: Driver file: pdftex.def on input line 143.
 )
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count115
-\scratchdimen=\dimen123
+\scratchcounter=\count123
+\scratchdimen=\dimen131
 \scratchbox=\box30
-\nofMPsegments=\count116
-\nofMParguments=\count117
+\nofMPsegments=\count124
+\nofMParguments=\count125
 \everyMPshowfont=\toks20
-\MPscratchCnt=\count118
-\MPscratchDim=\dimen124
-\MPnumerator=\count119
-\makeMPintoPDFobject=\count120
+\MPscratchCnt=\count126
+\MPscratchDim=\dimen132
+\MPnumerator=\count127
+\makeMPintoPDFobject=\count128
 \everyMPtoPDFconversion=\toks21
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
@@ -332,9 +397,13 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: subfig package v1.3 is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box31
 Package atbegshi Info: Package `everyshi' patched.
-Package hyperref Info: Link coloring OFF on input line 25.
+Package hyperref Info: Link coloring OFF on input line 26.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -342,133 +411,336 @@ Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count121
+\c@section@level=\count129
 )
-LaTeX Info: Redefining \ref on input line 25.
-LaTeX Info: Redefining \pageref on input line 25.
-LaTeX Info: Redefining \nameref on input line 25.
+LaTeX Info: Redefining \ref on input line 26.
+LaTeX Info: Redefining \pageref on input line 26.
+LaTeX Info: Redefining \nameref on input line 26.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 54.
-LaTeX Font Info:    Try loading font information for U+msa on input line 54.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 55.
+LaTeX Font Info:    Try loading font information for U+msa on input line 55.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 54.
+LaTeX Font Info:    Try loading font information for U+msb on input line 55.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 54.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 55.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 56.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 57.
 
-Underfull \hbox (badness 4144) in paragraph at lines 110--112
-\OT1/ptm/m/n/10 Fornire mis-urazioni sugli al-go-ritmi uti-liz-zati e sulle
- []
+Underfull \vbox (badness 3333) has occurred while \output is active []
 
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+ [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
 ]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 137.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 145.
+
+Underfull \hbox (badness 10000) in paragraph at lines 144--147
+[]\OT1/ptm/m/n/10 Using Adam op-ti-mizer with \OT1/pcr/m/n/10 Non Maxima
+ []
 
 
-LaTeX Warning: Citation `Authors14' on page 2 undefined on input line 232.
+Underfull \hbox (badness 10000) in paragraph at lines 144--147
+\OT1/pcr/m/n/10 Suppression \OT1/ptm/m/n/10 value of 0.4, \OT1/pcr/m/n/10 Confi
+dence
+ []
+
+Package epstopdf Info: Source file: <loss_x.eps>
+(epstopdf)                    date: 2020-06-13 12:41:11
+(epstopdf)                    size: 113028 bytes
+(epstopdf)             Output file: <loss_x-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:44:05
+(epstopdf)                    size: 59399 bytes
+(epstopdf)             Command: <repstopdf --outfile=loss_x-eps-converted-to.pd
+f loss_x.eps>
+(epstopdf)             \includegraphics on input line 157.
+Package epstopdf Info: Output file is already uptodate.
 
 
-LaTeX Warning: Citation `Authors14b' on page 2 undefined on input line 244.
+pdfTeX warning: /usr/bin/pdflatex (file ./loss_x-eps-converted-to.pdf): PDF inc
+lusion: found PDF version <1.7>, but at most version <1.5> allowed
+<loss_x-eps-converted-to.pdf, id=21, 455.7025pt x 255.95625pt>
+File: loss_x-eps-converted-to.pdf Graphic file (type pdf)
 
-[2]
-Underfull \hbox (badness 10000) in paragraph at lines 283--289
+<use loss_x-eps-converted-to.pdf>
+Package pdftex.def Info: loss_x-eps-converted-to.pdf used on input line 157.
+(pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
+Package epstopdf Info: Source file: <loss_y.eps>
+(epstopdf)                    date: 2020-06-13 12:41:22
+(epstopdf)                    size: 113239 bytes
+(epstopdf)             Output file: <loss_y-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:44:05
+(epstopdf)                    size: 59413 bytes
+(epstopdf)             Command: <repstopdf --outfile=loss_y-eps-converted-to.pd
+f loss_y.eps>
+(epstopdf)             \includegraphics on input line 158.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./loss_y-eps-converted-to.pdf): PDF inc
+lusion: found PDF version <1.7>, but at most version <1.5> allowed
+<loss_y-eps-converted-to.pdf, id=22, 455.7025pt x 255.95625pt>
+File: loss_y-eps-converted-to.pdf Graphic file (type pdf)
+
+<use loss_y-eps-converted-to.pdf>
+Package pdftex.def Info: loss_y-eps-converted-to.pdf used on input line 158.
+(pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
+Package epstopdf Info: Source file: <loss_width.eps>
+(epstopdf)                    date: 2020-06-13 12:41:33
+(epstopdf)                    size: 122370 bytes
+(epstopdf)             Output file: <loss_width-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:44:06
+(epstopdf)                    size: 63764 bytes
+(epstopdf)             Command: <repstopdf --outfile=loss_width-eps-converted-t
+o.pdf loss_width.eps>
+(epstopdf)             \includegraphics on input line 159.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./loss_width-eps-converted-to.pdf): PDF
+ inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<loss_width-eps-converted-to.pdf, id=23, 455.7025pt x 255.95625pt>
+File: loss_width-eps-converted-to.pdf Graphic file (type pdf)
+
+<use loss_width-eps-converted-to.pdf>
+Package pdftex.def Info: loss_width-eps-converted-to.pdf used on input line 159
+.
+(pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
+Package epstopdf Info: Source file: <loss_height.eps>
+(epstopdf)                    date: 2020-06-13 12:41:46
+(epstopdf)                    size: 123242 bytes
+(epstopdf)             Output file: <loss_height-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:44:06
+(epstopdf)                    size: 63788 bytes
+(epstopdf)             Command: <repstopdf --outfile=loss_height-eps-converted-
+to.pdf loss_height.eps>
+(epstopdf)             \includegraphics on input line 160.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./loss_height-eps-converted-to.pdf): PD
+F inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<loss_height-eps-converted-to.pdf, id=24, 455.7025pt x 255.95625pt>
+File: loss_height-eps-converted-to.pdf Graphic file (type pdf)
+
+<use loss_height-eps-converted-to.pdf>
+Package pdftex.def Info: loss_height-eps-converted-to.pdf used on input line 16
+0.
+(pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
+Package epstopdf Info: Source file: <loss_conf.eps>
+(epstopdf)                    date: 2020-06-13 12:11:04
+(epstopdf)                    size: 116719 bytes
+(epstopdf)             Output file: <loss_conf-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:11:26
+(epstopdf)                    size: 60006 bytes
+(epstopdf)             Command: <repstopdf --outfile=loss_conf-eps-converted-to
+.pdf loss_conf.eps>
+(epstopdf)             \includegraphics on input line 167.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./loss_conf-eps-converted-to.pdf): PDF 
+inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<loss_conf-eps-converted-to.pdf, id=25, 455.7025pt x 255.95625pt>
+File: loss_conf-eps-converted-to.pdf Graphic file (type pdf)
+
+<use loss_conf-eps-converted-to.pdf>
+Package pdftex.def Info: loss_conf-eps-converted-to.pdf used on input line 167.
+
+(pdftex.def)             Requested size: 237.13594pt x 133.19565pt.
+Package epstopdf Info: Source file: <loss_class.eps>
+(epstopdf)                    date: 2020-06-13 12:17:37
+(epstopdf)                    size: 111123 bytes
+(epstopdf)             Output file: <loss_class-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:19:25
+(epstopdf)                    size: 57309 bytes
+(epstopdf)             Command: <repstopdf --outfile=loss_class-eps-converted-t
+o.pdf loss_class.eps>
+(epstopdf)             \includegraphics on input line 177.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./loss_class-eps-converted-to.pdf): PDF
+ inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<loss_class-eps-converted-to.pdf, id=26, 455.7025pt x 255.95625pt>
+File: loss_class-eps-converted-to.pdf Graphic file (type pdf)
+
+<use loss_class-eps-converted-to.pdf>
+Package pdftex.def Info: loss_class-eps-converted-to.pdf used on input line 177
+.
+(pdftex.def)             Requested size: 237.13594pt x 133.19565pt.
+Package epstopdf Info: Source file: <loss_total.eps>
+(epstopdf)                    date: 2020-06-13 12:22:02
+(epstopdf)                    size: 103503 bytes
+(epstopdf)             Output file: <loss_total-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:25:20
+(epstopdf)                    size: 54428 bytes
+(epstopdf)             Command: <repstopdf --outfile=loss_total-eps-converted-t
+o.pdf loss_total.eps>
+(epstopdf)             \includegraphics on input line 186.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./loss_total-eps-converted-to.pdf): PDF
+ inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<loss_total-eps-converted-to.pdf, id=27, 455.7025pt x 255.95625pt>
+File: loss_total-eps-converted-to.pdf Graphic file (type pdf)
+
+<use loss_total-eps-converted-to.pdf>
+Package pdftex.def Info: loss_total-eps-converted-to.pdf used on input line 186
+.
+(pdftex.def)             Requested size: 237.13594pt x 133.19565pt.
+Package epstopdf Info: Source file: <recall.eps>
+(epstopdf)                    date: 2020-06-13 12:26:36
+(epstopdf)                    size: 115177 bytes
+(epstopdf)             Output file: <recall-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:27:50
+(epstopdf)                    size: 59288 bytes
+(epstopdf)             Command: <repstopdf --outfile=recall-eps-converted-to.pd
+f recall.eps>
+(epstopdf)             \includegraphics on input line 196.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./recall-eps-converted-to.pdf): PDF inc
+lusion: found PDF version <1.7>, but at most version <1.5> allowed
+<recall-eps-converted-to.pdf, id=28, 455.7025pt x 255.95625pt>
+File: recall-eps-converted-to.pdf Graphic file (type pdf)
+
+<use recall-eps-converted-to.pdf>
+Package pdftex.def Info: recall-eps-converted-to.pdf used on input line 196.
+(pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
+Package epstopdf Info: Source file: <precision.eps>
+(epstopdf)                    date: 2020-06-13 12:26:48
+(epstopdf)                    size: 119066 bytes
+(epstopdf)             Output file: <precision-eps-converted-to.pdf>
+(epstopdf)                    date: 2020-06-13 12:27:50
+(epstopdf)                    size: 60793 bytes
+(epstopdf)             Command: <repstopdf --outfile=precision-eps-converted-to
+.pdf precision.eps>
+(epstopdf)             \includegraphics on input line 197.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./precision-eps-converted-to.pdf): PDF 
+inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<precision-eps-converted-to.pdf, id=29, 455.7025pt x 255.95625pt>
+File: precision-eps-converted-to.pdf Graphic file (type pdf)
+
+<use precision-eps-converted-to.pdf>
+Package pdftex.def Info: precision-eps-converted-to.pdf used on input line 197.
+
+(pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
+
+Underfull \hbox (badness 4144) in paragraph at lines 206--208
+\OT1/ptm/m/n/10 Fornire mis-urazioni sugli al-go-ritmi uti-liz-zati e sulle
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [2 <./loss_x-eps-converted-to.pdf> <./loss_y-eps-converted-to.pdf> <./loss_wid
+th-eps-converted-to.pdf> <./loss_height-eps-converted-to.pdf> <./loss_conf-eps-
+converted-to.pdf> <./loss_class-eps-converted-to.pdf>] [3 <./loss_total-eps-con
+verted-to.pdf> <./recall-eps-converted-to.pdf> <./precision-eps-converted-to.pd
+f>]
+
+LaTeX Warning: Citation `Authors14' on page 4 undefined on input line 328.
+
+
+LaTeX Warning: Citation `Authors14b' on page 4 undefined on input line 340.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 379--385
 
  []
 
 
-LaTeX Warning: Citation `Alpher02' on page 3 undefined on input line 323.
+LaTeX Warning: Citation `Alpher02' on page 4 undefined on input line 419.
 
 
-LaTeX Warning: Citation `Alpher03' on page 3 undefined on input line 324.
+LaTeX Warning: Citation `Alpher03' on page 4 undefined on input line 420.
 
 
-LaTeX Warning: Citation `Alpher04' on page 3 undefined on input line 324.
+LaTeX Warning: Citation `Alpher04' on page 4 undefined on input line 420.
 
 
-LaTeX Warning: Citation `Alpher03' on page 3 undefined on input line 326.
+LaTeX Warning: Citation `Alpher03' on page 4 undefined on input line 422.
 
 
-LaTeX Warning: Citation `Alpher03' on page 3 undefined on input line 327.
+LaTeX Warning: Citation `Alpher03' on page 4 undefined on input line 423.
+
+[4]
+
+LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 428.
 
 
-LaTeX Warning: Citation `Alpher03' on page 3 undefined on input line 332.
+LaTeX Warning: Citation `Alpher02' on page 5 undefined on input line 428.
 
 
-LaTeX Warning: Citation `Alpher02' on page 3 undefined on input line 332.
+LaTeX Warning: Citation `Authors14' on page 5 undefined on input line 428.
 
 
-LaTeX Warning: Citation `Authors14' on page 3 undefined on input line 332.
+LaTeX Warning: Citation `Alpher02' on page 5 undefined on input line 429.
 
 
-LaTeX Warning: Citation `Alpher02' on page 3 undefined on input line 333.
+LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 429.
 
 
-LaTeX Warning: Citation `Alpher03' on page 3 undefined on input line 333.
+LaTeX Warning: Citation `Authors14' on page 5 undefined on input line 429.
 
+[5]
 
-LaTeX Warning: Citation `Authors14' on page 3 undefined on input line 333.
+LaTeX Warning: Citation `Authors14' on page 6 undefined on input line 539.
 
-[3]
-
-LaTeX Warning: Citation `Authors14' on page 4 undefined on input line 443.
-
-
-Underfull \vbox (badness 2478) has occurred while \output is active []
-
- [4]
 No file report_finalG20.bbl.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 505.
-[5
-
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 505.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 601.
+[6]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 601.
  (./report_finalG20.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 505.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 505.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 601.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 601.
 
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 505.
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 601.
  ) 
 Here is how much of TeX's memory you used:
- 6324 strings out of 493029
- 90437 string characters out of 6136234
- 181889 words of memory out of 5000000
- 9731 multiletter control sequences out of 15000+600000
- 33404 words of font info for 80 fonts, out of 8000000 for 9000
+ 7554 strings out of 493029
+ 113159 string characters out of 6136234
+ 206829 words of memory out of 5000000
+ 10928 multiletter control sequences out of 15000+600000
+ 30781 words of font info for 73 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,9n,26p,473b,324s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 44i,10n,49p,473b,394s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti1
-0.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/urw/times/utmri8a.pfb>
-Output written on report_finalG20.pdf (5 pages, 142423 bytes).
+fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucr
+r8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on report_finalG20.pdf (6 pages, 656888 bytes).
 PDF statistics:
- 114 PDF objects out of 1000 (max. 8388607)
- 94 compressed objects within 1 object stream
- 31 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 160 PDF objects out of 1000 (max. 8388607)
+ 131 compressed objects within 2 object streams
+ 49 named destinations out of 1000 (max. 500000)
+ 46 words of extra memory for PDF output out of 10000 (max. 10000000)
 
