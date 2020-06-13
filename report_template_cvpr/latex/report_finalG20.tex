@@ -56,8 +56,8 @@ Department of Engineering Enzo Ferrari\\
 \begin{abstract}
    Image processing, retrieval and people detection
    are important computer vision applications.
-   Here we present our work on the "Galleria Estense" dataset which contains
-   videos and images from the "Galleria Estense" of Modena.
+   Here we present our work on the ``Galleria Estense" dataset which contains
+   videos and images from the ``Galleria Estense" of Modena.
    We propose a method to detect and retrieve the paintings, the statues and the people in the 
    museum based on different approaches: one with pure image processing and one 
    with YOLOv3 network, trained with a custom annotated dataset of paintings and statues 
@@ -72,17 +72,17 @@ Spiegare i vari task (tipo spiegare cosa fa e cosa significa Painting Retrival, 
 
 \subsection{The dataset}
 
-The dataset contains videos and images from the "Galleria Estense" of Modena.
+The dataset contains videos and images from the ``Galleria Estense" of Modena.
 
 We have 208 short videos taken using different cameras, aspect ratios and resolutions. 
 Some video was taken with a GoPro camera which introduced some distortion and
 some video has frames particularly blurred due to the motion applied to the camera.
 
-We have a database of 95 images that should represents all paintings of the "Galleria Estense", 
+We have a database of 95 images that should represents all paintings of the ``Galleria Estense", 
 but during the development of the project we realized that many paintings were missing 
-and so we had to expand the paintings db adding some paintings taken from the "Galleria Estense" 
-website to improve the retrival and rectification tasks. We added 18 paintings that are named 
-with a fixed suffix "A" followed by a zero-based sequential identifier, \eg "A001.jpg".
+and so we had to expand the paintings db adding some paintings taken from the ``Galleria Estense" 
+website to improve the retrival and rectification tasks. We added 23 paintings that are named 
+with a fixed suffix ``A" followed by a zero-based sequential identifier, \eg ``A000.jpeg".
 
 Finally the dataset contains also a CSV file with informations for every painting present
 in the db, including the position of the painting in the museum as a room number, and also an image

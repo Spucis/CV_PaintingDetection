@@ -16,6 +16,7 @@ video_name = "VIRB0401.MP4" #000
 #video_name = "20180206_114408.mp4"
 #video_name = "20180206_114009.mp4"
 #video_name = "20180206_112930.mp4"
+#video_name = "20180206_114506.mp4"  # 002
 
 #video_name = "GOPR1926" #003
 #video_name = "GOPR1932.MP4"
