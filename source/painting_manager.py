@@ -603,7 +603,7 @@ class PaintingManager:
                 template_matchings = []
                 av = 100
                 i = 0
-                while(av >= matching_threshold and i < len(imgs_name)):
+                while(av >= matching_threshold and i < 10):
                     av = self.paint_rectification(frame, roi, imgs_name[i], show_details = show_details, verbose=verbose)
                     """ PROVA TEMPLATE MATCHING
                     try:
@@ -627,7 +627,7 @@ class PaintingManager:
 
                 # if(i < len(imgs_name)):
                 # prima era i < 5
-                if(i < len(imgs_name) and self.room == None):
+                if(i < 10 and self.room == None):
                     if show_details:
                         img = cv2.imread(imgs_name[i - 1])
                         d = {}
@@ -641,7 +641,7 @@ class PaintingManager:
 
                     self.ROIs_names.append(imgs_name[i-1])
 
-                elif(i < len(imgs_name) and self.room != None):
+                elif(i < 10 and self.room != None):
                     # come sopra ma controllo anche che il quadro sia nella stanza
                     img_name = os.path.basename(imgs_name[i-1])
                     if self.room_dict[img_name] == True:
