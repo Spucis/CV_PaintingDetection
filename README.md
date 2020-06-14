@@ -1,5 +1,6 @@
 # CV_PaintingDetection
 Computer Vision - Museum Painting Detection
+
 Authors: *Marco Cagrandi*, *Alessio Ruggi* and *Daniele Lombardo*.
 
 # Project structure
