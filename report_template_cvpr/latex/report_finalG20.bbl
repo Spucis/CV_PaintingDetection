@@ -1,0 +1,33 @@
+\begin{thebibliography}{1}\itemsep=-1pt
+
+\bibitem{canny}
+J. {Canny}.
+\newblock A computational approach to edge detection.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  PAMI-8(6):679--698, 1986.
+
+\bibitem{otsu}
+N. {Otsu}.
+\newblock A threshold selection method from gray-level histograms.
+\newblock {\em IEEE Transactions on Systems, Man, and Cybernetics},
+  9(1):62--66, 1979.
+
+\bibitem{yolov3}
+Joseph Redmon and Ali Farhadi.
+\newblock Yolov3: An incremental improvement.
+\newblock {\em arXiv}, 2018.
+
+\bibitem{grabcut}
+Carsten Rother, Vladimir Kolmogorov, and Andrew Blake.
+\newblock “grabcut”: Interactive foreground extraction using iterated graph
+  cuts.
+\newblock In {\em ACM SIGGRAPH 2004 Papers}, SIGGRAPH ’04, page 309–314,
+  New York, NY, USA, 2004. Association for Computing Machinery.
+
+\bibitem{orb}
+E. {Rublee}, V. {Rabaud}, K. {Konolige}, and G. {Bradski}.
+\newblock Orb: An efficient alternative to sift or surf.
+\newblock In {\em 2011 International Conference on Computer Vision}, pages
+  2564--2571, 2011.
+
+\end{thebibliography}

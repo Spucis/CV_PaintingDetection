@@ -72,7 +72,7 @@ Department of Engineering Enzo Ferrari\\
 
 We have tackled the problem of detect paintings, statues and people in a museum (the Galleria Estense).
 Our objectives were: rectify the paintings correcting the perspective distortions, retrieve the correct paintings in the dataset, provide a precise segmentation of both detected paintings and statues, sum up all the information we had and link the paintings and the people to a precise room in the museum.
- In order to achive our results, as further discussed in section 3, many techniques are involved: image processing topics as edge detection, connected components analysis, relevant ROI detection, object segmentation; image retrieval; deep learning and neural networks. 
+ In order to achieve our results, as further discussed in section 3, many techniques are involved: Image processing topics as edge detection, connected components analysis, relevant ROI detection, object segmentation; image retrieval; deep learning and neural networks. 
 
 \subsection{The dataset}
 
@@ -84,8 +84,7 @@ some video has frames particularly blurred due to the motion applied to the came
 
 We have a database of 95 images that should represents all paintings of the ``Galleria Estense", 
 but during the development of the project we realized that many paintings were missing 
-and so we had to expand the paintings db adding some paintings taken from the ``Galleria Estense" 
-website to improve the retrival and rectification tasks. We added 23 paintings that are named 
+and so we had to expand the paintings db adding some paintings taken from the \href{https://www.gallerie-estensi.beniculturali.it/opere/#c-dipinti#c-sculture#l-galleria-estense}{``Galleria Estense" website} to improve the retrival and rectification tasks. We added 23 paintings that are named 
 with a fixed suffix ``A" followed by a zero-based sequential identifier, \eg ``A000.jpeg".
 
 Finally the dataset contains also a CSV file with informations for every painting present
@@ -101,7 +100,8 @@ network able to detect objects in images parsing the image only once, saving com
 other detection networks, however maintaining a good degree of precision.
 We choosed YOLOv3 because it can achieve good performaces
 both in terms of detection and speed as described in YOLOv3 paper \textit{Joseph Redmon and Ali Farhadi} \cite{yolov3}.
-After the detection with YOLOv3, we used GrabCut algorithm for segmentation.
+
+After the detection with YOLOv3, we used GrabCut algorithm for segmentation \cite{grabcut}.
 GrabCut is an algorithm used for foreground extraction with minimal user interaction.
 User should inputs the rectangle which border the object of interest: everything outside this rectangle is considered sure background, while everything inside the rectangle may be both foreground or background.
 This minimal user interaction required by GrabCut is reduced to zero in our case, because, in the case of statues, YOLOv3 network inputs the rectangle, while in the case of painting the input ROIs are the one detected in the Painting Detection.
@@ -171,30 +171,56 @@ but sometimes affects the paintings that are overexposed to the light.
 
 \subsection{Painting Retrival}
 Painting retrival consists in the identification of ROIs passed from the Painting Detection. A ROI is extrapolated from the frame, and it is compared with all the painting in the database:
-	- if the ROI is recognized as one of the painting in the database (with a certain level of security), it's labeled and information to decribe it are retrived from the database
-	- if the ROI does not match any painting,  they are classified as "unidentified object".
-The comparison is done with ORB, which is a keypoint detector, just like SIFT and SURF, but not patented.
-For every detected ROI, we use ORB to find the keypoint, and we compare them with every keypoints of evry paint in the database.
-The comparison of the keypoint returns an avarage distance: this distance represent how different are the keypoints found in the considered paint from the key of the ROI; the smaller the distance, the higher the probability that the considered paint from the database is the one that was filmed in the frame.
+\begin{itemize}
+  \item If the ROI is recognized as one of the painting in the database (with a certain level of security), it's labeled and information to describe it are retrived from the database
+  \item If the ROI does not match any painting,  they are classified as ``unidentified object"
+\end{itemize}
+The comparison is done with ORB \cite{orb}, which is a keypoint detector, just like SIFT and SURF, but not patented.
+For every detected ROI, we use ORB to find the keypoint, and we compare them with every keypoints of every painting in the database.
+The comparison of the keypoint returns an avarage distance: this distance represent how different are the keypoints found in the considered painting from the keypoints of the ROI; the smaller the distance, the higher the probability that the considered painting from the database is the one that was filmed in the frame.
 
 \subsection{Painting Rectification}
-The paint with the smaller average distance from the database, that we will call the "Best Candidate", may not coincide with the object in the ROI; this may happend for many reasons:
-	- the object is not a paint
-	- the object is a paint, but the quality of that particular frame is very bad (the camera moving, the picture is overexposed to light)
-	- the object is a paint, but is not in the databse
-Painting Rectification can be very helpful: with painting retrival, we select the paint that has the smallest avarage distace from the object in the roi, then, we try to rectificate the object in the frame based on the keypoints of the Best Candidate, and we obtain a rectified image,
-If the Best Candidate was actually the paint in the ROI, the rectification should be good, not distored: otherwise, the rectification will bring to a "Black Hole": a Black Hole happends when the wrong keypoints are used for the rectification.
-it can therefore be inferred that a Black Hole happend when our Best Candidate is wrong, it does not concide with the object in the paint.
-We can discard the first Best Candidate, and get the paint from the database which has the second smallest average distance.
-We repeat the process with the first 5 paint with smallest average distance, ot untill we obtain a good rectification.
+The painting with the smaller average distance from the database, that we will call the ``Best Candidate", may not coincide with the object in the ROI; this may happen for many reasons:
+\begin{itemize}
+  \item The object is not a painting
+  \item The object is a painting, but the quality of that particular frame is very bad (the camera moving, the picture is overexposed to light)
+  \item The object is a painting, but is not in the database
+\end{itemize}
+Painting Rectification can be very helpful: with painting retrival, we select the painting that has the smallest avarage distance from the object in the ROI, then, we try to rectify the object in the frame based on the keypoints of the Best Candidate, and we obtain a rectified image,
+if the Best Candidate was actually the painting in the ROI, the rectification should be good, not distored \ref{fig:optimal_rectification}: otherwise, the rectification will bring to a ``Black Hole" \ref{fig:worst_rectification}: a Black Hole happens when the wrong keypoints are used for the rectification.
 
-**immagini di black hole etc etc**
+It can therefore be inferred that a Black Hole happened when our Best Candidate is wrong, it does not concide with the object in the painting.
+We can discard the first Best Candidate, and get the painting from the database which has the second smallest average distance.
+We repeat the process with the first 10 paintings with smallest average distance, or until we obtain a good rectification.
 
-Technically, we still use keypoint to detect if the rectified image is a Black Hole. After the rectification, we compute the keypoints on the rectified image: after that, we compute the avarage distance of the keypoints just calculated from the keypoints of the Best Candidate, that we already have. If the rectification was successful, the avarage distance shoul be low, otherwise it will be high, the rectification was a Black Hole and we have to try with another image.
+\begin{figure}
+    \centering
+    \subfloat[ROI from Painting Detection]{\includegraphics[width=0.33\linewidth]{img_001.png}}
+    \subfloat[Keypoints matching]{\includegraphics[width=0.33\linewidth]{img_001_KeyPoints.png}}
+    \subfloat[Painting rectified from retrived painting]{\includegraphics[width=0.33\linewidth]{img_001_RectRetr.png}}
+    \caption{Retrival and Rectification optimal case without further corrections}
+    \label{fig:optimal_rectification}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \subfloat[Wrong keypoints matching]{\includegraphics[width=0.5\linewidth]{img_002_wrongdetect.png}}
+    \subfloat[Bad rectification: ``Black Hole"]{\includegraphics[width=0.5\linewidth]{img_2_Blackhole.png}}\\
+    \subfloat[Right keypoints matching]{\includegraphics[width=0.5\linewidth]{img_002_right_matches.png}}
+    \subfloat[Good rectification]{\includegraphics[width=0.5\linewidth]{img_002_goodrect.png}}
+    \caption{Retrival and Rectification wrong attempt, correction with keypoint matching and good Rectification}
+    \label{fig:worst_rectification}
+\end{figure}
+
+Technically, we still use keypoints to detect if the rectified image is a Black Hole. After the rectification, we compute the keypoints on the rectified image: after that, we compute the avarage distance of the keypoints just calculated from the keypoints of the Best Candidate, that we already have. If the rectification was successful, the avarage distance should be low, otherwise it will be high, the rectification was a Black Hole and we have to try with another image.
+
 We set three threshold:
-	- if the average distance is less than 35, it means that we are very confident that we have found the right paint in the database; for this reason, we identify the paint with the information retrieved from the databese and we set in qhich room we are in.
-	- if the average distance is greater than 35, but less than 60, we are pretty sure that we get the right paint, but we are not sure enough to set the room
-	- if the average distance is greater tha 60, we are in the situation of a Black Hole, the keypoints are too different, so we have to try with another paint 
+\begin{itemize}
+  \item If the average distance is less than 35, it means that we are very confident that we have found the right painting in the database; for this reason, we identify the painting with the information retrieved from the database and we set in which room we are in.
+  \item If the average distance is greater than 35, but less than 60, we are pretty sure that we get the right painting, but we are not sure enough to set the room
+  \item If the average distance is greater than 60, we are in the situation of a Black Hole, the keypoints are too different, so we have to try with another painting 
+\end{itemize}
+
 \subsection{People Detection}
 
 We used YOLOv3 network pre-trained on COCO dataset to detect people on videos, getting the returned
@@ -227,10 +253,22 @@ discarded in detection phase.
 
 To train the network we used an Nvidia GTX 1050 with 4Gb and it took us almost 4 days to
 reach the 242th epoch with a batch size of 2, then we just stopped the training due to overfitting on 
-{\tt confidence loss} [2]. 
+{\tt confidence loss} \ref{fig:loss_conf}. 
 We achieved the best results of AP with the 177th epoch and we used those weights to detect
 statues on videos trying different combinations of {\tt Non Maxima Suppression} and {\tt Confidence Threshold} values,
 defining them to 0.1 and 0.98 respectively.
+
+\subsection{Segmentation}
+The last section of the project deals with segmentation, both of paintings and Stautes.
+We used GrabcCut algorithm as defined in \textit{Carsten Rother, Vladimir Kolmogorov, Andrew Blake} \cite{grabcut}
+: exploiting the ROIs received both from Painting Detection and YOLOv3, we were able to use GrabCut algorithm without user interactions.
+In particular, we took every ROI extrapolated in each frame, and enlarged them: In this manner, we had a section of the frame, in which we could draw the rectangle to define what was definitely background.
+At this point, we used GrabCut to extrapolate what in the ROI was our object of interest, was that a painting or a statue.
+We highlighted the objects of interest in green \ref{fig:results2}.
+
+\section{Results}
+
+In this section, some results frame and training graphs will be shown.
 
 \begin{figure}
     \centering
@@ -239,7 +277,7 @@ defining them to 0.1 and 0.98 respectively.
     \subfloat[]{\includegraphics[width=0.5\linewidth]{loss_width.eps}}
     \subfloat[]{\includegraphics[width=0.5\linewidth]{loss_height.eps}}
     \caption{(a) Loss X, (b) Loss Y, (c) Loss Width and (d) Loss Height}
-    \label{fig:foobar}
+    \label{fig:localization_loss}
 \end{figure}
 
 \begin{figure}[t]
@@ -248,7 +286,7 @@ defining them to 0.1 and 0.98 respectively.
 \end{center}
    \caption{The Loss Confidence begins to overfit after few epochs, probably due to bad labeling of
 paintings when we expanded the dataset.}
-\label{fig:long}
+\label{fig:loss_conf}
 \label{fig:onecol}
 \end{figure}
 
@@ -257,17 +295,7 @@ paintings when we expanded the dataset.}
    \includegraphics[width=1\linewidth]{loss_class.eps}
 \end{center}
    \caption{The Loss Class has a good trend.}
-\label{fig:long}
-\label{fig:onecol}
-\end{figure}
-
-\begin{figure}[t]
-\begin{center}
-   \includegraphics[width=1\linewidth]{loss_total.eps}
-\end{center}
-   \caption{The Total Loss is affected mainly by the loss confidence curve [2], 
-while the loss class [3] and localization losses [1] are good enough to improve the precision [5].}
-\label{fig:long}
+\label{fig:loss_class}
 \label{fig:onecol}
 \end{figure}
 
@@ -276,22 +304,18 @@ while the loss class [3] and localization losses [1] are good enough to improve 
     \subfloat[]{\includegraphics[width=0.5\linewidth]{recall.eps}}
     \subfloat[]{\includegraphics[width=0.5\linewidth]{precision.eps}}
     \caption{(a) Recall  and (b) Precision curves}
-    \label{fig:foobar}
+    \label{fig:recall_precision}
 \end{figure}
 
-\subsection{Segmentation}
-The last section of the project deals with segmentation, both of paintings and Stautes.
-We used GrabcCut algorithm as defined in \textit{Carsten Rother, Vladimir Kolmogorov, Andrew Blake} \cite{grabcut}
-: exploiting the ROIs received both from Painting Detection and YOLOv3, we were able to use GrabCut algorithm without user interactions.
-In particular, we took evry ROI extrapolated in each frame, and enlarged it: in this manner, we had a section of the frame, in which we could draw the rectangle to define what was definitely background.
-At this point, we used GrabCut to extrapolate what in the ROI was our object of interest, was that a paint or a statue.
-We highlighted the objects of interest in green
-
-
-***Foto con frame e rettangolo che identifa sfondo/unkown,Foto con statue e quadri in verde**
-\section{Results}
-
-In this section, some results frame and training graphs will be shown.
+\begin{figure}[t]
+\begin{center}
+   \includegraphics[width=1\linewidth]{loss_total.eps}
+\end{center}
+   \caption{The Total Loss is affected mainly by the loss confidence curve \ref{fig:loss_conf}, 
+while the loss class \ref{fig:loss_class} and localization losses \ref{fig:localization_loss} are good enough to improve the precision \ref{fig:recall_precision}.}
+\label{fig:loss_total}
+\label{fig:onecol}
+\end{figure}
 
 \begin{figure*}[t]
 \begin{center}
@@ -312,13 +336,12 @@ In this section, some results frame and training graphs will be shown.
     \label{fig:results2}
 \end{figure*}
 
-
 \section{Discussion}
 
-- migliorare la rete con dataset più ampio e bilanciato \\
-- potremmo eliminare alcune ROI inutili (e.g. le etichette) utilizzando alcune tecniche di Image Processing \\
-- Retrival, Rectification e Detection funzionerebbero meglio se avessimo un database di immagini completo anche con statue \\
-
+Considering this is our first work on this kind of problems we know that we could achieve better results with more work and time.
+In particular we could improve our network detection with a wider and more balanced dataset.
+Furthermore we could improve our painting detection discarding some useless ROIs (\eg the labels describing paintings and statues) using some Image Processing technique (\eg Histogram to discard labels).
+We know also that Retrival, Rectification and Detection tasks could work better if we had a complete paintings and statues database.
 
 {\small
 \bibliographystyle{ieee_fullname}

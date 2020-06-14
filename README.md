@@ -12,8 +12,8 @@ The file `conf.json` is the configuration file and it's were you can change the 
   - `globals.py` contains all the global definitions and the utilities used to manage the input video itself (such as opening and closing the video).
 
 An output file `output_details.json` is provided: it summarize all the information provided by the program.
-# How it works and how to enable all the options available
 
+# How it works and how to enable all the options available
 Each `step` frames the program will stop and process the frame, producing a modified frame `mod_frame` and writing it on the disk.
 In `cv_project.py` is possible to enable the output of the details with the option `json_output_details`, enable the segmentation of both statues and 
 detected paintings with the option `en_segmentation`, and modify the `step`.

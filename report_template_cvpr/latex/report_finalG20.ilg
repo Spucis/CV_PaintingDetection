@@ -1,0 +1,585 @@
+This is makeindex, version 2.15 [TeX Live 2015] (kpathsea + Thai support).
+Scanning input file report_finalG20.tex...
+!! Input index error (file = report_finalG20.tex, line = 1):
+   -- Unknown index keyword \documentclass[10pt,twocolumn,letterpaper].
+!! Input index error (file = report_finalG20.tex, line = 3):
+   -- Unknown index keyword \usepackage.
+!! Input index error (file = report_finalG20.tex, line = 4):
+   -- Unknown index keyword \usepackage.
+!! Input index error (file = report_finalG20.tex, line = 5):
+   -- Unknown index keyword \usepackage.
+!! Input index error (file = report_finalG20.tex, line = 6):
+   -- Unknown index keyword \usepackage.
+!! Input index error (file = report_finalG20.tex, line = 7):
+   -- Unknown index keyword \usepackage.
+!! Input index error (file = report_finalG20.tex, line = 8):
+   -- Unknown index keyword \usepackage.
+!! Input index error (file = report_finalG20.tex, line = 9):
+   -- Unknown index keyword \usepackage.
+!! Input index error (file = report_finalG20.tex, line = 10):
+   -- Unknown index keyword \usepackage.
+!! Input index error (file = report_finalG20.tex, line = 12):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 14):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 15):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 16):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 17):
+   -- Unknown index keyword \usepackage[breaklinks=true,bookmarks=false].
+!! Input index error (file = report_finalG20.tex, line = 19):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 21):
+   -- Unknown index keyword \def\cvprPaperID.
+!! Input index error (file = report_finalG20.tex, line = 22):
+   -- Unknown index keyword \def\httilde.
+!! Input index error (file = report_finalG20.tex, line = 24):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 25):
+   -- Unknown index keyword %\ifcvprfinal\pagestyle.
+!! Input index error (file = report_finalG20.tex, line = 26):
+   -- Unknown index keyword \setcounter.
+!! Input index error (file = report_finalG20.tex, line = 28):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 30):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 31):
+   -- Unknown index keyword \title.
+!! Input index error (file = report_finalG20.tex, line = 33):
+   -- Unknown index keyword \author.
+!! Input index error (file = report_finalG20.tex, line = 34):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 35):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 36):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 37):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 38):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 39):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 40):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 41):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 42):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 43):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 44):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 45):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 46):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 47):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 48):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 49):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 50):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 51):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 52):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 55):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 56):
+   -- Unknown index keyword %\thispagestyle.
+!! Input index error (file = report_finalG20.tex, line = 58):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 59):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 60):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 61):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 62):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 63):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 64):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 65):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 66):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 67):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 68):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 70):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 71):
+   -- Unknown index keyword \section.
+!! Input index error (file = report_finalG20.tex, line = 73):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 74):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 75):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 77):
+   -- Unknown index keyword \subsection.
+!! Input index error (file = report_finalG20.tex, line = 79):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 81):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 82):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 83):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 85):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 86):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 87):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 88):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 89):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 91):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 92):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 93):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 94):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 96):
+   -- Unknown index keyword \section.
+!! Input index error (file = report_finalG20.tex, line = 98):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 99):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 100):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 101):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 102):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 103):
+   -- Unknown index keyword bothintermsofdetectionandspeedasdescribedinYOLOv3paper\textit.
+!! Input index error (file = report_finalG20.tex, line = 105):
+   -- Unknown index keyword AfterthedetectionwithYOLOv3,weusedGrabCutalgorithmforsegmentation\cite.
+!! Input index error (file = report_finalG20.tex, line = 106):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 107):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 108):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 111):
+   -- Unknown index keyword \section.
+!! Input index error (file = report_finalG20.tex, line = 113):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 114):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 116):
+   -- Unknown index keyword \subsection.
+!! Input index error (file = report_finalG20.tex, line = 118):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 119):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 120):
+   -- Unknown index keyword AgoodmethodtodetectrelevantedgesistheCannyalgorithm\cite.
+!! Input index error (file = report_finalG20.tex, line = 122):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 123):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 124):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 125):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 126):
+   -- Unknown index keyword \multicolumn.
+!! Input index error (file = report_finalG20.tex, line = 127):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 128):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 129):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 130):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 131):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 132):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 133):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 134):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 135):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 137):
+   -- Unknown index keyword withaSobeloperator\cite.
+!! Input index error (file = report_finalG20.tex, line = 139):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 140):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 141):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 142):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 143):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 144):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 145):
+   -- Unknown index keyword ratio_.
+!! Input index error (file = report_finalG20.tex, line = 146):
+   -- Unknown index keyword area_.
+!! Input index error (file = report_finalG20.tex, line = 147):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 148):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 150):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 152):
+   -- Unknown index keyword Wethenproposeanoptionaloptimization,named\textbf.
+!! Input index error (file = report_finalG20.tex, line = 153):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 154):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 155):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 156):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 157):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 158):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 159):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 161):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 162):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 163):
+   -- Unknown index keyword \subfloat[Originalframe].
+!! Input index error (file = report_finalG20.tex, line = 164):
+   -- Unknown index keyword \subfloat[Cannyedgedetection].
+!! Input index error (file = report_finalG20.tex, line = 165):
+   -- Unknown index keyword \subfloat[Closingresults].
+!! Input index error (file = report_finalG20.tex, line = 166):
+   -- Unknown index keyword \subfloat[Detectedconnectedcomponents].
+!! Input index error (file = report_finalG20.tex, line = 167):
+   -- Unknown index keyword \subfloat[ConnectedcomponentsROIs].
+!! Input index error (file = report_finalG20.tex, line = 168):
+   -- Unknown index keyword \subfloat[RelevantROIs;ingreenthediscardedROIsduetotheoverlap].
+!! Input index error (file = report_finalG20.tex, line = 169):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 170):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 171):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 173):
+   -- Unknown index keyword \subsection.
+!! Input index error (file = report_finalG20.tex, line = 174):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 175):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 176):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 177):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 178):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 179):
+   -- Unknown index keyword ThecomparisonisdonewithORB\cite.
+!! Input index error (file = report_finalG20.tex, line = 180):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 181):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 183):
+   -- Unknown index keyword \subsection.
+!! Input index error (file = report_finalG20.tex, line = 184):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 185):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 186):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 187):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 188):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 189):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 190):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 191):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 193):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 194):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 195):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 197):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 198):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 199):
+   -- Unknown index keyword \subfloat[ROIfromPaintingDetection].
+!! Input index error (file = report_finalG20.tex, line = 200):
+   -- Unknown index keyword \subfloat[Keypointsmatching].
+!! Input index error (file = report_finalG20.tex, line = 201):
+   -- Unknown index keyword \subfloat[Paintingrectifiedfromretrivedpainting].
+!! Input index error (file = report_finalG20.tex, line = 202):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 203):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 204):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 206):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 207):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 208):
+   -- Unknown index keyword \subfloat[Wrongkeypointsmatching].
+!! Input index error (file = report_finalG20.tex, line = 209):
+   -- Unknown index keyword \subfloat[Badrectification:``BlackHole"].
+!! Input index error (file = report_finalG20.tex, line = 210):
+   -- Unknown index keyword \subfloat[Rightkeypointsmatching].
+!! Input index error (file = report_finalG20.tex, line = 211):
+   -- Unknown index keyword \subfloat[Goodrectification].
+!! Input index error (file = report_finalG20.tex, line = 212):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 213):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 214):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 216):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 218):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 219):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 220):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 221):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 222):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 223):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 225):
+   -- Unknown index keyword \subsection.
+!! Input index error (file = report_finalG20.tex, line = 227):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 228):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 230):
+   -- Unknown index keyword \subsection.
+!! Input index error (file = report_finalG20.tex, line = 232):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 233):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 234):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 235):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 237):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 238):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 239):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 240):
+   -- Unknown index keyword Wetriedtotrainthenetworkwiththissmallandunbalanceddatasetusingdifferent.
+!! Input index error (file = report_finalG20.tex, line = 241):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 243):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 244):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 245):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 246):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 247):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 248):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 249):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 251):
+   -- Unknown index keyword UsingAdamoptimizerwith.
+!! Input index error (file = report_finalG20.tex, line = 252):
+   -- Unknown index keyword anda.
+!! Input index error (file = report_finalG20.tex, line = 253):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 255):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 256):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 257):
+   -- Unknown index keyword {\ttconfidenceloss}\ref.
+!! Input index error (file = report_finalG20.tex, line = 258):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 259):
+   -- Unknown index keyword statuesonvideostryingdifferentcombinationsof.
+!! Input index error (file = report_finalG20.tex, line = 260):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 262):
+   -- Unknown index keyword \subsection.
+!! Input index error (file = report_finalG20.tex, line = 263):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 264):
+   -- Unknown index keyword WeusedGrabcCutalgorithmasdefinedin\textit.
+!! Input index error (file = report_finalG20.tex, line = 265):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 266):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 267):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 268):
+   -- Unknown index keyword Wehighlightedtheobjectsofinterestingreen\ref.
+!! Input index error (file = report_finalG20.tex, line = 270):
+   -- Unknown index keyword \section.
+!! Input index error (file = report_finalG20.tex, line = 272):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 274):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 275):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 276):
+   -- Unknown index keyword \subfloat[].
+!! Input index error (file = report_finalG20.tex, line = 277):
+   -- Unknown index keyword \subfloat[].
+!! Input index error (file = report_finalG20.tex, line = 278):
+   -- Unknown index keyword \subfloat[].
+!! Input index error (file = report_finalG20.tex, line = 279):
+   -- Unknown index keyword \subfloat[].
+!! Input index error (file = report_finalG20.tex, line = 280):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 281):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 282):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 284):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 285):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 286):
+   -- Unknown index keyword \includegraphics[width=1\linewidth].
+!! Input index error (file = report_finalG20.tex, line = 287):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 288):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 289):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 290):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 291):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 292):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 294):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 295):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 296):
+   -- Unknown index keyword \includegraphics[width=1\linewidth].
+!! Input index error (file = report_finalG20.tex, line = 297):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 298):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 299):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 300):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 301):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 303):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 304):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 305):
+   -- Unknown index keyword \subfloat[].
+!! Input index error (file = report_finalG20.tex, line = 306):
+   -- Unknown index keyword \subfloat[].
+!! Input index error (file = report_finalG20.tex, line = 307):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 308):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 309):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 311):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 312):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 313):
+   -- Unknown index keyword \includegraphics[width=1\linewidth].
+!! Input index error (file = report_finalG20.tex, line = 314):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 315):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 316):
+   -- Unknown index keyword whilethelossclass\ref.
+!! Input index error (file = report_finalG20.tex, line = 317):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 318):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 319):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 321):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 322):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 323):
+   -- Unknown index keyword \subfloat[Nootsu\_optimization,bad].
+!! Input index error (file = report_finalG20.tex, line = 324):
+   -- Unknown index keyword \subfloat[Withotsu\_optimization,good].
+!! Input index error (file = report_finalG20.tex, line = 325):
+   -- Unknown index keyword \subfloat[Nootsu\_optimization,good].
+!! Input index error (file = report_finalG20.tex, line = 326):
+   -- Unknown index keyword \subfloat[Withotsu\_optimization,bad].
+!! Input index error (file = report_finalG20.tex, line = 327):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 328):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 329):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 330):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 332):
+   -- Unknown index keyword \begin.
+!! Input index error (file = report_finalG20.tex, line = 333):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 334):
+   -- Unknown index keyword \subfloat[].
+!! Input index error (file = report_finalG20.tex, line = 335):
+   -- Unknown index keyword \subfloat[].
+!! Input index error (file = report_finalG20.tex, line = 336):
+   -- Unknown index keyword \caption.
+!! Input index error (file = report_finalG20.tex, line = 337):
+   -- Unknown index keyword \label.
+!! Input index error (file = report_finalG20.tex, line = 338):
+   -- Unknown index keyword \end.
+!! Input index error (file = report_finalG20.tex, line = 340):
+   -- Unknown index keyword \section.
+!! Input index error (file = report_finalG20.tex, line = 342):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 343):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 344):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 345):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 347):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 348):
+   -- Unknown index keyword \bibliographystyle.
+!! Input index error (file = report_finalG20.tex, line = 349):
+   -- Unknown index keyword \bibliography.
+!! Input index error (file = report_finalG20.tex, line = 350):
+   -- Missing arguments -- need two (premature LFD).
+!! Input index error (file = report_finalG20.tex, line = 352):
+   -- Unknown index keyword \end.
+done (0 entries accepted, 290 rejected).
+Nothing written in report_finalG20.ind.
+Transcript written in report_finalG20.ilg.
