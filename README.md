@@ -3,6 +3,8 @@ Computer Vision - Museum Painting Detection
 
 Authors: *Marco Cagrandi*, *Alessio Ruggi* and *Daniele Lombardo*.
 
+GitHub Repository: https://github.com/Spucis/CV_PaintingDetection
+
 # Project structure
 The file `cv_project.py` is the entry point of the application. It contains the video selection and it is where you can change the *step* of the program.
 The file `conf.json` is the configuration file and it's were you can change the input directory and (optionally) all the paths of the directories of the project.
