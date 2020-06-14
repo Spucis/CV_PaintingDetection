@@ -24,3 +24,4 @@ yolo_training/data
 yolo_training/det
 yolo_training/imgs
 Segmentation/
+output_details.json
