@@ -7,6 +7,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{subfig}
+\usepackage{float}
 
 % Include other packages here, before hyperref.
 
@@ -68,8 +69,9 @@ Department of Engineering Enzo Ferrari\\
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 
-Presentazione del problema:
-Spiegare i vari task (tipo spiegare cosa fa e cosa significa Painting Retrival, Rectification, ecc)
+We have tackled the problem of detect paintings, statues and people in a museum (the Galleria Estense).
+Our objectives were: rectify the paintings correcting the perspective distortions, retrieve the correct paintings in the dataset, provide a precise segmentation of both detected paintings and statues, sum up all the information we had and link the paintings and the people to a precise room in the museum.
+ In order to achive our results, as further discussed in section 3, many techniques are involved: image processing topics as edge detection, connected components analysis, relevant ROI detection, object segmentation; image retrieval; deep learning and neural networks. 
 
 \subsection{The dataset}
 
@@ -108,11 +110,65 @@ both in terms of detection and speed as described in YOLOv3 paper:
 
 \section{Approach}
 
+The proposed approach involve several elements: Painting detection, Painting retrieval, 
+Painting rectification, People detection and Statue detection.
+
 \subsection{Painting Detection}
 
-- Edge Detection\\
-- CCL\\
-- ROI Clean rules
+The first thing to do in order to detect relevant objects is to perform edge detection, but right before we have 
+precessed the image with a gaussian filter in order to remove the gaussian noise and a bilateral filter. 
+A good method to detect relevant edges is the Canny algorithm. It has been proposed with the following empirically determined thresholds 
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+\multicolumn{2}{|c|}{Thresholds}  \\
+\hline
+Low & High \\
+\hline
+400 & 400 \\ 
+\hline
+\end{tabular}
+\caption{Canny thresholds}
+\end{center}
+\end{table}
+
+with a Sobel operator with aperture of 5. With low threshold and high threshold set to an equal value, we don't accept weak edges, even if connected with strong edges.
+
+The next step is to perform a Dilation 3x3 followed by an Erosion (Closing), in order to 
+connect the edges of the same relevant object, and to detect the connected components in the output image 
+thus obtaining a list of ROIs.
+In order to discard unrelevant ROIs, we have set some rules that have to be satisfied in order to be considered
+a relevant ROI: 
+\begin{gather*}
+	ratio_{ROI} =  \frac{max(width_{ROI}, height_{ROI})}{min(width_{ROI}, height_{ROI})} <  3 \quad (1)\\
+	area_{ROI} > 0.015 \cdot area_{frame} \quad (2)\\ 
+	max\_overlap = 0.8 \quad (3)
+\end{gather*}
+
+If the overlap is greater than the threshold, the bigger ROI survives.
+
+We then propose an optional optimization, named \textbf{otsu\_optimization} and activated with the 
+{\tt otsu\_opt\_enabled} flag set to True,
+\begin{gather*}
+	otsu\_th(ROI) > 1.3 \cdot otsu\_th(frame) \quad (4)
+\end{gather*}
+ where \(otsu\_th(x)\) is the function that computes the Otsu threshold. 
+This optimization helps when it comes to discard the ROIs containing \eg wall sections,
+but sometimes affects the paintings that are overexposed to the light.
+
+\begin{figure}
+    \centering
+    \subfloat[Original frame]{\includegraphics[width=0.5\linewidth]{frame.jpg}}\\
+    \subfloat[Canny edge detection]{\includegraphics[width=0.5\linewidth]{canny_out.jpg}}\\
+    \subfloat[Closing results]{\includegraphics[width=0.5\linewidth]{closing_canny.jpg}}\\
+    \subfloat[Detected connected components]{\includegraphics[width=0.5\linewidth]{connected_components.jpg}}\\
+    \subfloat[Connected components ROIs]{\includegraphics[width=0.5\linewidth]{components_rois.jpg}}\\
+    \subfloat[Relevant ROIs; in green the discarded ROIs due to the overlap]{\includegraphics[width=0.5\linewidth]{relevant_rois.jpg}}
+    \caption{Relevant ROIs results}
+    \label{fig:foobar}
+\end{figure}
 
 \subsection{Painting Retrival}
 
@@ -202,6 +258,27 @@ while the loss class [3] and localization losses [1] are good enough to improve 
 \subsection{Segmentation}
 
 \section{Results}
+
+In this section, some results frame will be shown.
+
+\begin{figure*}[t]
+\begin{center}
+    \subfloat[No otsu\_optimization, bad]{\includegraphics[width=0.5\linewidth]{4720_Frame560_noOtsu_bad.jpg}}
+    \subfloat[With otsu\_optimization, good]{\includegraphics[width=0.5\linewidth]{4720_Frame560_yesOtsu_good.jpg}}\\
+    \subfloat[No otsu\_optimization, good]{\includegraphics[width=0.5\linewidth]{4720_Frame260_noOtsu_Good.jpg}}
+    \subfloat[With otsu\_optimization, bad]{\includegraphics[width=0.5\linewidth]{4720_Frame260_yesOtsu_bad.jpg}}
+\end{center}
+   \caption{Example of otsu\_optimization (no statue detection nor segmentation)}
+\label{fig:results1}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{good_segm_det_frame_20.jpg}}
+    \caption{Example of segmentation and statue detection}
+    \label{fig:foobar}
+\end{figure*}
+
 
 Mostrare e commentare alcuni frame (belli e brutti).
 Fornire misurazioni sugli algoritmi utilizzati e sulle prestazioni della rete con grafici
