@@ -8,7 +8,12 @@ video_name = "VIRB0401.MP4" #000
 #video_name = "VIRB0391.mp4"
 #video_name = "VIRB0400.mp4"
 #video_name = "VIRB0402"
+<<<<<<< HEAD
 #video_name = "20180206_114720.mp4" # 002 # IMP 1
+=======
+
+video_name = "20180206_114720.mp4" # 002 # IMP 1
+>>>>>>> 9e59c4e66bbeca3a1219ea1d44feab33d7585d1d
 #video_name = "20180206_113716.mp4"
 #video_name = "20180206_112930.mp4"
 #video_name = "20180206_114720.mp4"
@@ -57,5 +62,9 @@ else:
     # 'step': the frame will be processed each 'step' frames
     p_manager.paint_detection(json_output_details=True,
                               en_segmentation=True,
+<<<<<<< HEAD
                               step=2)
+=======
+                              step=20)
+>>>>>>> 9e59c4e66bbeca3a1219ea1d44feab33d7585d1d
     p_manager.close_video()

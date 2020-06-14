@@ -221,7 +221,7 @@ class PaintingManager:
                                         ed_frame,
                                         frame_number=self.count,
                                         otsu_opt_enabled=otsu_opt_enabled)
-        # ed_frame = cv2.cvtColor(ed_frame, cv2.COLOR_GRAY2BGR)
+        #roi_frame = cv2.cvtColor(roi_frame, cv2.COLOR_GRAY2BGR)
 
         return roi_frame, ROIs
 
@@ -461,6 +461,7 @@ class PaintingManager:
 
                         mod_frame, self.ROIs = self.ROI_detection(frame.copy(),
                                                                   otsu_opt_enabled=False)
+
                         self.retrival_and_rectification(frame.copy(),
                                                         show_details=False,
                                                         verbose=False,
@@ -531,6 +532,8 @@ class PaintingManager:
 
                         if json_output_details:
                             self.json_output["FRAME {}".format(self.count)]["room"] = str(self.room) if self.room != None else "No room"
+                            
+
                 self.count += 1
 
                 if self.count % step == 0:
@@ -603,7 +606,11 @@ class PaintingManager:
                 template_matchings = []
                 av = 100
                 i = 0
+<<<<<<< HEAD
                 while(av >= matching_threshold and i < 10):
+=======
+                while(av >= matching_threshold and i < 5):
+>>>>>>> 9e59c4e66bbeca3a1219ea1d44feab33d7585d1d
                     av = self.paint_rectification(frame, roi, imgs_name[i], show_details = show_details, verbose=verbose)
                     """ PROVA TEMPLATE MATCHING
                     try:
@@ -627,7 +634,11 @@ class PaintingManager:
 
                 # if(i < len(imgs_name)):
                 # prima era i < 5
+<<<<<<< HEAD
                 if(i < 10 and self.room == None):
+=======
+                if(i < 5 and self.room == None):
+>>>>>>> 9e59c4e66bbeca3a1219ea1d44feab33d7585d1d
                     if show_details:
                         img = cv2.imread(imgs_name[i - 1])
                         d = {}
@@ -641,7 +652,11 @@ class PaintingManager:
 
                     self.ROIs_names.append(imgs_name[i-1])
 
+<<<<<<< HEAD
                 elif(i < 10 and self.room != None):
+=======
+                elif(i < 5 and self.room != None):
+>>>>>>> 9e59c4e66bbeca3a1219ea1d44feab33d7585d1d
                     # come sopra ma controllo anche che il quadro sia nella stanza
                     img_name = os.path.basename(imgs_name[i-1])
                     if self.room_dict[img_name] == True:

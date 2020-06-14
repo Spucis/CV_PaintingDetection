@@ -7,6 +7,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{subfig}
+\usepackage{float}
 
 % Include other packages here, before hyperref.
 
@@ -23,6 +24,7 @@
 % Pages are numbered in submission mode, and unnumbered in camera-ready
 %\ifcvprfinal\pagestyle{empty}\fi
 \setcounter{page}{1}
+
 \begin{document}
 
 %%%%%%%%% TITLE
@@ -68,8 +70,9 @@ Department of Engineering Enzo Ferrari\\
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 
-Presentazione del problema:
-Spiegare i vari task (tipo spiegare cosa fa e cosa significa Painting Retrival, Rectification, ecc)
+We have tackled the problem of detect paintings, statues and people in a museum (the Galleria Estense).
+Our objectives were: rectify the paintings correcting the perspective distortions, retrieve the correct paintings in the dataset, provide a precise segmentation of both detected paintings and statues, sum up all the information we had and link the paintings and the people to a precise room in the museum.
+ In order to achive our results, as further discussed in section 3, many techniques are involved: image processing topics as edge detection, connected components analysis, relevant ROI detection, object segmentation; image retrieval; deep learning and neural networks. 
 
 \subsection{The dataset}
 
@@ -93,17 +96,13 @@ painting db we expanded the CSV file accordingly to maintain consistency.
 \section{Related works}
 
 To detect the paintings and statues in the museum we trained a YOLOv3 network with
-our custom annotated dataset. We choosed YOLOv3 because it can achieve good performaces
+our custom annotated dataset. YOLO (acronym for ``You Only Look Once") is an object detection
+network able to detect objects in images parsing the image only once, saving computation time w.r.t. 
+other detection networks, however maintaining a good degree of precision.
+We choosed YOLOv3 because it can achieve good performaces
 both in terms of detection and speed as described in YOLOv3 paper:
 \begin{quote}
-   At 320$\times$320 YOLOv3 runs in 22 ms at 28.2 mAP, as accurate as SSD but three times faster. 
-   When we look at the old .5 IOU mAP detection metric YOLOv3 is quite good. It achieves
-   57.9 $AP_{50}$ in 51 ms on a Titan X, compared to 57.5 $AP_{50}$ in 198 ms by RetinaNet,
-   similar performance but 3.8$\times$ faster.
-
-   [1] Redmon, Joseph and Farhadi, Ali 
-   ``YOLOv3: An Incremental Improvement''.
-   arXiv, 2018.
+   \cite{yolov3}
 \end{quote}
 
 After the detection with YOLOv3, we used GrabCut algorithm for segmentation.
@@ -118,11 +117,65 @@ Transactions on Graphics (SIGGRAPH'04), 2004.
 
 \section{Approach}
 
+The proposed approach involve several elements: Painting detection, Painting retrieval, 
+Painting rectification, People detection and Statue detection.
+
 \subsection{Painting Detection}
 
-- Edge Detection\\
-- CCL\\
-- ROI Clean rules
+The first thing to do in order to detect relevant objects is to perform edge detection, but right before we have 
+precessed the image with a gaussian filter in order to remove the gaussian noise and a bilateral filter. 
+A good method to detect relevant edges is the Canny algorithm. It has been proposed with the following empirically determined thresholds 
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+\multicolumn{2}{|c|}{Thresholds}  \\
+\hline
+Low & High \\
+\hline
+400 & 400 \\ 
+\hline
+\end{tabular}
+\caption{Canny thresholds}
+\end{center}
+\end{table}
+
+with a Sobel operator with aperture of 5. With low threshold and high threshold set to an equal value, we don't accept weak edges, even if connected with strong edges.
+
+The next step is to perform a Dilation 3x3 followed by an Erosion (Closing), in order to 
+connect the edges of the same relevant object, and to detect the connected components in the output image 
+thus obtaining a list of ROIs.
+In order to discard unrelevant ROIs, we have set some rules that have to be satisfied in order to be considered
+a relevant ROI: 
+\begin{gather*}
+	ratio_{ROI} =  \frac{max(width_{ROI}, height_{ROI})}{min(width_{ROI}, height_{ROI})} <  3 \quad (1)\\
+	area_{ROI} > 0.015 \cdot area_{frame} \quad (2)\\ 
+	max\_overlap = 0.8 \quad (3)
+\end{gather*}
+
+If the overlap is greater than the threshold, the bigger ROI survives.
+
+We then propose an optional optimization, named \textbf{otsu\_optimization} and activated with the 
+{\tt otsu\_opt\_enabled} flag set to True,
+\begin{gather*}
+	otsu\_th(ROI) > 1.3 \cdot otsu\_th(frame) \quad (4)
+\end{gather*}
+ where \(otsu\_th(x)\) is the function that computes the Otsu threshold. 
+This optimization helps when it comes to discard the ROIs containing \eg wall sections,
+but sometimes affects the paintings that are overexposed to the light.
+
+\begin{figure}
+    \centering
+    \subfloat[Original frame]{\includegraphics[width=0.5\linewidth]{frame.jpg}}\\
+    \subfloat[Canny edge detection]{\includegraphics[width=0.5\linewidth]{canny_out.jpg}}\\
+    \subfloat[Closing results]{\includegraphics[width=0.5\linewidth]{closing_canny.jpg}}\\
+    \subfloat[Detected connected components]{\includegraphics[width=0.5\linewidth]{connected_components.jpg}}\\
+    \subfloat[Connected components ROIs]{\includegraphics[width=0.5\linewidth]{components_rois.jpg}}\\
+    \subfloat[Relevant ROIs; in green the discarded ROIs due to the overlap]{\includegraphics[width=0.5\linewidth]{relevant_rois.jpg}}
+    \caption{Relevant ROIs results}
+    \label{fig:foobar}
+\end{figure}
 
 \subsection{Painting Retrival}
 Painting retrival consists in the identification of ROIs passed from the Painting Detection. A ROI is extrapolated from the frame, and it is compared with all the painting in the database:
@@ -151,6 +204,9 @@ We set three threshold:
 	- if the average distance is greater than 35, but less than 60, we are pretty sure that we get the right paint, but we are not sure enough to set the room
 	- if the average distance is greater tha 60, we are in the situation of a Black Hole, the keypoints are too different, so we have to try with another paint 
 \subsection{People Detection}
+
+We used YOLOv3 network pre-trained on COCO dataset to detect people on videos, getting the returned
+ROIs to draw them on output video.
 
 \subsection{Statue Detection}
 
@@ -183,6 +239,36 @@ reach the 242th epoch with a batch size of 2, then we just stopped the training 
 We achieved the best results of AP with the 177th epoch and we used those weights to detect
 statues on videos trying different combinations of {\tt Non Maxima Suppression} and {\tt Confidence Threshold} values,
 defining them to 0.1 and 0.98 respectively.
+
+\subsection{Segmentation}
+The last section of the project deals with segmentation, both of paintings and Stautes.
+We used GrabcCut algorithm: exploiting the ROIs received both from Painting Detection and YOLOv3, we were able to use GrabCut algorithm without user interactions.
+In particular, we took evry ROI extrapolated in each frame, and enlarged it: in this manner, we had a section of the frame, in which we could draw the rectangle to define what was definitely background.
+At this point, we used GrabCut to extrapolate what in the ROI was our object of interest, was that a paint or a statue.
+We highlighted the objects of interest in green
+
+***Foto con frame e rettangolo che identifa sfondo/unkown,Foto con statue e quadri in verde**
+\section{Results}
+
+In this section, some results frame and training graphs will be shown.
+
+\begin{figure*}[t]
+\begin{center}
+    \subfloat[No otsu\_optimization, bad]{\includegraphics[width=0.5\linewidth]{4720_Frame560_noOtsu_bad.jpg}}
+    \subfloat[With otsu\_optimization, good]{\includegraphics[width=0.5\linewidth]{4720_Frame560_yesOtsu_good.jpg}}\\
+    \subfloat[No otsu\_optimization, good]{\includegraphics[width=0.5\linewidth]{4720_Frame260_noOtsu_Good.jpg}}
+    \subfloat[With otsu\_optimization, bad]{\includegraphics[width=0.5\linewidth]{4720_Frame260_yesOtsu_bad.jpg}}
+\end{center}
+   \caption{Example of otsu\_optimization (no statue detection nor segmentation)}
+\label{fig:results1}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{good_segm_det_frame_20.jpg}}
+    \caption{Example of segmentation and statue detection}
+    \label{fig:foobar}
+\end{figure*}
 
 \begin{figure}
     \centering
@@ -231,24 +317,11 @@ while the loss class [3] and localization losses [1] are good enough to improve 
     \label{fig:foobar}
 \end{figure}
 
-\subsection{Segmentation}
-The last section of the project deals with segmentation, both of paintings and Stautes.
-We used GrabcCut algorithm: exploiting the ROIs received both from Painting Detection and YOLOv3, we were able to use GrabCut algorithm without user interactions.
-In particular, we took evry ROI extrapolated in each frame, and enlarged it: in this manner, we had a section of the frame, in which we could draw the rectangle to define what was definitely background.
-At this point, we used GrabCut to extrapolate what in the ROI was our object of interest, was that a paint or a statue.
-We highlighted the objects of interest in green
-
-***Foto con frame e rettangolo che identifa sfondo/unkown,Foto con statue e quadri in verde**
-
-\section{Results}
-
-Mostrare e commentare alcuni frame (belli e brutti).
-Fornire misurazioni sugli algoritmi utilizzati e sulle prestazioni della rete con grafici
-
 \section{Discussion}
 
-Commenti e considerazioni finali, discutendo di eventuali limiti e miglioramenti futuri
-
+- migliorare la rete con dataset più ampio e bilanciato
+- potremmo eliminare alcune ROI inutili (e.g. le etichette) utilizzando alcune tecniche di Image Processing
+- Retrival, Rectification e Detection funzionerebbero meglio se avessimo un database di immagini completo anche con statue
 
 %---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 % PER PRENDERE SPUNTO SUI DIVERSI COMANDI LATEX
