@@ -606,6 +606,7 @@ class PaintingManager:
                 template_matchings = []
                 av = 100
                 i = 0
+
                 while(av >= matching_threshold and i < 5):
                     av = self.paint_rectification(frame, roi, imgs_name[i], show_details = show_details, verbose=verbose)
                     """ PROVA TEMPLATE MATCHING
