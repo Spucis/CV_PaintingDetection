@@ -23,3 +23,6 @@ Instead, inside the `painting_manager.py` file and `paint_detection(...)` functi
 - `show_details` will stop the execution to let you see the detected ROI, the rectified attempt and the proposed selected painting in the DB
 - `otsu_opt_enabled` will enable the *otsu_optimization*, as discussed in the report 
 
+# Link to Google Drive to download YOLO weights
+https://drive.google.com/open?id=1Na6uMDc_ST1179GNjGjJ5ywywlBoYXNj
+
