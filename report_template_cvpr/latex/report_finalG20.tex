@@ -93,7 +93,23 @@ painting db we expanded the CSV file accordingly to maintain consistency.
 \section{Related works}
 
 To detect the paintings and statues in the museum we trained a YOLOv3 network with
-our custom annotated dataset. We choosed YOLOv3 because it can achieve good performaces
+our custom annotated dataset. YOLO (acronym for ``You Only Look Once") is an object detection
+network able to detect objects in images parsing the image only once, saving computation time w.r.t. 
+other detection networks, however maintaining a good degree of precision.
+The network can achieve this splitting the image into a fixed size grid, analyzing each cell to find
+correspondeces between objects in cell and ground truth objects. The net tries to fits objects into
+fixed size rectangles called {\tt Anchors}, each one with different ratios and scales.
+YOLO networks returns a prediction vector with shape: {\tt [$p_c$, $b_{cx}$, $b_{cy}$, $b_w$, $b_h$, $c_1$, ..., $c_N$]} 
+where:
+\begin{itemize}
+  \item $p_c$ is the probability that there is an object belonging to one of the classes
+  \item $b_{cx}$ is the x center coordinate of the bounding box
+  \item $b_{cy}$ is the y center coordinate of the bounding box
+  \item $b_w$ is the width of the bounding box
+  \item $b_h$ is the height of the bounding box
+  \item $c_1$ ... $c_N$ are the probabilities of belonging to each class
+\end{itemize}
+We choosed YOLOv3 because it can achieve good performaces
 both in terms of detection and speed as described in YOLOv3 paper:
 \begin{quote}
    At 320$\times$320 YOLOv3 runs in 22 ms at 28.2 mAP, as accurate as SSD but three times faster. 

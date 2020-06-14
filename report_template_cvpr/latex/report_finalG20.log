@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  13 JUN 2020 12:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  13 JUN 2020 18:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -435,214 +435,219 @@ File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 57.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 105.
 
-Underfull \vbox (badness 3333) has occurred while \output is active []
 
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 105.
  [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
 ]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 145.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 161.
 
-Underfull \hbox (badness 10000) in paragraph at lines 144--147
+Underfull \hbox (badness 10000) in paragraph at lines 160--163
 []\OT1/ptm/m/n/10 Using Adam op-ti-mizer with \OT1/pcr/m/n/10 Non Maxima
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 144--147
+Underfull \hbox (badness 10000) in paragraph at lines 160--163
 \OT1/pcr/m/n/10 Suppression \OT1/ptm/m/n/10 value of 0.4, \OT1/pcr/m/n/10 Confi
 dence
  []
 
 Package epstopdf Info: Source file: <loss_x.eps>
-(epstopdf)                    date: 2020-06-13 12:41:11
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 113028 bytes
 (epstopdf)             Output file: <loss_x-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:44:05
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 59399 bytes
 (epstopdf)             Command: <repstopdf --outfile=loss_x-eps-converted-to.pd
 f loss_x.eps>
-(epstopdf)             \includegraphics on input line 157.
+(epstopdf)             \includegraphics on input line 173.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./loss_x-eps-converted-to.pdf): PDF inc
 lusion: found PDF version <1.7>, but at most version <1.5> allowed
-<loss_x-eps-converted-to.pdf, id=21, 455.7025pt x 255.95625pt>
+<loss_x-eps-converted-to.pdf, id=20, 455.7025pt x 255.95625pt>
 File: loss_x-eps-converted-to.pdf Graphic file (type pdf)
 
 <use loss_x-eps-converted-to.pdf>
-Package pdftex.def Info: loss_x-eps-converted-to.pdf used on input line 157.
+Package pdftex.def Info: loss_x-eps-converted-to.pdf used on input line 173.
 (pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
 Package epstopdf Info: Source file: <loss_y.eps>
-(epstopdf)                    date: 2020-06-13 12:41:22
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 113239 bytes
 (epstopdf)             Output file: <loss_y-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:44:05
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 59413 bytes
 (epstopdf)             Command: <repstopdf --outfile=loss_y-eps-converted-to.pd
 f loss_y.eps>
-(epstopdf)             \includegraphics on input line 158.
+(epstopdf)             \includegraphics on input line 174.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./loss_y-eps-converted-to.pdf): PDF inc
 lusion: found PDF version <1.7>, but at most version <1.5> allowed
-<loss_y-eps-converted-to.pdf, id=22, 455.7025pt x 255.95625pt>
+<loss_y-eps-converted-to.pdf, id=21, 455.7025pt x 255.95625pt>
 File: loss_y-eps-converted-to.pdf Graphic file (type pdf)
 
 <use loss_y-eps-converted-to.pdf>
-Package pdftex.def Info: loss_y-eps-converted-to.pdf used on input line 158.
+Package pdftex.def Info: loss_y-eps-converted-to.pdf used on input line 174.
 (pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
 Package epstopdf Info: Source file: <loss_width.eps>
-(epstopdf)                    date: 2020-06-13 12:41:33
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 122370 bytes
 (epstopdf)             Output file: <loss_width-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:44:06
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 63764 bytes
 (epstopdf)             Command: <repstopdf --outfile=loss_width-eps-converted-t
 o.pdf loss_width.eps>
-(epstopdf)             \includegraphics on input line 159.
+(epstopdf)             \includegraphics on input line 175.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./loss_width-eps-converted-to.pdf): PDF
  inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<loss_width-eps-converted-to.pdf, id=23, 455.7025pt x 255.95625pt>
+<loss_width-eps-converted-to.pdf, id=22, 455.7025pt x 255.95625pt>
 File: loss_width-eps-converted-to.pdf Graphic file (type pdf)
 
 <use loss_width-eps-converted-to.pdf>
-Package pdftex.def Info: loss_width-eps-converted-to.pdf used on input line 159
+Package pdftex.def Info: loss_width-eps-converted-to.pdf used on input line 175
 .
 (pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
 Package epstopdf Info: Source file: <loss_height.eps>
-(epstopdf)                    date: 2020-06-13 12:41:46
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 123242 bytes
 (epstopdf)             Output file: <loss_height-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:44:06
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 63788 bytes
 (epstopdf)             Command: <repstopdf --outfile=loss_height-eps-converted-
 to.pdf loss_height.eps>
-(epstopdf)             \includegraphics on input line 160.
+(epstopdf)             \includegraphics on input line 176.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./loss_height-eps-converted-to.pdf): PD
 F inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<loss_height-eps-converted-to.pdf, id=24, 455.7025pt x 255.95625pt>
+<loss_height-eps-converted-to.pdf, id=23, 455.7025pt x 255.95625pt>
 File: loss_height-eps-converted-to.pdf Graphic file (type pdf)
 
 <use loss_height-eps-converted-to.pdf>
-Package pdftex.def Info: loss_height-eps-converted-to.pdf used on input line 16
-0.
+Package pdftex.def Info: loss_height-eps-converted-to.pdf used on input line 17
+6.
 (pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
 Package epstopdf Info: Source file: <loss_conf.eps>
-(epstopdf)                    date: 2020-06-13 12:11:04
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 116719 bytes
 (epstopdf)             Output file: <loss_conf-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:11:26
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 60006 bytes
 (epstopdf)             Command: <repstopdf --outfile=loss_conf-eps-converted-to
 .pdf loss_conf.eps>
-(epstopdf)             \includegraphics on input line 167.
+(epstopdf)             \includegraphics on input line 183.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./loss_conf-eps-converted-to.pdf): PDF 
 inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<loss_conf-eps-converted-to.pdf, id=25, 455.7025pt x 255.95625pt>
+<loss_conf-eps-converted-to.pdf, id=24, 455.7025pt x 255.95625pt>
 File: loss_conf-eps-converted-to.pdf Graphic file (type pdf)
 
 <use loss_conf-eps-converted-to.pdf>
-Package pdftex.def Info: loss_conf-eps-converted-to.pdf used on input line 167.
+Package pdftex.def Info: loss_conf-eps-converted-to.pdf used on input line 183.
 
 (pdftex.def)             Requested size: 237.13594pt x 133.19565pt.
 Package epstopdf Info: Source file: <loss_class.eps>
-(epstopdf)                    date: 2020-06-13 12:17:37
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 111123 bytes
 (epstopdf)             Output file: <loss_class-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:19:25
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 57309 bytes
 (epstopdf)             Command: <repstopdf --outfile=loss_class-eps-converted-t
 o.pdf loss_class.eps>
-(epstopdf)             \includegraphics on input line 177.
+(epstopdf)             \includegraphics on input line 193.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./loss_class-eps-converted-to.pdf): PDF
  inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<loss_class-eps-converted-to.pdf, id=26, 455.7025pt x 255.95625pt>
+<loss_class-eps-converted-to.pdf, id=25, 455.7025pt x 255.95625pt>
 File: loss_class-eps-converted-to.pdf Graphic file (type pdf)
 
 <use loss_class-eps-converted-to.pdf>
-Package pdftex.def Info: loss_class-eps-converted-to.pdf used on input line 177
+Package pdftex.def Info: loss_class-eps-converted-to.pdf used on input line 193
 .
 (pdftex.def)             Requested size: 237.13594pt x 133.19565pt.
 Package epstopdf Info: Source file: <loss_total.eps>
-(epstopdf)                    date: 2020-06-13 12:22:02
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 103503 bytes
 (epstopdf)             Output file: <loss_total-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:25:20
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 54428 bytes
 (epstopdf)             Command: <repstopdf --outfile=loss_total-eps-converted-t
 o.pdf loss_total.eps>
-(epstopdf)             \includegraphics on input line 186.
+(epstopdf)             \includegraphics on input line 202.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./loss_total-eps-converted-to.pdf): PDF
  inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<loss_total-eps-converted-to.pdf, id=27, 455.7025pt x 255.95625pt>
+<loss_total-eps-converted-to.pdf, id=26, 455.7025pt x 255.95625pt>
 File: loss_total-eps-converted-to.pdf Graphic file (type pdf)
 
 <use loss_total-eps-converted-to.pdf>
-Package pdftex.def Info: loss_total-eps-converted-to.pdf used on input line 186
+Package pdftex.def Info: loss_total-eps-converted-to.pdf used on input line 202
 .
 (pdftex.def)             Requested size: 237.13594pt x 133.19565pt.
 Package epstopdf Info: Source file: <recall.eps>
-(epstopdf)                    date: 2020-06-13 12:26:36
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 115177 bytes
 (epstopdf)             Output file: <recall-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:27:50
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 59288 bytes
 (epstopdf)             Command: <repstopdf --outfile=recall-eps-converted-to.pd
 f recall.eps>
-(epstopdf)             \includegraphics on input line 196.
+(epstopdf)             \includegraphics on input line 212.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./recall-eps-converted-to.pdf): PDF inc
 lusion: found PDF version <1.7>, but at most version <1.5> allowed
-<recall-eps-converted-to.pdf, id=28, 455.7025pt x 255.95625pt>
+<recall-eps-converted-to.pdf, id=27, 455.7025pt x 255.95625pt>
 File: recall-eps-converted-to.pdf Graphic file (type pdf)
 
 <use recall-eps-converted-to.pdf>
-Package pdftex.def Info: recall-eps-converted-to.pdf used on input line 196.
+Package pdftex.def Info: recall-eps-converted-to.pdf used on input line 212.
 (pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
 Package epstopdf Info: Source file: <precision.eps>
-(epstopdf)                    date: 2020-06-13 12:26:48
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 119066 bytes
 (epstopdf)             Output file: <precision-eps-converted-to.pdf>
-(epstopdf)                    date: 2020-06-13 12:27:50
+(epstopdf)                    date: 2020-06-13 13:03:32
 (epstopdf)                    size: 60793 bytes
 (epstopdf)             Command: <repstopdf --outfile=precision-eps-converted-to
 .pdf precision.eps>
-(epstopdf)             \includegraphics on input line 197.
+(epstopdf)             \includegraphics on input line 213.
 Package epstopdf Info: Output file is already uptodate.
 
 
 pdfTeX warning: /usr/bin/pdflatex (file ./precision-eps-converted-to.pdf): PDF 
 inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<precision-eps-converted-to.pdf, id=29, 455.7025pt x 255.95625pt>
+<precision-eps-converted-to.pdf, id=28, 455.7025pt x 255.95625pt>
 File: precision-eps-converted-to.pdf Graphic file (type pdf)
 
 <use precision-eps-converted-to.pdf>
-Package pdftex.def Info: precision-eps-converted-to.pdf used on input line 197.
+Package pdftex.def Info: precision-eps-converted-to.pdf used on input line 213.
 
 (pdftex.def)             Requested size: 118.56796pt x 66.59392pt.
 
-Underfull \hbox (badness 4144) in paragraph at lines 206--208
+Underfull \hbox (badness 4144) in paragraph at lines 222--224
 \OT1/ptm/m/n/10 Fornire mis-urazioni sugli al-go-ritmi uti-liz-zati e sulle
  []
 
@@ -651,65 +656,65 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [2 <./loss_x-eps-converted-to.pdf> <./loss_y-eps-converted-to.pdf> <./loss_wid
 th-eps-converted-to.pdf> <./loss_height-eps-converted-to.pdf> <./loss_conf-eps-
-converted-to.pdf> <./loss_class-eps-converted-to.pdf>] [3 <./loss_total-eps-con
+converted-to.pdf>] [3 <./loss_class-eps-converted-to.pdf> <./loss_total-eps-con
 verted-to.pdf> <./recall-eps-converted-to.pdf> <./precision-eps-converted-to.pd
 f>]
 
-LaTeX Warning: Citation `Authors14' on page 4 undefined on input line 328.
+LaTeX Warning: Citation `Authors14' on page 4 undefined on input line 344.
 
 
-LaTeX Warning: Citation `Authors14b' on page 4 undefined on input line 340.
+LaTeX Warning: Citation `Authors14b' on page 4 undefined on input line 356.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 379--385
+Underfull \hbox (badness 10000) in paragraph at lines 395--401
 
  []
 
-
-LaTeX Warning: Citation `Alpher02' on page 4 undefined on input line 419.
-
-
-LaTeX Warning: Citation `Alpher03' on page 4 undefined on input line 420.
-
-
-LaTeX Warning: Citation `Alpher04' on page 4 undefined on input line 420.
-
-
-LaTeX Warning: Citation `Alpher03' on page 4 undefined on input line 422.
-
-
-LaTeX Warning: Citation `Alpher03' on page 4 undefined on input line 423.
-
 [4]
 
-LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 428.
+LaTeX Warning: Citation `Alpher02' on page 5 undefined on input line 435.
 
 
-LaTeX Warning: Citation `Alpher02' on page 5 undefined on input line 428.
+LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 436.
 
 
-LaTeX Warning: Citation `Authors14' on page 5 undefined on input line 428.
+LaTeX Warning: Citation `Alpher04' on page 5 undefined on input line 436.
 
 
-LaTeX Warning: Citation `Alpher02' on page 5 undefined on input line 429.
+LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 438.
 
 
-LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 429.
+LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 439.
 
 
-LaTeX Warning: Citation `Authors14' on page 5 undefined on input line 429.
+LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 444.
+
+
+LaTeX Warning: Citation `Alpher02' on page 5 undefined on input line 444.
+
+
+LaTeX Warning: Citation `Authors14' on page 5 undefined on input line 444.
+
+
+LaTeX Warning: Citation `Alpher02' on page 5 undefined on input line 445.
+
+
+LaTeX Warning: Citation `Alpher03' on page 5 undefined on input line 445.
+
+
+LaTeX Warning: Citation `Authors14' on page 5 undefined on input line 445.
 
 [5]
 
-LaTeX Warning: Citation `Authors14' on page 6 undefined on input line 539.
+LaTeX Warning: Citation `Authors14' on page 6 undefined on input line 555.
 
 No file report_finalG20.bbl.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 601.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 617.
 [6]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 601.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 617.
  (./report_finalG20.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 601.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 601.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 617.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 617.
 
 
 LaTeX Warning: There were undefined references.
@@ -717,13 +722,13 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 601.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 617.
  ) 
 Here is how much of TeX's memory you used:
- 7554 strings out of 493029
- 113159 string characters out of 6136234
- 206829 words of memory out of 5000000
- 10928 multiletter control sequences out of 15000+600000
+ 7571 strings out of 493029
+ 113451 string characters out of 6136234
+ 204829 words of memory out of 5000000
+ 10942 multiletter control sequences out of 15000+600000
  30781 words of font info for 73 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  44i,10n,49p,473b,394s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -737,7 +742,7 @@ sfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucr
 r8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/s
 hare/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/te
 xmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report_finalG20.pdf (6 pages, 656888 bytes).
+Output written on report_finalG20.pdf (6 pages, 660240 bytes).
 PDF statistics:
  160 PDF objects out of 1000 (max. 8388607)
  131 compressed objects within 2 object streams
