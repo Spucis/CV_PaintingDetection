@@ -95,17 +95,13 @@ painting db we expanded the CSV file accordingly to maintain consistency.
 \section{Related works}
 
 To detect the paintings and statues in the museum we trained a YOLOv3 network with
-our custom annotated dataset. We choosed YOLOv3 because it can achieve good performaces
+our custom annotated dataset. YOLO (acronym for ``You Only Look Once") is an object detection
+network able to detect objects in images parsing the image only once, saving computation time w.r.t. 
+other detection networks, however maintaining a good degree of precision.
+We choosed YOLOv3 because it can achieve good performaces
 both in terms of detection and speed as described in YOLOv3 paper:
 \begin{quote}
-   At 320$\times$320 YOLOv3 runs in 22 ms at 28.2 mAP, as accurate as SSD but three times faster. 
-   When we look at the old .5 IOU mAP detection metric YOLOv3 is quite good. It achieves
-   57.9 $AP_{50}$ in 51 ms on a Titan X, compared to 57.5 $AP_{50}$ in 198 ms by RetinaNet,
-   similar performance but 3.8$\times$ faster.
-
-   [1] Redmon, Joseph and Farhadi, Ali 
-   ``YOLOv3: An Incremental Improvement''.
-   arXiv, 2018.
+   \cite{yolov3}
 \end{quote}
 
 \section{Approach}
@@ -176,6 +172,9 @@ but sometimes affects the paintings that are overexposed to the light.
 
 \subsection{People Detection}
 
+We used YOLOv3 network pre-trained on COCO dataset to detect people on videos, getting the returned
+ROIs to draw them on output video.
+
 \subsection{Statue Detection}
 
 To detect the statues in the museum we fine-tuned the YOLOv3 network starting from
@@ -207,6 +206,30 @@ reach the 242th epoch with a batch size of 2, then we just stopped the training 
 We achieved the best results of AP with the 177th epoch and we used those weights to detect
 statues on videos trying different combinations of {\tt Non Maxima Suppression} and {\tt Confidence Threshold} values,
 defining them to 0.1 and 0.98 respectively.
+
+\subsection{Segmentation}
+
+\section{Results}
+
+In this section, some results frame and training graphs will be shown.
+
+\begin{figure*}[t]
+\begin{center}
+    \subfloat[No otsu\_optimization, bad]{\includegraphics[width=0.5\linewidth]{4720_Frame560_noOtsu_bad.jpg}}
+    \subfloat[With otsu\_optimization, good]{\includegraphics[width=0.5\linewidth]{4720_Frame560_yesOtsu_good.jpg}}\\
+    \subfloat[No otsu\_optimization, good]{\includegraphics[width=0.5\linewidth]{4720_Frame260_noOtsu_Good.jpg}}
+    \subfloat[With otsu\_optimization, bad]{\includegraphics[width=0.5\linewidth]{4720_Frame260_yesOtsu_bad.jpg}}
+\end{center}
+   \caption{Example of otsu\_optimization (no statue detection nor segmentation)}
+\label{fig:results1}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \subfloat[]{\includegraphics[width=0.5\linewidth]{good_segm_det_frame_20.jpg}}
+    \caption{Example of segmentation and statue detection}
+    \label{fig:foobar}
+\end{figure*}
 
 \begin{figure}
     \centering
@@ -255,38 +278,11 @@ while the loss class [3] and localization losses [1] are good enough to improve 
     \label{fig:foobar}
 \end{figure}
 
-\subsection{Segmentation}
-
-\section{Results}
-
-In this section, some results frame will be shown.
-
-\begin{figure*}[t]
-\begin{center}
-    \subfloat[No otsu\_optimization, bad]{\includegraphics[width=0.5\linewidth]{4720_Frame560_noOtsu_bad.jpg}}
-    \subfloat[With otsu\_optimization, good]{\includegraphics[width=0.5\linewidth]{4720_Frame560_yesOtsu_good.jpg}}\\
-    \subfloat[No otsu\_optimization, good]{\includegraphics[width=0.5\linewidth]{4720_Frame260_noOtsu_Good.jpg}}
-    \subfloat[With otsu\_optimization, bad]{\includegraphics[width=0.5\linewidth]{4720_Frame260_yesOtsu_bad.jpg}}
-\end{center}
-   \caption{Example of otsu\_optimization (no statue detection nor segmentation)}
-\label{fig:results1}
-\end{figure*}
-
-\begin{figure*}
-    \centering
-    \subfloat[]{\includegraphics[width=0.5\linewidth]{good_segm_det_frame_20.jpg}}
-    \caption{Example of segmentation and statue detection}
-    \label{fig:foobar}
-\end{figure*}
-
-
-Mostrare e commentare alcuni frame (belli e brutti).
-Fornire misurazioni sugli algoritmi utilizzati e sulle prestazioni della rete con grafici
-
 \section{Discussion}
 
-Commenti e considerazioni finali, discutendo di eventuali limiti e miglioramenti futuri
-
+- migliorare la rete con dataset più ampio e bilanciato
+- potremmo eliminare alcune ROI inutili (e.g. le etichette) utilizzando alcune tecniche di Image Processing
+- Retrival, Rectification e Detection funzionerebbero meglio se avessimo un database di immagini completo anche con statue
 
 %---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 % PER PRENDERE SPUNTO SUI DIVERSI COMANDI LATEX

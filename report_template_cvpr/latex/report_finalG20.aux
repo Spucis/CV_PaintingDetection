@@ -16,72 +16,91 @@
 \gdef\HyperFirstAtBeginDocument#1{#1}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{yolov3}
 \@writefile{toc}{\contentsline {section}{\numberline {1}\hskip -1em.\nobreakspace  {}Introduction}{1}{section.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}\hskip -1em.\nobreakspace  {}The dataset}{1}{subsection.1.1}}
 \@writefile{toc}{\contentsline {section}{\numberline {2}\hskip -1em.\nobreakspace  {}Related works}{1}{section.2}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}\hskip -1em.\nobreakspace  {}Approach}{1}{section.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}\hskip -1em.\nobreakspace  {}Painting Detection}{1}{subsection.3.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}\hskip -1em.\nobreakspace  {}Painting Detection}{2}{subsection.3.1}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Canny thresholds\relax }}{2}{table.caption.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}\hskip -1em.\nobreakspace  {}Painting Retrival}{2}{subsection.3.2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}\hskip -1em.\nobreakspace  {}Painting Rectification}{2}{subsection.3.3}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}\hskip -1em.\nobreakspace  {}People Detection}{2}{subsection.3.4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}\hskip -1em.\nobreakspace  {}Statue Detection}{2}{subsection.3.5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}\hskip -1em.\nobreakspace  {}Segmentation}{2}{subsection.3.6}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}\hskip -1em.\nobreakspace  {}Results}{2}{section.4}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces (a) Loss X, (b) Loss Y, (c) Loss Width and (d) Loss Height\relax }}{2}{figure.caption.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Relevant ROIs results\relax }}{2}{figure.caption.2}}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:foobar}{{1}{2}{(a) Loss X, (b) Loss Y, (c) Loss Width and (d) Loss Height\relax }{figure.caption.1}{}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{2}{subfigure.1.1}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{2}{subfigure.1.2}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {}}}{2}{subfigure.1.3}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {}}}{2}{subfigure.1.4}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces The Loss Confidence begins to overfit after few epochs, probably due to bad labeling of paintings when we expanded the dataset.\relax }}{2}{figure.caption.2}}
-\newlabel{fig:long}{{2}{2}{The Loss Confidence begins to overfit after few epochs, probably due to bad labeling of paintings when we expanded the dataset.\relax }{figure.caption.2}{}}
-\newlabel{fig:onecol}{{2}{2}{The Loss Confidence begins to overfit after few epochs, probably due to bad labeling of paintings when we expanded the dataset.\relax }{figure.caption.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The Loss Class has a good trend.\relax }}{2}{figure.caption.3}}
-\newlabel{fig:long}{{3}{2}{The Loss Class has a good trend.\relax }{figure.caption.3}{}}
-\newlabel{fig:onecol}{{3}{2}{The Loss Class has a good trend.\relax }{figure.caption.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces The Total Loss is affected mainly by the loss confidence curve [2], while the loss class [3] and localization losses [1] are good enough to improve the precision [5].\relax }}{3}{figure.caption.4}}
-\newlabel{fig:long}{{4}{3}{The Total Loss is affected mainly by the loss confidence curve [2], while the loss class [3] and localization losses [1] are good enough to improve the precision [5].\relax }{figure.caption.4}{}}
-\newlabel{fig:onecol}{{4}{3}{The Total Loss is affected mainly by the loss confidence curve [2], while the loss class [3] and localization losses [1] are good enough to improve the precision [5].\relax }{figure.caption.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces (a) Recall and (b) Precision curves\relax }}{3}{figure.caption.5}}
-\newlabel{fig:foobar}{{5}{3}{(a) Recall and (b) Precision curves\relax }{figure.caption.5}{}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{3}{subfigure.5.1}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{3}{subfigure.5.2}}
+\newlabel{fig:foobar}{{1}{2}{Relevant ROIs results\relax }{figure.caption.2}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Original frame}}}{2}{subfigure.1.1}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Canny edge detection}}}{2}{subfigure.1.2}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Closing results}}}{2}{subfigure.1.3}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {Detected connected components}}}{2}{subfigure.1.4}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {Connected components ROIs}}}{2}{subfigure.1.5}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {Relevant ROIs; in green the discarded ROIs due to the overlap}}}{2}{subfigure.1.6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}\hskip -1em.\nobreakspace  {}Statue Detection}{2}{subsection.3.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}\hskip -1em.\nobreakspace  {}Segmentation}{3}{subsection.3.6}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}\hskip -1em.\nobreakspace  {}Results}{3}{section.4}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}\hskip -1em.\nobreakspace  {}Discussion}{3}{section.5}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}\hskip -1em.\nobreakspace  {}Language}{3}{subsection.5.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}\hskip -1em.\nobreakspace  {}Dual submission}{3}{subsection.5.2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.3}\hskip -1em.\nobreakspace  {}Paper length}{3}{subsection.5.3}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.4}\hskip -1em.\nobreakspace  {}The ruler}{3}{subsection.5.4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.5}\hskip -1em.\nobreakspace  {}Mathematics}{3}{subsection.5.5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}\hskip -1em.\nobreakspace  {}Blind review}{3}{subsection.5.6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Example of otsu\_optimization (no statue detection nor segmentation)\relax }}{4}{figure.caption.3}}
+\newlabel{fig:results1}{{2}{4}{Example of otsu\_optimization (no statue detection nor segmentation)\relax }{figure.caption.3}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {No otsu\_optimization, bad}}}{4}{subfigure.2.1}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {With otsu\_optimization, good}}}{4}{subfigure.2.2}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {No otsu\_optimization, good}}}{4}{subfigure.2.3}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {With otsu\_optimization, bad}}}{4}{subfigure.2.4}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Example of segmentation and statue detection\relax }}{4}{figure.caption.4}}
+\newlabel{fig:foobar}{{3}{4}{Example of segmentation and statue detection\relax }{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{4}{subfigure.3.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}\hskip -1em.\nobreakspace  {}Blind review}{4}{subsection.5.6}}
 \citation{Authors14}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces (a) Loss X, (b) Loss Y, (c) Loss Width and (d) Loss Height\relax }}{5}{figure.caption.5}}
+\newlabel{fig:foobar}{{4}{5}{(a) Loss X, (b) Loss Y, (c) Loss Width and (d) Loss Height\relax }{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{5}{subfigure.4.1}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{5}{subfigure.4.2}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {}}}{5}{subfigure.4.3}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {}}}{5}{subfigure.4.4}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The Loss Confidence begins to overfit after few epochs, probably due to bad labeling of paintings when we expanded the dataset.\relax }}{5}{figure.caption.6}}
+\newlabel{fig:long}{{5}{5}{The Loss Confidence begins to overfit after few epochs, probably due to bad labeling of paintings when we expanded the dataset.\relax }{figure.caption.6}{}}
+\newlabel{fig:onecol}{{5}{5}{The Loss Confidence begins to overfit after few epochs, probably due to bad labeling of paintings when we expanded the dataset.\relax }{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces The Loss Class has a good trend.\relax }}{5}{figure.caption.7}}
+\newlabel{fig:long}{{6}{5}{The Loss Class has a good trend.\relax }{figure.caption.7}{}}
+\newlabel{fig:onecol}{{6}{5}{The Loss Class has a good trend.\relax }{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces The Total Loss is affected mainly by the loss confidence curve [2], while the loss class [3] and localization losses [1] are good enough to improve the precision [5].\relax }}{5}{figure.caption.8}}
+\newlabel{fig:long}{{7}{5}{The Total Loss is affected mainly by the loss confidence curve [2], while the loss class [3] and localization losses [1] are good enough to improve the precision [5].\relax }{figure.caption.8}{}}
+\newlabel{fig:onecol}{{7}{5}{The Total Loss is affected mainly by the loss confidence curve [2], while the loss class [3] and localization losses [1] are good enough to improve the precision [5].\relax }{figure.caption.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces (a) Recall and (b) Precision curves\relax }}{5}{figure.caption.9}}
+\newlabel{fig:foobar}{{8}{5}{(a) Recall and (b) Precision curves\relax }{figure.caption.9}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{5}{subfigure.8.1}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{5}{subfigure.8.2}}
 \citation{Authors14b}
 \citation{Alpher02}
 \citation{Alpher03}
 \citation{Alpher04}
 \citation{Alpher03}
 \citation{Alpher03}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}\hskip -1em.\nobreakspace  {}Miscellaneous}{4}{subsection.5.7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Example of caption. It is set in Roman so that mathematics (always set in Roman: $B \qopname  \relax o{sin}A = A \qopname  \relax o{sin}B$) may be included without an ugly clash.\relax }}{6}{figure.caption.10}}
+\newlabel{fig:long}{{9}{6}{Example of caption. It is set in Roman so that mathematics (always set in Roman: $B \sin A = A \sin B$) may be included without an ugly clash.\relax }{figure.caption.10}{}}
+\newlabel{fig:onecol}{{9}{6}{Example of caption. It is set in Roman so that mathematics (always set in Roman: $B \sin A = A \sin B$) may be included without an ugly clash.\relax }{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}\hskip -1em.\nobreakspace  {}Miscellaneous}{6}{subsection.5.7}}
 \citation{Alpher03}
 \citation{Alpher02}
 \citation{Authors14}
 \citation{Alpher02}
 \citation{Alpher03}
 \citation{Authors14}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Example of caption. It is set in Roman so that mathematics (always set in Roman: $B \qopname  \relax o{sin}A = A \qopname  \relax o{sin}B$) may be included without an ugly clash.\relax }}{5}{figure.caption.6}}
-\newlabel{fig:long}{{6}{5}{Example of caption. It is set in Roman so that mathematics (always set in Roman: $B \sin A = A \sin B$) may be included without an ugly clash.\relax }{figure.caption.6}{}}
-\newlabel{fig:onecol}{{6}{5}{Example of caption. It is set in Roman so that mathematics (always set in Roman: $B \sin A = A \sin B$) may be included without an ugly clash.\relax }{figure.caption.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}\hskip -1em.\nobreakspace  {}Formatting your paper}{5}{section.6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}\hskip -1em.\nobreakspace  {}Margins and page numbering}{5}{subsection.6.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}\hskip -1em.\nobreakspace  {}Type-style and fonts}{5}{subsection.6.2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}\hskip -1em.\nobreakspace  {}Footnotes}{5}{subsection.6.3}}
 \citation{Authors14}
+\@writefile{toc}{\contentsline {section}{\numberline {6}\hskip -1em.\nobreakspace  {}Formatting your paper}{7}{section.6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}\hskip -1em.\nobreakspace  {}Margins and page numbering}{7}{subsection.6.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}\hskip -1em.\nobreakspace  {}Type-style and fonts}{7}{subsection.6.2}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Results. Ours is better.\relax }}{7}{table.caption.12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}\hskip -1em.\nobreakspace  {}Footnotes}{7}{subsection.6.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}\hskip -1em.\nobreakspace  {}References}{7}{subsection.6.4}}
 \bibstyle{ieee_fullname}
 \bibdata{egbib}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Example of a short caption, which should be centered.\relax }}{6}{figure.caption.7}}
-\newlabel{fig:short}{{7}{6}{Example of a short caption, which should be centered.\relax }{figure.caption.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Results. Ours is better.\relax }}{6}{table.caption.8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}\hskip -1em.\nobreakspace  {}References}{6}{subsection.6.4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}\hskip -1em.\nobreakspace  {}Illustrations, graphs, and photographs}{6}{subsection.6.5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}\hskip -1em.\nobreakspace  {}Color}{6}{subsection.6.6}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}\hskip -1em.\nobreakspace  {}Final copy}{6}{section.7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Example of a short caption, which should be centered.\relax }}{8}{figure.caption.11}}
+\newlabel{fig:short}{{10}{8}{Example of a short caption, which should be centered.\relax }{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}\hskip -1em.\nobreakspace  {}Illustrations, graphs, and photographs}{8}{subsection.6.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}\hskip -1em.\nobreakspace  {}Color}{8}{subsection.6.6}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}\hskip -1em.\nobreakspace  {}Final copy}{8}{section.7}}
