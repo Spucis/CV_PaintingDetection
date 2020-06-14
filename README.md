@@ -1,5 +1,6 @@
 # CV_PaintingDetection
 Computer Vision - Museum Painting Detection
+Authors: *Marco Cagrandi*, *Alessio Ruggi* and *Daniele Lombardo*.
 
 # Project structure
 The file `cv_project.py` is the entry point of the application. It contains the video selection and it is where you can change the *step* of the program.
