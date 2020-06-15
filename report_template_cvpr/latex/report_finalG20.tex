@@ -187,7 +187,7 @@ The painting with the smaller average distance from the database, that we will c
   \item The object is a painting, but is not in the database
 \end{itemize}
 Painting Rectification can be very helpful: with painting retrival, we select the painting that has the smallest avarage distance from the object in the ROI, then, we try to rectify the object in the frame based on the keypoints of the Best Candidate, and we obtain a rectified image,
-if the Best Candidate was actually the painting in the ROI, the rectification should be good, not distored \ref{fig:optimal_rectification}: otherwise, the rectification will bring to a ``Black Hole" \ref{fig:worst_rectification}: a Black Hole happens when the wrong keypoints are used for the rectification.
+if the Best Candidate was actually the painting in the ROI, the rectification should be good, not distored [Fig. \ref{fig:optimal_rectification}]: otherwise, the rectification will bring to a ``Black Hole" [Fig. \ref{fig:worst_rectification}]: a Black Hole happens when the wrong keypoints are used for the rectification.
 
 It can therefore be inferred that a Black Hole happened when our Best Candidate is wrong, it does not concide with the object in the painting.
 We can discard the first Best Candidate, and get the painting from the database which has the second smallest average distance.
@@ -248,12 +248,12 @@ augmentation script to flip all statues frames, obtaining 564 images with statue
 Finally our dataset contains 1169 images, slightly balanced in number of paintings and statues.
 
 Using Adam optimizer with {\tt Non Maxima Suppression} value of 0.4, {\tt Confidence Threshold} of 0.8 
-and a {\tt Learning Rate} of 0.004 we achieved an AP of {\bf 6.39\%}, considering also the painting class that we 
+and a {\tt Learning Rate} of 0.004 we achieved an AP of {\bf 13.62\%}, considering also the painting class that we 
 discarded in detection phase. 
 
 To train the network we used an Nvidia GTX 1050 with 4Gb and it took us almost 4 days to
 reach the 242th epoch with a batch size of 2, then we just stopped the training due to overfitting on 
-{\tt confidence loss} \ref{fig:loss_conf}. 
+{\tt confidence loss} [Fig. \ref{fig:loss_conf}]. 
 We achieved the best results of AP with the 177th epoch and we used those weights to detect
 statues on videos trying different combinations of {\tt Non Maxima Suppression} and {\tt Confidence Threshold} values,
 defining them to 0.1 and 0.98 respectively.
@@ -264,7 +264,7 @@ We used GrabcCut algorithm as defined in \textit{Carsten Rother, Vladimir Kolmog
 : exploiting the ROIs received both from Painting Detection and YOLOv3, we were able to use GrabCut algorithm without user interactions.
 In particular, we took every ROI extrapolated in each frame, and enlarged them: In this manner, we had a section of the frame, in which we could draw the rectangle to define what was definitely background.
 At this point, we used GrabCut to extrapolate what in the ROI was our object of interest, was that a painting or a statue.
-We highlighted the objects of interest in green \ref{fig:results2}.
+We highlighted the objects of interest in green [Fig. \ref{fig:results2}].
 
 \section{Results}
 
@@ -311,8 +311,8 @@ paintings when we expanded the dataset.}
 \begin{center}
    \includegraphics[width=1\linewidth]{loss_total.eps}
 \end{center}
-   \caption{The Total Loss is affected mainly by the loss confidence curve \ref{fig:loss_conf}, 
-while the loss class \ref{fig:loss_class} and localization losses \ref{fig:localization_loss} are good enough to improve the precision \ref{fig:recall_precision}.}
+   \caption{The Total Loss is affected mainly by the loss confidence curve [Fig. \ref{fig:loss_conf}], 
+while the loss class [Fig. \ref{fig:loss_class}] and localization losses [Fig. \ref{fig:localization_loss}] are good enough to improve the precision [Fig. \ref{fig:recall_precision}].}
 \label{fig:loss_total}
 \label{fig:onecol}
 \end{figure}
